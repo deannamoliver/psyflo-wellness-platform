@@ -5,6 +5,7 @@ import {
   ChevronRight,
   ChevronRight as ChevronRightIcon,
   Filter,
+  Info,
   MessageSquare,
   Phone,
   Search,
@@ -16,9 +17,29 @@ import { useState } from "react";
 import { cn } from "@/lib/tailwind-utils";
 import type { OrgPatientRow } from "../page";
 
-type SortKey = "name" | "assignedProvider" | "billableDays" | "providerMinutes" | "daysAgo";
+type MyCaseloadSortKey = "name" | "billableDays" | "providerMinutes" | "daysAgo";
+type PracticeCaseloadSortKey = "name" | "assignedProvider" | "enrollmentDate" | "lastActivity" | "rtmStatus";
 type SortDir = "asc" | "desc";
-type ViewMode = "my-caseload" | "organization";
+type ViewMode = "my-caseload" | "practice-caseload";
+
+function getRtmStatusBadge(status: string) {
+  switch (status) {
+    case "Eligible":
+      return "bg-emerald-50 text-emerald-700";
+    case "At Risk":
+      return "bg-amber-50 text-amber-700";
+    case "Ineligible":
+      return "bg-red-50 text-red-700";
+    default:
+      return "bg-gray-50 text-gray-700";
+  }
+}
+
+function getBillingEligibilityBadge(eligible: boolean) {
+  return eligible
+    ? "bg-emerald-50 text-emerald-700"
+    : "bg-gray-100 text-gray-500";
+}
 
 function getBillableDaysColor(days: number) {
   if (days >= 16) return "bg-emerald-50 text-emerald-700";
@@ -43,7 +64,8 @@ export function CaseloadsClient({
 }) {
   const [viewMode, setViewMode] = useState<ViewMode>("my-caseload");
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [myCaseloadSortKey, setMyCaseloadSortKey] = useState<MyCaseloadSortKey>("name");
+  const [practiceSortKey, setPracticeSortKey] = useState<PracticeCaseloadSortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
@@ -53,9 +75,8 @@ export function CaseloadsClient({
   const pageSize = 15;
 
   // Get base patients based on view mode
-  const basePatients = viewMode === "my-caseload" 
-    ? patients.filter(p => p.assignedProvider === currentUserProvider)
-    : patients;
+  const myCaseloadPatients = patients.filter(p => p.assignedProvider === currentUserProvider);
+  const basePatients = viewMode === "my-caseload" ? myCaseloadPatients : patients;
 
   // Filter
   let filtered = basePatients;
@@ -71,18 +92,25 @@ export function CaseloadsClient({
   if (statusFilter !== "all") {
     filtered = filtered.filter((p) => p.status === statusFilter);
   }
-  if (providerFilter !== "all" && viewMode === "organization") {
+  if (providerFilter !== "all" && viewMode === "practice-caseload") {
     filtered = filtered.filter((p) => p.assignedProvider === providerFilter);
   }
 
   // Sort
   const sorted = [...filtered].sort((a, b) => {
     let cmp = 0;
-    if (sortKey === "name") cmp = a.name.localeCompare(b.name);
-    else if (sortKey === "assignedProvider") cmp = a.assignedProvider.localeCompare(b.assignedProvider);
-    else if (sortKey === "billableDays") cmp = a.billableDays - b.billableDays;
-    else if (sortKey === "providerMinutes") cmp = a.providerMinutes - b.providerMinutes;
-    else if (sortKey === "daysAgo") cmp = a.daysAgo - b.daysAgo;
+    if (viewMode === "my-caseload") {
+      if (myCaseloadSortKey === "name") cmp = a.name.localeCompare(b.name);
+      else if (myCaseloadSortKey === "billableDays") cmp = a.billableDays - b.billableDays;
+      else if (myCaseloadSortKey === "providerMinutes") cmp = a.providerMinutes - b.providerMinutes;
+      else if (myCaseloadSortKey === "daysAgo") cmp = a.daysAgo - b.daysAgo;
+    } else {
+      if (practiceSortKey === "name") cmp = a.name.localeCompare(b.name);
+      else if (practiceSortKey === "assignedProvider") cmp = a.assignedProvider.localeCompare(b.assignedProvider);
+      else if (practiceSortKey === "enrollmentDate") cmp = a.lastActivity.localeCompare(b.lastActivity);
+      else if (practiceSortKey === "lastActivity") cmp = a.daysAgo - b.daysAgo;
+      else if (practiceSortKey === "rtmStatus") cmp = (a.riskLevel ?? "").localeCompare(b.riskLevel ?? "");
+    }
     return sortDir === "asc" ? cmp : -cmp;
   });
 
@@ -91,22 +119,43 @@ export function CaseloadsClient({
   const safePage = Math.min(page, Math.max(0, totalPages - 1));
   const paginated = sorted.slice(safePage * pageSize, (safePage + 1) * pageSize);
 
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
+  const toggleMyCaseloadSort = (key: MyCaseloadSortKey) => {
+    if (myCaseloadSortKey === key) {
       setSortDir(sortDir === "asc" ? "desc" : "asc");
     } else {
-      setSortKey(key);
+      setMyCaseloadSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const togglePracticeSort = (key: PracticeCaseloadSortKey) => {
+    if (practiceSortKey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setPracticeSortKey(key);
       setSortDir("asc");
     }
   };
 
   const activeCount = basePatients.filter((p) => p.status === "active").length;
-  const alertCount = basePatients.filter((p) => p.riskLevel && p.riskLevel !== "low").length;
+  const billingEligibleCount = basePatients.filter((p) => p.billableDays >= 16).length;
 
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
     setPage(0);
     setProviderFilter("all");
+  };
+
+  // Helper to get RTM status from risk level
+  const getRtmStatus = (riskLevel: string | null): string => {
+    if (!riskLevel || riskLevel === "low") return "Eligible";
+    if (riskLevel === "moderate") return "At Risk";
+    return "Ineligible";
+  };
+
+  // Helper to get billing eligibility
+  const getBillingEligibility = (billableDays: number): boolean => {
+    return billableDays >= 16;
   };
 
   return (
@@ -128,18 +177,28 @@ export function CaseloadsClient({
         </button>
         <button
           type="button"
-          onClick={() => handleViewModeChange("organization")}
+          onClick={() => handleViewModeChange("practice-caseload")}
           className={cn(
             "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-            viewMode === "organization"
+            viewMode === "practice-caseload"
               ? "bg-teal-600 text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200",
           )}
         >
           <Users className="h-4 w-4" />
-          Organization Caseloads
+          Practice Caseload
         </button>
       </div>
+
+      {/* HIPAA Info Banner for Practice Caseload */}
+      {viewMode === "practice-caseload" && (
+        <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
+          <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
+          <p className="text-sm text-blue-700">
+            Practice view shows operational data only. To view clinical details for a patient, they must be on your caseload.
+          </p>
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
         {/* Summary Stats */}
@@ -159,8 +218,8 @@ export function CaseloadsClient({
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Needs Attention</p>
-            <p className="text-xl font-bold text-orange-600">{alertCount}</p>
+            <p className="text-xs text-gray-500">Billing Eligible</p>
+            <p className="text-xl font-bold text-teal-600">{billingEligibleCount}</p>
           </div>
         </div>
 
@@ -168,7 +227,7 @@ export function CaseloadsClient({
         <div className="flex items-center justify-between border-b px-5 py-4">
           <div className="flex items-center gap-3">
             <h3 className="text-sm font-semibold text-gray-900">
-              {viewMode === "my-caseload" ? "My Patients" : "All Caseloads"}{" "}
+              {viewMode === "my-caseload" ? "My Patients" : "All Practice Patients"}{" "}
               <span className="ml-1 text-gray-500">({filtered.length})</span>
             </h3>
           </div>
@@ -226,7 +285,7 @@ export function CaseloadsClient({
                 ))}
               </div>
             </div>
-            {viewMode === "organization" && (
+            {viewMode === "practice-caseload" && (
               <div className="flex items-center gap-2">
                 <span className="text-xs font-medium text-gray-500">Provider:</span>
                 <select
@@ -247,123 +306,195 @@ export function CaseloadsClient({
           </div>
         )}
 
-        {/* Table - matching provider dashboard columns */}
+        {/* Table - Different columns based on view mode */}
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead>
-              <tr className="border-b bg-gray-50/50">
-                <th
-                  className="cursor-pointer px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                  onClick={() => toggleSort("name")}
-                >
-                  Patient {sortKey === "name" && (sortDir === "asc" ? "↑" : "↓")}
-                </th>
-                {viewMode === "organization" && (
-                  <th
-                    className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    onClick={() => toggleSort("assignedProvider")}
-                  >
-                    Provider {sortKey === "assignedProvider" && (sortDir === "asc" ? "↑" : "↓")}
-                  </th>
-                )}
-                <th
-                  className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                  onClick={() => toggleSort("billableDays")}
-                >
-                  Billable Days {sortKey === "billableDays" && (sortDir === "asc" ? "↑" : "↓")}
-                </th>
-                <th
-                  className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                  onClick={() => toggleSort("providerMinutes")}
-                >
-                  Provider Time {sortKey === "providerMinutes" && (sortDir === "asc" ? "↑" : "↓")}
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Treatment Plan
-                </th>
-                <th
-                  className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                  onClick={() => toggleSort("daysAgo")}
-                >
-                  Days Since Last Login {sortKey === "daysAgo" && (sortDir === "asc" ? "↑" : "↓")}
-                </th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {paginated.length === 0 ? (
-                <tr>
-                  <td colSpan={viewMode === "organization" ? 7 : 6} className="px-5 py-8 text-center text-sm text-gray-400">
-                    No patients found.
-                  </td>
-                </tr>
-              ) : (
-                paginated.map((patient) => (
-                  <tr key={patient.id} className="transition-colors hover:bg-gray-50/50">
-                    <td className="px-5 py-3">
-                      <Link
-                        href={`/dashboard/practice/patients/${patient.id}/overview`}
-                        className="text-sm font-medium text-gray-900 hover:text-blue-600 hover:underline"
-                      >
-                        {patient.name}
-                      </Link>
-                    </td>
-                    {viewMode === "organization" && (
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {patient.assignedProvider}
-                      </td>
-                    )}
-                    <td className="px-4 py-3">
-                      <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", getBillableDaysColor(patient.billableDays))}>
-                        {patient.billableDays} / 30
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", getProviderTimeColor(patient.providerMinutes))}>
-                        {patient.providerMinutes} min
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {patient.treatmentPlan ? (
-                        <span className="text-xs">{patient.treatmentPlan}</span>
-                      ) : (
-                        <span className="text-xs italic text-gray-400">None</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-gray-500">
-                      {patient.daysAgo === 0 ? "Today" : patient.daysAgo === 1 ? "1 day" : `${patient.daysAgo} days`}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          type="button"
-                          className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-green-50 hover:text-green-600"
-                          title="Call patient"
-                        >
-                          <Phone className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
-                          title="Message patient"
-                        >
-                          <MessageSquare className="h-4 w-4" />
-                        </button>
-                        <Link
-                          href={`/dashboard/practice/patients/${patient.id}/overview`}
-                          className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
-                          title="View patient"
-                        >
-                          <ChevronRightIcon className="h-4 w-4" />
-                        </Link>
-                      </div>
-                    </td>
+            {viewMode === "my-caseload" ? (
+              /* MY CASELOAD TABLE - Clinical view with clickable names */
+              <>
+                <thead>
+                  <tr className="border-b bg-gray-50/50">
+                    <th
+                      className="cursor-pointer px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => toggleMyCaseloadSort("name")}
+                    >
+                      Patient {myCaseloadSortKey === "name" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => toggleMyCaseloadSort("billableDays")}
+                    >
+                      Data Days {myCaseloadSortKey === "billableDays" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => toggleMyCaseloadSort("providerMinutes")}
+                    >
+                      Provider Time {myCaseloadSortKey === "providerMinutes" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Treatment Plan
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => toggleMyCaseloadSort("daysAgo")}
+                    >
+                      Last Engagement {myCaseloadSortKey === "daysAgo" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Actions
+                    </th>
                   </tr>
-                ))
-              )}
-            </tbody>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {paginated.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-400">
+                        No patients found.
+                      </td>
+                    </tr>
+                  ) : (
+                    paginated.map((patient) => (
+                      <tr key={patient.id} className="transition-colors hover:bg-gray-50/50">
+                        <td className="px-5 py-3">
+                          <Link
+                            href={`/dashboard/practice/patients/${patient.id}/overview`}
+                            className="text-sm font-medium text-gray-900 hover:text-blue-600 hover:underline"
+                          >
+                            {patient.name}
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", getBillableDaysColor(patient.billableDays))}>
+                            {patient.billableDays} / 30
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", getProviderTimeColor(patient.providerMinutes))}>
+                            {patient.providerMinutes} min
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {patient.treatmentPlan ? (
+                            <span className="text-xs">{patient.treatmentPlan}</span>
+                          ) : (
+                            <span className="text-xs italic text-gray-400">None</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-gray-500">
+                          {patient.daysAgo === 0 ? "Today" : patient.daysAgo === 1 ? "1 day" : `${patient.daysAgo} days`}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              type="button"
+                              className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-green-50 hover:text-green-600"
+                              title="Call patient"
+                            >
+                              <Phone className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
+                              title="Message patient"
+                            >
+                              <MessageSquare className="h-4 w-4" />
+                            </button>
+                            <Link
+                              href={`/dashboard/practice/patients/${patient.id}/overview`}
+                              className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                              title="View patient"
+                            >
+                              <ChevronRightIcon className="h-4 w-4" />
+                            </Link>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </>
+            ) : (
+              /* PRACTICE CASELOAD TABLE - Operational view, NO clickable names (HIPAA boundary) */
+              <>
+                <thead>
+                  <tr className="border-b bg-gray-50/50">
+                    <th
+                      className="cursor-pointer px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => togglePracticeSort("name")}
+                    >
+                      Patient Name {practiceSortKey === "name" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => togglePracticeSort("assignedProvider")}
+                    >
+                      Assigned Provider {practiceSortKey === "assignedProvider" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => togglePracticeSort("enrollmentDate")}
+                    >
+                      Enrollment Date {practiceSortKey === "enrollmentDate" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => togglePracticeSort("lastActivity")}
+                    >
+                      Last Activity {practiceSortKey === "lastActivity" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th
+                      className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      onClick={() => togglePracticeSort("rtmStatus")}
+                    >
+                      RTM Status {practiceSortKey === "rtmStatus" && (sortDir === "asc" ? "↑" : "↓")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                      Billing Eligibility
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {paginated.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-400">
+                        No patients found.
+                      </td>
+                    </tr>
+                  ) : (
+                    paginated.map((patient) => (
+                      <tr key={patient.id} className="transition-colors hover:bg-gray-50/50">
+                        {/* Patient name is NOT clickable - plain text only */}
+                        <td className="px-5 py-3">
+                          <span className="text-sm font-medium text-gray-900">
+                            {patient.name}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {patient.assignedProvider}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {new Date(patient.lastActivity).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-gray-500">
+                          {patient.daysAgo === 0 ? "Today" : patient.daysAgo === 1 ? "1 day ago" : `${patient.daysAgo} days ago`}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", getRtmStatusBadge(getRtmStatus(patient.riskLevel)))}>
+                            {getRtmStatus(patient.riskLevel)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", getBillingEligibilityBadge(getBillingEligibility(patient.billableDays)))}>
+                            {getBillingEligibility(patient.billableDays) ? "Eligible" : "Not Eligible"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </>
+            )}
           </table>
         </div>
 

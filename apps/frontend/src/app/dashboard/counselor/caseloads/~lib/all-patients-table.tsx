@@ -163,7 +163,7 @@ export function AllPatientsTable({ patients }: { patients: PatientRow[] }) {
                 <SortHeader label="Patient" sortKeyName="name" />
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                <SortHeader label="Billable Days" sortKeyName="billableDays" />
+                <SortHeader label="Data Days" sortKeyName="billableDays" />
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 <SortHeader label="Provider Time" sortKeyName="providerMinutes" />
@@ -172,7 +172,7 @@ export function AllPatientsTable({ patients }: { patients: PatientRow[] }) {
                 Treatment Plan
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                <SortHeader label="Days Since Last Login" sortKeyName="daysAgo" />
+                <SortHeader label="Last Engagement" sortKeyName="daysAgo" />
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                 Actions

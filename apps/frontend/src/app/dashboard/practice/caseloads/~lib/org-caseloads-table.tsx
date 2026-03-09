@@ -93,7 +93,7 @@ export function OrgCaseloadsTable({
       {/* Summary Stats */}
       <div className="grid grid-cols-4 gap-4 border-b bg-gray-50/50 px-5 py-4">
         <div>
-          <p className="text-xs text-gray-500">Total Patients</p>
+          <p className="text-xs text-gray-500">Caseload</p>
           <p className="text-xl font-bold text-gray-900">{patients.length}</p>
         </div>
         <div>
@@ -217,13 +217,13 @@ export function OrgCaseloadsTable({
                 className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
                 onClick={() => toggleSort("lastActivity")}
               >
-                Last Activity {sortKey === "lastActivity" && (sortDir === "asc" ? "↑" : "↓")}
+                Last Engagement {sortKey === "lastActivity" && (sortDir === "asc" ? "↑" : "↓")}
               </th>
               <th
                 className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
                 onClick={() => toggleSort("billableDays")}
               >
-                Billable Days {sortKey === "billableDays" && (sortDir === "asc" ? "↑" : "↓")}
+                Data Days {sortKey === "billableDays" && (sortDir === "asc" ? "↑" : "↓")}
               </th>
               <th
                 className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"

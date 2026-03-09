@@ -75,7 +75,7 @@ export default function TopNav({
               <span className="font-semibold text-gray-900">{practiceName}</span>
             </Link>
             <span className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-medium text-teal-700">
-              Organization
+              Practice Manager
             </span>
 
             {/* Separator */}

@@ -316,7 +316,7 @@ const KPI_CARDS: StatCardConfig[] = [
     changeLabel: "from last week",
     icon: <CheckSquare className="size-5 text-blue-600" />,
     iconBg: "bg-blue-50",
-    tag: "To Do",
+    tag: "Pending",
     tagBg: "bg-blue-100",
     tagText: "text-blue-700",
     dotColor: "bg-blue-600",

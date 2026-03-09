@@ -301,7 +301,7 @@ export default function BillingDashboard({ realStudents }: { realStudents: RealS
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard title="Patient Census" value={patients.length} subtitle={`${activePatients.length} active · ${inactivePatients.length} inactive`} icon={Users} color="bg-blue-500" />
+        <SummaryCard title="Caseload" value={patients.length} subtitle={`${activePatients.length} active · ${inactivePatients.length} inactive`} icon={Users} color="bg-blue-500" />
         <SummaryCard title="Billable This Period" value={totalBillable.length} subtitle="Meeting all RTM requirements" icon={CheckCircle2} color="bg-emerald-500" />
         <SummaryCard title="Reports to Sign" value={actionNeeded.length} subtitle="Missing billing requirements" icon={XCircle} color="bg-amber-500" />
         <SummaryCard title="Est. Revenue" value={`$${estimatedRevenue.toFixed(0)}`} subtitle="This billing period" icon={TrendingUp} color="bg-violet-500" />

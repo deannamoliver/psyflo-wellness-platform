@@ -25,8 +25,8 @@ type DashboardOption = {
 const DASHBOARD_OPTIONS: DashboardOption[] = [
   {
     id: "admin",
-    label: "Psyflo",
-    description: "System administration",
+    label: "PsyFlo Admin",
+    description: "Internal administration — no patient data",
     href: "/dashboard/admin",
     icon: Settings,
     color: "text-violet-600",
@@ -34,7 +34,7 @@ const DASHBOARD_OPTIONS: DashboardOption[] = [
   },
   {
     id: "counselor",
-    label: "Provider / Clinician",
+    label: "Provider",
     description: "Clinical dashboard",
     href: "/dashboard/counselor/home",
     icon: Stethoscope,
@@ -43,8 +43,8 @@ const DASHBOARD_OPTIONS: DashboardOption[] = [
   },
   {
     id: "practice",
-    label: "Organization",
-    description: "Practice management",
+    label: "Practice Manager",
+    description: "Practice management + clinical",
     href: "/dashboard/practice/home",
     icon: Building2,
     color: "text-teal-600",
@@ -75,7 +75,9 @@ export function DashboardSwitcher() {
   };
 
   const currentId = getCurrentDashboard();
-  const currentDashboard = DASHBOARD_OPTIONS.find((d) => d.id === currentId) ?? DASHBOARD_OPTIONS[1];
+  // currentDashboard available for future use if needed
+  const _currentDashboard = DASHBOARD_OPTIONS.find((d) => d.id === currentId) ?? DASHBOARD_OPTIONS[1];
+  void _currentDashboard;
 
   return (
     <div className="relative">

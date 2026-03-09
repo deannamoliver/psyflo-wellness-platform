@@ -12,7 +12,7 @@ import { and, count, desc, eq, inArray, or } from "drizzle-orm";
 import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { H2, Muted } from "@/lib/core-ui/typography";
+import { H2 } from "@/lib/core-ui/typography";
 import { serverDrizzle } from "@/lib/database/drizzle";
 import { PageContainer, PageContent } from "@/lib/extended-ui/page";
 import { getUserFullName } from "@/lib/user/utils";
@@ -20,6 +20,35 @@ import * as Icons from "../../../counselor/caseloads/~lib/icons";
 import { ChartViewTracker } from "../../../counselor/students/[studentId]/~lib/chart-view-tracker";
 import { QuickActions } from "../../../counselor/students/[studentId]/~lib/quick-actions";
 import { PatientTabs } from "./tabs";
+import { AccessDenied } from "./~lib/access-denied";
+
+// Mock: Provider assignments for demo purposes
+// In production, this would come from patient_assignments table
+const MOCK_PROVIDERS = ["Dr. Sarah Johnson", "Dr. Michael Chen", "Lisa Martinez, LCSW", "Dr. Emily Williams"];
+const CURRENT_USER_PROVIDER = "Lisa Martinez, LCSW";
+
+// Simple deterministic hash for consistent mock data
+function hash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h) + s.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h);
+}
+
+// Check if patient is on current user's caseload (mock implementation)
+function isPatientOnMyCaseload(patientId: string): boolean {
+  const assignedProviderIndex = hash(patientId) % MOCK_PROVIDERS.length;
+  const assignedProvider = MOCK_PROVIDERS[assignedProviderIndex];
+  return assignedProvider === CURRENT_USER_PROVIDER;
+}
+
+// Get assigned provider for a patient (mock implementation)
+function getAssignedProvider(patientId: string): string {
+  const assignedProviderIndex = hash(patientId) % MOCK_PROVIDERS.length;
+  return MOCK_PROVIDERS[assignedProviderIndex] ?? "Unknown Provider";
+}
 
 export default async function PatientLayout({
   params,
@@ -31,6 +60,20 @@ export default async function PatientLayout({
   const { patientId } = await params;
   const db = await serverDrizzle();
   const userId = db.userId();
+
+  // Check if patient is on user's caseload (HIPAA boundary)
+  const hasAccess = isPatientOnMyCaseload(patientId);
+  
+  if (!hasAccess) {
+    const assignedProvider = getAssignedProvider(patientId);
+    return (
+      <PageContainer>
+        <PageContent>
+          <AccessDenied assignedProvider={assignedProvider} />
+        </PageContent>
+      </PageContainer>
+    );
+  }
 
   // Get user's school (no role restriction for practice managers)
   const userSchool = await db.admin

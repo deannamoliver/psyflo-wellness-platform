@@ -31,10 +31,12 @@ import {
   real,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { authUsers, supabaseAuthAdminRole } from "drizzle-orm/supabase";
 import { timestamps, uuidv7 } from "./column-utils";
+import { schools } from "./school";
 
 // ─── Treatment Plans ────────────────────────────────────────────────
 
@@ -289,6 +291,54 @@ export const billingReports = pgTable(
   ],
 );
 
+// ─── Patient Assignments (Access Control) ───────────────────────────
+
+export const patientAssignmentCaseRoleEnum = pgEnum("patient_assignment_case_role", [
+  "primary",
+  "co_treating",
+  "supervisor",
+  "consulting",
+]);
+
+export const patientAssignmentStatusEnum = pgEnum("patient_assignment_status", [
+  "active",
+  "inactive",
+]);
+
+export const patientAssignments = pgTable(
+  "patient_assignments",
+  {
+    id: uuidv7().primaryKey(),
+    patientId: uuid("patient_id")
+      .references(() => authUsers.id, { onDelete: "cascade" })
+      .notNull(),
+    providerId: uuid("provider_id")
+      .references(() => authUsers.id, { onDelete: "cascade" })
+      .notNull(),
+    organizationId: uuid("organization_id")
+      .references(() => schools.id, { onDelete: "cascade" })
+      .notNull(),
+    caseRole: patientAssignmentCaseRoleEnum("case_role").notNull().default("primary"),
+    assignedBy: uuid("assigned_by").references(() => authUsers.id, {
+      onDelete: "set null",
+    }),
+    status: patientAssignmentStatusEnum().notNull().default("active"),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("patient_provider_org_unique").on(
+      table.patientId,
+      table.providerId,
+      table.organizationId,
+    ),
+    pgPolicy("admin can manage all patient assignments", {
+      for: "all",
+      to: supabaseAuthAdminRole,
+      using: sql`true`,
+    }),
+  ],
+);
+
 // ─── Relations ──────────────────────────────────────────────────────
 
 export const treatmentPlansRelations = relations(treatmentPlans, ({ many }) => ({
@@ -301,3 +351,25 @@ export const assignedExercisesRelations = relations(assignedExercises, ({ one })
     references: [treatmentPlans.id],
   }),
 }));
+
+export const patientAssignmentsRelations = relations(
+  patientAssignments,
+  ({ one }) => ({
+    patient: one(authUsers, {
+      fields: [patientAssignments.patientId],
+      references: [authUsers.id],
+    }),
+    provider: one(authUsers, {
+      fields: [patientAssignments.providerId],
+      references: [authUsers.id],
+    }),
+    organization: one(schools, {
+      fields: [patientAssignments.organizationId],
+      references: [schools.id],
+    }),
+    assignedByUser: one(authUsers, {
+      fields: [patientAssignments.assignedBy],
+      references: [authUsers.id],
+    }),
+  }),
+);

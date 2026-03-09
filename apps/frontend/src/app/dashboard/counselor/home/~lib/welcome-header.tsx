@@ -43,7 +43,7 @@ function getQuoteOfTheDay() {
 }
 
 /**
- * Legacy welcome header for wellness coaches - uses the original design
+ * Legacy welcome header for providers - uses the original design
  */
 export async function WelcomeHeaderLegacy({ name }: { name: string }) {
   const db = await serverDrizzle();
@@ -79,7 +79,7 @@ export async function WelcomeHeaderLegacy({ name }: { name: string }) {
 }
 
 /**
- * New welcome header for counselors - includes quote, date/time, and school selector
+ * New welcome header for providers - includes quote, date/time, and organization selector
  */
 export async function WelcomeHeader({
   name,

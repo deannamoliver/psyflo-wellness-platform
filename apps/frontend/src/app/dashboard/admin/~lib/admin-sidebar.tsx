@@ -4,6 +4,7 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  LayoutDashboard,
   Plus,
   Users,
 } from "lucide-react";
@@ -23,6 +24,11 @@ type NavItem = {
 function buildNavItems(): NavItem[] {
   return [
     {
+      href: "/dashboard/admin",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+    },
+    {
       href: "/dashboard/admin/organizations",
       label: "Organizations",
       icon: Building2,
@@ -37,8 +43,8 @@ export default function AdminSidebar() {
   const NAV_ITEMS = buildNavItems();
 
   const isActive = (href: string) => {
-    if (href === "/dashboard/admin/organizations") {
-      return pathname === href || pathname === "/dashboard/admin";
+    if (href === "/dashboard/admin") {
+      return pathname === "/dashboard/admin";
     }
     return pathname.startsWith(href);
   };

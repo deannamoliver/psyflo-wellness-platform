@@ -88,7 +88,7 @@ export function PatientCensusTable({
       {/* Summary Stats */}
       <div className="grid grid-cols-4 gap-4 border-b bg-gray-50/50 px-5 py-4">
         <div>
-          <p className="text-xs text-gray-500">Total Patients</p>
+          <p className="text-xs text-gray-500">Caseload</p>
           <p className="text-xl font-bold text-gray-900">{patients.length}</p>
         </div>
         <div>
@@ -109,7 +109,7 @@ export function PatientCensusTable({
       <div className="flex items-center justify-between border-b px-5 py-4">
         <div className="flex items-center gap-3">
           <h3 className="text-sm font-semibold text-gray-900">
-            Patient Census <span className="ml-1 text-gray-500">({filtered.length})</span>
+            Caseload <span className="ml-1 text-gray-500">({filtered.length})</span>
           </h3>
           <button
             type="button"

@@ -13,7 +13,6 @@ import {
   DollarSign,
   FileText,
   Minus,
-  ShieldAlert,
   TrendingUp,
   UserCheck,
   UserPlus,
@@ -40,7 +39,7 @@ const recentProviders = [
 ];
 
 const engagementMetrics = [
-  { label: "Avg. Data Days/Patient", value: "18.4", change: 12, unit: "days" },
+  { label: "Avg. Data Days/Patient", value: "18.4", change: 12, unit: "" },
   { label: "Avg. Provider Time/Patient", value: "24", change: 8, unit: "min" },
   { label: "Patient Engagement Rate", value: "87%", change: 5, unit: "" },
   { label: "Billing Eligible Patients", value: "78%", change: 3, unit: "" },
@@ -260,15 +259,16 @@ const PROVIDER_KPI_CARDS: ProviderKpiCard[] = [
     dotColor: "bg-orange-500",
   },
   {
-    label: "Safety Alerts (7d)",
-    value: 2,
-    change: 0,
-    icon: <ShieldAlert className="size-5 text-red-600" />,
-    iconBg: "bg-red-50",
-    tag: "Urgent",
-    tagBg: "bg-red-100",
-    tagText: "text-red-700",
-    dotColor: "bg-red-600",
+    label: "Avg. Data Days",
+    value: 18,
+    change: 8,
+    changeLabel: "vs last month",
+    icon: <Calendar className="size-5 text-violet-600" />,
+    iconBg: "bg-violet-50",
+    tag: "On Track",
+    tagBg: "bg-violet-100",
+    tagText: "text-violet-700",
+    dotColor: "bg-violet-600",
   },
   {
     label: "Open Tasks",
@@ -277,7 +277,7 @@ const PROVIDER_KPI_CARDS: ProviderKpiCard[] = [
     changeLabel: "from last week",
     icon: <CheckSquare className="size-5 text-blue-600" />,
     iconBg: "bg-blue-50",
-    tag: "To Do",
+    tag: "Pending",
     tagBg: "bg-blue-100",
     tagText: "text-blue-700",
     dotColor: "bg-blue-600",
@@ -364,7 +364,7 @@ export function PracticeDashboard({
             href="/dashboard/practice/providers"
           />
           <StatCard
-            title="Patient Census"
+            title="Caseload"
             value={patientCount}
             subtitle={`${activePatientCount} active, ${inactivePatientCount} inactive`}
             icon={Building2}
