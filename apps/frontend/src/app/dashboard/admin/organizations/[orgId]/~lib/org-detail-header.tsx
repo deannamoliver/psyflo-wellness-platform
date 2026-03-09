@@ -11,9 +11,8 @@ import type { OrgDetail } from "./org-detail-data";
 
 const STATUS_DOT_COLORS: Record<OrgStatus, string> = {
   Active: "bg-green-500",
-  Suspended: "bg-red-500",
+  Inactive: "bg-gray-400",
   Onboarding: "bg-yellow-500",
-  Archived: "bg-gray-400",
 };
 
 export function OrgDetailHeader({ org }: { org: OrgDetail }) {

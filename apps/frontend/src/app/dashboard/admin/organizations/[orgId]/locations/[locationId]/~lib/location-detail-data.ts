@@ -56,7 +56,9 @@ export type LocationDetail = {
   orgId: string;
   orgName: string;
   createdAt: string;
-  locationName: string;
+  legalName: string;
+  dba: string;
+  taxId: string;
   locationNpi: string;
   locationCode: string;
   timeZone: string;

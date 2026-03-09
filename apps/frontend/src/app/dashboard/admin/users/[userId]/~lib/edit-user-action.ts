@@ -23,7 +23,6 @@ function mapDisplayRole(role: string): PlatformRole {
 
 function mapDisplayStatus(status: string): "active" | "blocked" | "archived" {
   if (status === "Inactive") return "archived";
-  if (status === "Suspended") return "blocked";
   return "active";
 }
 

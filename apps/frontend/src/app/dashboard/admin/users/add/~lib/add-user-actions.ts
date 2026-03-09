@@ -36,7 +36,6 @@ function mapFormRole(role: string): {
 
 function mapFormStatus(status: string): "active" | "blocked" | "archived" {
   if (status === "Inactive") return "archived";
-  if (status === "Suspended") return "blocked";
   return "active";
 }
 

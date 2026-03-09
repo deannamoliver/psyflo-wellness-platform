@@ -43,19 +43,40 @@ const ACCESS_TYPES: AccessType[] = [
   },
 ];
 
-const INSURANCE_PROVIDERS = [
-  "Aetna",
-  "Anthem Blue Cross",
-  "Blue Cross Blue Shield",
-  "Cigna",
-  "Humana",
-  "Kaiser Permanente",
-  "Medicare",
-  "Medicaid",
-  "Oscar Health",
-  "UnitedHealthcare",
-  "Self-Pay",
-  "Out of Network",
+
+const LICENSE_TYPES = [
+  "MD",
+  "DO",
+  "PhD",
+  "PsyD",
+  "LCSW",
+  "LMFT",
+  "LPC",
+  "LPCC",
+  "NP",
+  "PA",
+  "RN",
+  "Other",
+];
+
+const INSURANCE_CATEGORIES = [
+  { id: "private", label: "Private/Commercial", placeholder: "e.g., Aetna, Blue Cross, Cigna..." },
+  { id: "public", label: "Public (Medicaid/Medicare/VA)", placeholder: "e.g., Medicare Part B, Medicaid, VA..." },
+  { id: "other", label: "Other", placeholder: "e.g., Workers comp, EAP..." },
+];
+
+const INSURANCE_SUGGESTIONS: Record<string, string[]> = {
+  private: ["Aetna", "Anthem Blue Cross", "Blue Cross Blue Shield", "Cigna", "Humana", "Kaiser Permanente", "Oscar Health", "UnitedHealthcare", "Optum", "Centene", "Molina"],
+  public: ["Medicare Part A", "Medicare Part B", "Medicare Advantage", "Medicaid", "VA Health Benefits", "TRICARE", "CHIP"],
+  other: ["Workers Compensation", "EAP", "Auto Insurance (PIP)", "Legal Settlement"],
+};
+
+const US_STATES = [
+  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL",
+  "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME",
+  "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH",
+  "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI",
+  "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
 ];
 
 export const ROLE_LABELS: Record<Role, string> = {
@@ -78,7 +99,12 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
   );
   const [newPatientContact, setNewPatientContact] = useState("");
   const [newPatientType, setNewPatientType] = useState<"email" | "phone">("email");
-  const [acceptedInsurance, setAcceptedInsurance] = useState<string[]>(initialData?.acceptedInsurance ?? []);
+  const [acceptsInsurance, setAcceptsInsurance] = useState(initialData?.acceptsInsurance ?? true);
+  const [acceptedInsurance, setAcceptedInsurance] = useState<Record<string, string[]>>(initialData?.acceptedInsurance ?? { private: [], public: [], other: [] });
+  const [insuranceInputs, setInsuranceInputs] = useState<Record<string, string>>({ private: "", public: "", other: "" });
+  const [npi, setNpi] = useState(initialData?.npi ?? "");
+  const [licenseTypes, setLicenseTypes] = useState<string[]>(initialData?.licenseTypes ?? (initialData?.licenseType ? [initialData.licenseType] : []));
+  const [licensedStates, setLicensedStates] = useState<string[]>(initialData?.licensedStates ?? []);
   const [saving, setSaving] = useState(false);
   const [patientUploadMode, setPatientUploadMode] = useState<"single" | "bulk">("single");
   const [bulkPatientText, setBulkPatientText] = useState("");
@@ -118,11 +144,35 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
     setPatients(patients.filter((p) => p.contact !== contactToRemove));
   }
 
-  function toggleInsurance(insurance: string) {
-    setAcceptedInsurance((prev) =>
-      prev.includes(insurance)
-        ? prev.filter((i) => i !== insurance)
-        : [...prev, insurance]
+  function addInsuranceToCategory(categoryId: string, value: string) {
+    if (!value.trim()) return;
+    setAcceptedInsurance((prev) => ({
+      ...prev,
+      [categoryId]: prev[categoryId]?.includes(value.trim()) ? prev[categoryId] : [...(prev[categoryId] || []), value.trim()]
+    }));
+    setInsuranceInputs((prev) => ({ ...prev, [categoryId]: "" }));
+  }
+
+  function removeInsuranceFromCategory(categoryId: string, value: string) {
+    setAcceptedInsurance((prev) => ({
+      ...prev,
+      [categoryId]: (prev[categoryId] || []).filter((i) => i !== value)
+    }));
+  }
+
+  function getFilteredSuggestions(categoryId: string, input: string): string[] {
+    const suggestions = INSURANCE_SUGGESTIONS[categoryId] || [];
+    const existing = acceptedInsurance[categoryId] || [];
+    return suggestions
+      .filter((s) => s.toLowerCase().includes(input.toLowerCase()) && !existing.includes(s))
+      .slice(0, 5);
+  }
+
+  function toggleLicensedState(state: string) {
+    setLicensedStates((prev) =>
+      prev.includes(state)
+        ? prev.filter((s) => s !== state)
+        : [...prev, state]
     );
   }
 
@@ -201,6 +251,94 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
             />
           </FormField>
 
+          {/* Provider NPI */}
+          <FormField label="Individual Provider NPI" required>
+            <Input
+              value={npi}
+              onChange={(e) => setNpi(e.target.value.replace(/\D/g, "").slice(0, 10))}
+              className="h-10 border-gray-200 font-dm"
+              placeholder="10-digit NPI number"
+              maxLength={10}
+            />
+            <p className="mt-1 text-gray-400 text-xs">Required for billing purposes</p>
+          </FormField>
+
+          {/* License Types (Multiple Selection) */}
+          <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+            <label className="mb-2 block font-medium text-gray-700 text-sm">
+              License Type(s) <span className="text-red-500">*</span>
+            </label>
+            <p className="mb-3 text-gray-500 text-xs">
+              Select all credentials/license types that apply
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {LICENSE_TYPES.map((type) => {
+                const isSelected = licenseTypes.includes(type);
+                return (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => {
+                      setLicenseTypes((prev) =>
+                        isSelected
+                          ? prev.filter((t) => t !== type)
+                          : [...prev, type]
+                      );
+                    }}
+                    className={cn(
+                      "rounded-md border px-2.5 py-1.5 text-xs font-medium transition-all",
+                      isSelected
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
+                    )}
+                  >
+                    {type}
+                  </button>
+                );
+              })}
+            </div>
+            {licenseTypes.length > 0 && (
+              <p className="mt-2 text-gray-600 text-xs">
+                Selected: {licenseTypes.join(", ")}
+              </p>
+            )}
+          </div>
+
+          {/* Licensed States */}
+          <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+            <label className="mb-2 block font-medium text-gray-700 text-sm">
+              Licensed States <span className="text-red-500">*</span>
+            </label>
+            <p className="mb-3 text-gray-500 text-xs">
+              Select all states where this provider is licensed to practice
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {US_STATES.map((state) => {
+                const isSelected = licensedStates.includes(state);
+                return (
+                  <button
+                    key={state}
+                    type="button"
+                    onClick={() => toggleLicensedState(state)}
+                    className={cn(
+                      "rounded-md border px-2 py-1 text-xs font-medium transition-all",
+                      isSelected
+                        ? "border-teal-500 bg-teal-50 text-teal-700"
+                        : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
+                    )}
+                  >
+                    {state}
+                  </button>
+                );
+              })}
+            </div>
+            {licensedStates.length > 0 && (
+              <p className="mt-2 text-teal-600 text-xs font-medium">
+                {licensedStates.length} state{licensedStates.length !== 1 ? 's' : ''} selected
+              </p>
+            )}
+          </div>
+
           {/* Access Type */}
           <div>
             <label className="mb-2 block font-medium text-gray-700 text-sm">
@@ -242,45 +380,95 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
             </div>
           </div>
 
-          {/* Insurance Providers */}
+          {/* Accepted Insurance */}
           <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-gray-600" />
-              <label className="font-medium text-gray-700 text-sm">
-                Accepted Insurance
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-gray-600" />
+                <label className="font-medium text-gray-700 text-sm">
+                  Accepted Insurance
+                </label>
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acceptsInsurance}
+                  onChange={(e) => setAcceptsInsurance(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-600">Accepts Insurance</span>
               </label>
             </div>
-            <p className="mb-3 text-gray-500 text-xs">
-              Select the insurance providers this user accepts
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {INSURANCE_PROVIDERS.map((insurance) => {
-                const isSelected = acceptedInsurance.includes(insurance);
+            {acceptsInsurance && (
+              <>
+                <p className="mb-3 text-gray-500 text-xs">
+                  Add insurance plans by category. Type to search or add custom entries.
+                </p>
+                <div className="space-y-4">
+                  {INSURANCE_CATEGORIES.map((category) => {
+                const categoryInsurances = acceptedInsurance[category.id] || [];
+                const inputValue = insuranceInputs[category.id] || "";
+                const suggestions = inputValue.length > 0 ? getFilteredSuggestions(category.id, inputValue) : [];
+                
                 return (
-                  <button
-                    key={insurance}
-                    type="button"
-                    onClick={() => toggleInsurance(insurance)}
-                    className={cn(
-                      "flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-all",
-                      isSelected
-                        ? "border-green-500 bg-green-50 text-green-700"
-                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
-                    )}
-                  >
-                    <div className={cn(
-                      "flex h-4 w-4 items-center justify-center rounded border",
-                      isSelected
-                        ? "border-green-500 bg-green-500"
-                        : "border-gray-300 bg-white"
-                    )}>
-                      {isSelected && <Check className="h-3 w-3 text-white" />}
+                  <div key={category.id} className="rounded-lg border border-gray-200 bg-white p-3">
+                    <label className="mb-2 block font-medium text-gray-700 text-xs">
+                      {category.label}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInsuranceInputs((prev) => ({ ...prev, [category.id]: e.target.value }))}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addInsuranceToCategory(category.id, inputValue);
+                          }
+                        }}
+                        placeholder={category.placeholder}
+                        className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                      {suggestions.length > 0 && (
+                        <div className="absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+                          {suggestions.map((suggestion) => (
+                            <button
+                              key={suggestion}
+                              type="button"
+                              onClick={() => addInsuranceToCategory(category.id, suggestion)}
+                              className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                            >
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <span className="truncate">{insurance}</span>
-                  </button>
+                    {categoryInsurances.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {categoryInsurances.map((ins) => (
+                          <span
+                            key={ins}
+                            className="flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700"
+                          >
+                            {ins}
+                            <button
+                              type="button"
+                              onClick={() => removeInsuranceFromCategory(category.id, ins)}
+                              className="ml-0.5 text-green-600 hover:text-green-800"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
-            </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Patient Assignment */}
@@ -496,7 +684,11 @@ patient2@email.com
                     role,
                     notes: notes.trim(),
                     patients,
-                    acceptedInsurance,
+                    acceptsInsurance,
+                    acceptedInsurance: acceptsInsurance ? acceptedInsurance : undefined,
+                    npi: npi.trim(),
+                    licenseTypes,
+                    licensedStates,
                   });
                 } finally {
                   setSaving(false);

@@ -20,7 +20,7 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#EDF2F9]">
+    <div className="flex h-screen w-full overflow-hidden bg-white">
       <DashboardClient
         firstName={firstName}
         fullName={fullName}

@@ -5,7 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
-  Plus,
+  UserPlus,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -34,6 +34,7 @@ function buildNavItems(): NavItem[] {
       icon: Building2,
     },
     { href: "/dashboard/admin/users", label: "Users", icon: Users },
+    { href: "/dashboard/admin/patients", label: "Patients", icon: UserPlus },
   ];
 }
 
@@ -103,25 +104,6 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      {/* Quick Actions */}
-      <div className="border-[#1A9090]/30 border-t px-3 py-4">
-        {!collapsed && (
-          <p className="mb-3 px-3 font-medium text-[#7A9696] text-xs uppercase tracking-wider">
-            Quick Actions
-          </p>
-        )}
-        <Link
-          href="/dashboard/admin/users/add"
-          title={collapsed ? "Add User" : undefined}
-          className={cn(
-            "flex w-full items-center justify-center rounded-lg bg-[#0D6B6B] py-2.5 font-medium text-sm text-white transition-colors hover:bg-[#1A9090]",
-            collapsed ? "px-0" : "gap-2 px-4",
-          )}
-        >
-          <Plus className="h-4 w-4 shrink-0" />
-          {!collapsed && "Add User"}
-        </Link>
-      </div>
-    </aside>
+          </aside>
   );
 }

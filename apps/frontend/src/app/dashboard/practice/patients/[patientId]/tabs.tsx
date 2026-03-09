@@ -6,10 +6,11 @@ import { cn } from "@/lib/tailwind-utils";
 
 const TABS = [
   { segment: "overview", label: "Overview" },
-  { segment: "safety", label: "Action Items" },
+  { segment: "monitoring", label: "Monitoring" },
   { segment: "treatment-plan", label: "Treatment Plan" },
+  { segment: "wellness", label: "Wellness Activity" },
   { segment: "sessions", label: "Communications" },
-  { segment: "assessments", label: "Assessment" },
+  { segment: "billing", label: "Billing" },
 ] as const;
 
 export function PatientTabs({

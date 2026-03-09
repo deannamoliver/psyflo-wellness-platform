@@ -121,7 +121,7 @@ const DAILY_TIPS = [
   "Taking short breaks every hour can improve productivity and reduce fatigue.",
 ] as const;
 
-type ActivityType = "wellness-check" | "daily-goals" | "morning-meditation" | null;
+type ActivityType = "daily-check-in" | "wellness-check" | "daily-goals" | "morning-meditation" | null;
 
 function ActivityContent({
   activityType,
@@ -279,6 +279,15 @@ function ActivityContent({
 
 const START_YOUR_DAY_ITEMS = [
   {
+    id: "daily-check-in" as const,
+    title: "Daily Check-In",
+    description: "How are you feeling today?",
+    icon: Calendar,
+    color: "bg-blue-50",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-600",
+  },
+  {
     id: "wellness-check" as const,
     title: "Wellness Check",
     description: "Quick health assessment",
@@ -372,11 +381,11 @@ export default function WellnessDashboard({
   const completedDays = 5; // Demo: 5 days completed
 
   return (
-    <div className="flex h-full w-full gap-8 overflow-y-auto px-16 py-6">
+    <div className="flex h-full w-full gap-8 overflow-y-auto bg-white px-16 py-8">
       {/* Left Column - Main Content */}
       <div className="flex min-w-0 flex-1 flex-col gap-6">
         {/* Welcome Header */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(210,233,255,0.4)]">
           <h1 className="mb-4 font-bold text-3xl text-gray-900">
             Welcome back, {firstName}!
           </h1>
@@ -387,7 +396,7 @@ export default function WellnessDashboard({
         </div>
 
         {/* Main Content Area - Shows Check-In, Completed State, or Activity */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(210,233,255,0.4)]">
           {activeActivity ? (
             /* Activity Content */
             <ActivityContent
@@ -509,7 +518,7 @@ export default function WellnessDashboard({
               {/* Complete Check-In Button */}
               <button
                 onClick={() => setCheckInCompleted(true)}
-                className="mt-6 w-full rounded-xl bg-primary py-4 font-semibold text-white transition-colors hover:bg-primary/90"
+                className="mt-6 w-full rounded-full bg-gray-900 py-4 font-semibold text-white transition-colors hover:bg-gray-800"
               >
                 Complete Check-In
               </button>
@@ -518,7 +527,7 @@ export default function WellnessDashboard({
         </div>
 
         {/* Wellness Toolbox */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(240,228,255,0.5)]">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-100">
@@ -570,7 +579,7 @@ export default function WellnessDashboard({
       {/* Right Column - Sidebar */}
       <div className="flex w-80 flex-shrink-0 flex-col gap-6">
         {/* Status Card */}
-        <div className="rounded-2xl bg-gradient-to-br from-primary to-cyan-500 p-6 text-white shadow-sm">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(210,233,255,0.4)]">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="font-semibold">You are thriving!</span>
@@ -591,35 +600,35 @@ export default function WellnessDashboard({
 
           {/* Stats */}
           <div className="mb-4 grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-white/10 p-3 text-center">
-              <p className="font-bold text-2xl">{soliStateData.streak}</p>
-              <p className="text-white/80 text-xs">Days</p>
+            <div className="rounded-xl bg-blue-50 p-3 text-center">
+              <p className="font-bold text-2xl text-gray-900">{soliStateData.streak}</p>
+              <p className="text-gray-500 text-xs">Days</p>
             </div>
-            <div className="rounded-xl bg-white/10 p-3 text-center">
-              <p className="font-bold text-2xl">42</p>
-              <p className="text-white/80 text-xs">Check-ins</p>
+            <div className="rounded-xl bg-blue-50 p-3 text-center">
+              <p className="font-bold text-2xl text-gray-900">42</p>
+              <p className="text-gray-500 text-xs">Check-ins</p>
             </div>
-            <div className="rounded-xl bg-white/10 p-3 text-center">
-              <p className="font-bold text-2xl">15</p>
-              <p className="text-white/80 text-xs">Badges</p>
+            <div className="rounded-xl bg-blue-50 p-3 text-center">
+              <p className="font-bold text-2xl text-gray-900">15</p>
+              <p className="text-gray-500 text-xs">Badges</p>
             </div>
           </div>
 
           {/* Weekly Progress */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm">Weekly Progress</span>
-              <span className="text-sm">{completedDays}/7</span>
+              <span className="text-gray-700 text-sm">Weekly Progress</span>
+              <span className="text-gray-700 text-sm">{completedDays}/7</span>
             </div>
             <div className="flex gap-1">
               {weekDays.map((day, i) => (
                 <div
                   key={day + i}
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-lg text-xs",
+                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium",
                     i < completedDays
-                      ? "bg-white text-primary"
-                      : "bg-white/20 text-white/60"
+                      ? "bg-primary text-white"
+                      : "bg-gray-100 text-gray-400"
                   )}
                 >
                   {i < completedDays ? <Check className="h-4 w-4" /> : day}
@@ -630,7 +639,7 @@ export default function WellnessDashboard({
         </div>
 
         {/* Start Your Day */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(255,234,209,0.5)]">
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-100">
               <Sparkles className="h-5 w-5 text-yellow-600" />
@@ -639,7 +648,36 @@ export default function WellnessDashboard({
           </div>
 
           <div className="space-y-3">
-            {START_YOUR_DAY_ITEMS.map((item) => (
+            {/* Daily Check-In - shows completion status */}
+            <div
+              className={cn(
+                "flex w-full items-center gap-3 rounded-xl p-3",
+                checkInCompleted ? "bg-green-50" : "bg-blue-50"
+              )}
+            >
+              <div className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg",
+                checkInCompleted ? "bg-green-500" : "bg-blue-100"
+              )}>
+                {checkInCompleted ? (
+                  <Check className="h-4 w-4 text-white" />
+                ) : (
+                  <Calendar className="h-4 w-4 text-blue-600" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900 text-sm">Daily Check-In</p>
+                <p className="text-gray-500 text-xs">
+                  {checkInCompleted ? "Completed today!" : "How are you feeling today?"}
+                </p>
+              </div>
+              {checkInCompleted && (
+                <span className="text-green-600 text-xs font-medium">Done</span>
+              )}
+            </div>
+
+            {/* Other Start Your Day items */}
+            {START_YOUR_DAY_ITEMS.filter(item => item.id !== "daily-check-in").map((item) => (
               <button
                 key={item.id}
                 onClick={() => {
@@ -666,7 +704,7 @@ export default function WellnessDashboard({
         </div>
 
         {/* Achievements */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(255,220,235,0.5)]">
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-100">
               <Award className="h-5 w-5 text-pink-600" />
@@ -700,13 +738,13 @@ export default function WellnessDashboard({
         </div>
 
         {/* Daily Tip */}
-        <div className="rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 p-6 text-white shadow-sm">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(255,220,235,0.5)]">
           <div className="mb-3 flex items-center gap-2">
-            <Lightbulb className="h-5 w-5" />
-            <h2 className="font-bold text-lg">Daily Tip</h2>
+            <Lightbulb className="h-5 w-5 text-pink-500" />
+            <h2 className="font-bold text-gray-900 text-lg">Daily Tip</h2>
           </div>
-          <p className="mb-4 text-sm text-white/90">"{dailyTip}"</p>
-          <button className="rounded-full bg-white px-4 py-2 font-medium text-pink-600 text-sm transition-colors hover:bg-white/90">
+          <p className="mb-4 text-gray-600 text-sm">"{dailyTip}"</p>
+          <button className="rounded-full bg-gray-900 px-4 py-2 font-medium text-white text-sm transition-colors hover:bg-gray-800">
             Try Breathing Exercise
           </button>
         </div>

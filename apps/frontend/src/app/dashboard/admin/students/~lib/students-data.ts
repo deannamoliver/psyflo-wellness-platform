@@ -1,4 +1,4 @@
-export type StudentStatus = "Active" | "Blocked" | "Archived";
+export type StudentStatus = "Active" | "Inactive" | "Invite Sent";
 
 export type Student = {
   id: string;
@@ -23,8 +23,8 @@ export type BlockedStudent = {
 export type StudentStats = {
   total: number;
   active: number;
-  blocked: number;
-  archived: number;
+  inactive: number;
+  inviteSent: number;
 };
 
 export type StudentsPageData = {
@@ -53,8 +53,8 @@ export const GRADE_OPTIONS = [
 
 export const STATUS_OPTIONS: StudentStatus[] = [
   "Active",
-  "Blocked",
-  "Archived",
+  "Inactive",
+  "Invite Sent",
 ];
 
 export type SortColumn =
@@ -80,6 +80,6 @@ export const STATUS_BADGE_COLORS: Record<
   { bg: string; text: string }
 > = {
   Active: { bg: "bg-green-100", text: "text-green-700" },
-  Blocked: { bg: "bg-red-100", text: "text-red-600" },
-  Archived: { bg: "bg-gray-100", text: "text-gray-600" },
+  Inactive: { bg: "bg-gray-100", text: "text-gray-600" },
+  "Invite Sent": { bg: "bg-amber-50", text: "text-amber-600" },
 };

@@ -1,16 +1,14 @@
 "use client";
 
-import { GraduationCap, Info, Settings, Users } from "lucide-react";
+import { Info, Users } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/tailwind-utils";
-import { LocationConfigTab } from "./location-config-tab";
 import type { LocationDetail } from "./location-detail-data";
 import { LocationDetailHeader } from "./location-detail-header";
 import { LocationOverviewTab } from "./location-overview-tab";
-import { LocationStaffTab } from "./location-staff-tab";
-import { LocationStudentsTab } from "./location-students-tab";
+import { LocationUsersTab } from "./location-users-tab";
 
-type Tab = "overview" | "staff" | "students" | "configuration";
+type Tab = "overview" | "users";
 
 export function LocationDetailClient({
   location,
@@ -18,6 +16,8 @@ export function LocationDetailClient({
   location: LocationDetail;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+
+  const totalUsers = location.staff.length + location.patients.length;
 
   return (
     <div className="flex flex-col gap-6 p-8 font-dm">
@@ -33,33 +33,17 @@ export function LocationDetailClient({
             label="Overview"
           />
           <TabButton
-            active={activeTab === "staff"}
-            onClick={() => setActiveTab("staff")}
+            active={activeTab === "users"}
+            onClick={() => setActiveTab("users")}
             icon={<Users className="h-4 w-4" />}
-            label={`Staff (${location.staff.length})`}
-          />
-          <TabButton
-            active={activeTab === "students"}
-            onClick={() => setActiveTab("students")}
-            icon={<GraduationCap className="h-4 w-4" />}
-            label={`Patients (${location.patients.length})`}
-          />
-          <TabButton
-            active={activeTab === "configuration"}
-            onClick={() => setActiveTab("configuration")}
-            icon={<Settings className="h-4 w-4" />}
-            label="Configuration"
+            label={`Users & Permissions (${totalUsers})`}
           />
         </div>
       </div>
 
       {/* Tab Content */}
       {activeTab === "overview" && <LocationOverviewTab location={location} />}
-      {activeTab === "staff" && <LocationStaffTab location={location} />}
-      {activeTab === "students" && <LocationStudentsTab location={location} />}
-      {activeTab === "configuration" && (
-        <LocationConfigTab location={location} />
-      )}
+      {activeTab === "users" && <LocationUsersTab location={location} />}
     </div>
   );
 }

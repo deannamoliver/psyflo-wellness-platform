@@ -51,8 +51,8 @@ async function checkAdminAccess() {
 export async function createLocationAction(formData: LocationFormData) {
   await checkAdminAccess();
 
-  if (!formData.locationName.trim()) {
-    throw new Error("Location name is required");
+  if (!formData.legalName.trim()) {
+    throw new Error("Legal name is required");
   }
 
   const db = await serverDrizzle();
@@ -79,7 +79,7 @@ export async function createLocationAction(formData: LocationFormData) {
   const [school] = await db.admin
     .insert(schools)
     .values({
-      name: formData.locationName.trim(),
+      name: formData.dba?.trim() || formData.legalName.trim(),
       schoolCode: formData.schoolCode || null,
       phone: formData.phone || null,
       streetAddress: formData.streetAddress || null,
@@ -142,8 +142,8 @@ export async function updateLocationAction(
 ) {
   await checkAdminAccess();
 
-  if (!formData.locationName.trim()) {
-    throw new Error("Location name is required");
+  if (!formData.legalName.trim()) {
+    throw new Error("Legal name is required");
   }
 
   const db = await serverDrizzle();
@@ -171,7 +171,7 @@ export async function updateLocationAction(
   await db.admin
     .update(schools)
     .set({
-      name: formData.locationName.trim(),
+      name: formData.dba?.trim() || formData.legalName.trim(),
       schoolCode: formData.schoolCode || null,
       phone: formData.phone || null,
       streetAddress: formData.streetAddress || null,

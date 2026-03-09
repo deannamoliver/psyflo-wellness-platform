@@ -157,9 +157,6 @@ function LocationsTable({
                 onSort={onSort}
               />
             </TableHead>
-            <TableHead className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-              Grade Levels
-            </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-gray-500 text-xs tracking-wider">
               <SortableHeader
                 label="# of Patients"
@@ -184,9 +181,6 @@ function LocationsTable({
             >
               <TableCell className="px-6 py-4 font-medium text-gray-900">
                 {loc.name}
-              </TableCell>
-              <TableCell className="px-4 py-4 text-gray-600">
-                {loc.gradeLevels}
               </TableCell>
               <TableCell className="px-4 py-4">
                 <div className="font-semibold text-gray-900">

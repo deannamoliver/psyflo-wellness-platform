@@ -1,22 +1,20 @@
 "use client";
 
-import { Archive, ArchiveRestore, Ban, Download, Upload } from "lucide-react";
+import { Download, RotateCcw, Upload, UserX } from "lucide-react";
 
 type Props = {
   selectedCount: number;
-  isUnarchive: boolean;
+  isReactivate: boolean;
   onExport: () => void;
-  onBlock: () => void;
-  onArchive: () => void;
+  onDeactivate: () => void;
   onImport: () => void;
 };
 
 export function BulkActions({
   selectedCount,
-  isUnarchive,
+  isReactivate,
   onExport,
-  onBlock,
-  onArchive,
+  onDeactivate,
   onImport,
 }: Props) {
   return (
@@ -43,24 +41,15 @@ export function BulkActions({
         <button
           type="button"
           disabled={selectedCount === 0}
-          onClick={onBlock}
-          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 px-5 py-3 font-medium text-red-600 text-sm transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <Ban className="size-4" />
-          Block Selected
-        </button>
-        <button
-          type="button"
-          disabled={selectedCount === 0}
-          onClick={onArchive}
+          onClick={onDeactivate}
           className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 px-5 py-3 font-medium text-gray-700 text-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isUnarchive ? (
-            <ArchiveRestore className="size-4" />
+          {isReactivate ? (
+            <RotateCcw className="size-4" />
           ) : (
-            <Archive className="size-4" />
+            <UserX className="size-4" />
           )}
-          {isUnarchive ? "Unarchive Selected" : "Archive Selected"}
+          {isReactivate ? "Reactivate Selected" : "Deactivate Selected"}
         </button>
       </div>
     </div>

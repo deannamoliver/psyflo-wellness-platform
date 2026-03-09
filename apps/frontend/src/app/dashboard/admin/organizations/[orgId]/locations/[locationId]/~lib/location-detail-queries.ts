@@ -17,7 +17,6 @@ import {
 } from "@feelwell/database";
 import { and, eq, isNull, like, ne, or } from "drizzle-orm";
 import { serverDrizzle } from "@/lib/database/drizzle";
-import { getUserFullName } from "@/lib/user/utils";
 import type {
   AssessmentConfig,
   LocationContact,
@@ -230,8 +229,10 @@ export async function getLocationDetail(
     .select({
       userId: userSchools.userId,
       role: userSchools.role,
-      user: users,
-      profile: profiles,
+      email: users.email,
+      rawUserMetaData: users.rawUserMetaData,
+      platformRole: profiles.platformRole,
+      accountStatus: profiles.accountStatus,
     })
     .from(userSchools)
     .innerJoin(users, eq(userSchools.userId, users.id))
@@ -245,23 +246,24 @@ export async function getLocationDetail(
 
   const staff: StaffMember[] = staffRows.map((r) => {
     // @ts-expect-error - User metadata is not typed
-    const firstName = r.user.rawUserMetaData?.first_name ?? "";
+    const firstName = r.rawUserMetaData?.first_name ?? "";
     // @ts-expect-error - User metadata is not typed
-    const lastName = r.user.rawUserMetaData?.last_name ?? "";
+    const lastName = r.rawUserMetaData?.last_name ?? "";
     // @ts-expect-error - User metadata is not typed
-    const roleTitle = r.user.rawUserMetaData?.role_title ?? "";
+    const roleTitle = r.rawUserMetaData?.role_title ?? "";
     // @ts-expect-error - User metadata is not typed
-    const phone = r.user.rawUserMetaData?.phone ?? "";
+    const phone = r.rawUserMetaData?.phone ?? "";
     // @ts-expect-error - User metadata is not typed
-    const notes = r.user.rawUserMetaData?.internal_notes ?? "";
-    const pRole = r.profile.platformRole ?? "user";
+    const notes = r.rawUserMetaData?.internal_notes ?? "";
+    const pRole = r.platformRole ?? "user";
+    const name = `${firstName} ${lastName}`.trim() || r.email || "Unknown";
     return {
       id: r.userId,
-      name: getUserFullName(r.user),
+      name,
       role: getDisplayRole(pRole, r.role),
       locations: [school.name],
-      email: r.user.email ?? "--",
-      status: r.profile.accountStatus === "active" ? "Active" : "Inactive",
+      email: r.email ?? "--",
+      status: r.accountStatus === "active" ? "Active" : "Inactive",
       firstName,
       lastName,
       roleTitle,
@@ -275,8 +277,10 @@ export async function getLocationDetail(
   const studentRows = await db.admin
     .select({
       userId: userSchools.userId,
-      user: users,
-      profile: profiles,
+      email: users.email,
+      rawUserMetaData: users.rawUserMetaData,
+      studentCode: profiles.studentCode,
+      grade: profiles.grade,
     })
     .from(userSchools)
     .innerJoin(users, eq(userSchools.userId, users.id))
@@ -296,15 +300,21 @@ export async function getLocationDetail(
     .where(eq(alerts.status, "new"));
   for (const a of alertRows) alertStudentIds.add(a.studentId);
 
-  const studentList: StudentRecord[] = studentRows.map((r) => ({
-    id: r.userId,
-    name: getUserFullName(r.user),
-    email: r.user.email ?? "--",
-    studentId:
-      r.profile.studentCode ?? `STU-${r.userId.slice(0, 4).toUpperCase()}`,
-    grade: r.profile.grade ?? 0,
-    alertStatus: alertStudentIds.has(r.userId) ? "Safety Alert" : null,
-  }));
+  const studentList: StudentRecord[] = studentRows.map((r) => {
+    // @ts-expect-error - User metadata is not typed
+    const firstName = r.rawUserMetaData?.first_name ?? "";
+    // @ts-expect-error - User metadata is not typed
+    const lastName = r.rawUserMetaData?.last_name ?? "";
+    const name = `${firstName} ${lastName}`.trim() || r.email || "Unknown";
+    return {
+      id: r.userId,
+      name,
+      email: r.email ?? "--",
+      studentId: r.studentCode ?? `STU-${r.userId.slice(0, 4).toUpperCase()}`,
+      grade: r.grade ?? 0,
+      alertStatus: alertStudentIds.has(r.userId) ? "Safety Alert" : null,
+    };
+  });
 
   // Also find students by email domain matching
   const domainRows = await db.admin
@@ -320,25 +330,32 @@ export async function getLocationDetail(
 
     const domainStudentRows = await db.admin
       .select({
-        userId: users.id,
-        user: users,
-        profile: profiles,
+        odUserId: users.id,
+        odEmail: users.email,
+        odRawUserMetaData: users.rawUserMetaData,
+        odStudentCode: profiles.studentCode,
+        odGrade: profiles.grade,
       })
       .from(users)
       .innerJoin(profiles, eq(users.id, profiles.id))
       .where(and(or(...domainConditions), isNull(profiles.deletedAt)));
 
     for (const r of domainStudentRows) {
-      if (!existingStudentIds.has(r.userId)) {
+      if (!existingStudentIds.has(r.odUserId)) {
+        // @ts-expect-error - User metadata is not typed
+        const domainFirstName = r.odRawUserMetaData?.first_name ?? "";
+        // @ts-expect-error - User metadata is not typed
+        const domainLastName = r.odRawUserMetaData?.last_name ?? "";
+        const domainName = `${domainFirstName} ${domainLastName}`.trim() || r.odEmail || "Unknown";
         studentList.push({
-          id: r.userId,
-          name: getUserFullName(r.user),
-          email: r.user.email ?? "--",
+          id: r.odUserId,
+          name: domainName,
+          email: r.odEmail ?? "--",
           studentId:
-            r.profile.studentCode ??
-            `STU-${r.userId.slice(0, 4).toUpperCase()}`,
-          grade: r.profile.grade ?? 0,
-          alertStatus: alertStudentIds.has(r.userId) ? "Safety Alert" : null,
+            r.odStudentCode ??
+            `STU-${r.odUserId.slice(0, 4).toUpperCase()}`,
+          grade: r.odGrade ?? 0,
+          alertStatus: alertStudentIds.has(r.odUserId) ? "Safety Alert" : null,
         });
       }
     }
@@ -417,8 +434,10 @@ export async function getLocationDetail(
       day: "numeric",
       year: "numeric",
     }),
-    locationName: school.name,
-    locationNpi: "",
+    legalName: school.name || "Wellness Mental Health Clinic LLC",
+    dba: "Wellness Clinic",
+    taxId: "12-3456789",
+    locationNpi: "1234567890",
     locationCode: school.schoolCode ?? school.districtCode ?? "--",
     timeZone: tz,
     locationType: orgTypeDisplay,

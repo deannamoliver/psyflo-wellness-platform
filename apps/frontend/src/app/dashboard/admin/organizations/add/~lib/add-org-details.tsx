@@ -51,18 +51,32 @@ export function AddOrgDetails({ formData, onChange }: Props) {
       </p>
 
       <div className="mt-6 flex flex-col gap-5">
-        {/* Row 1: Name, Tax ID, NPI */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Row 1: Legal Name, DBA */}
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <FieldLabel label="Organization Name" required />
+            <FieldLabel label="Legal Name" required />
             <Input
-              placeholder="e.g., Wellness Mental Health Clinic"
-              value={formData.name}
-              onChange={(e) => onChange("name", e.target.value)}
+              placeholder="e.g., Wellness Mental Health Clinic LLC"
+              value={formData.legalName}
+              onChange={(e) => onChange("legalName", e.target.value)}
               className={inputClass}
             />
-            <FieldHint text="Official name of the organization" />
+            <FieldHint text="Official legal name of the organization" />
           </div>
+          <div>
+            <FieldLabel label="DBA (Doing Business As)" />
+            <Input
+              placeholder="e.g., Wellness Clinic"
+              value={formData.dba}
+              onChange={(e) => onChange("dba", e.target.value)}
+              className={inputClass}
+            />
+            <FieldHint text="Trade name or brand name if different from legal name" />
+          </div>
+        </div>
+
+        {/* Row 2: Tax ID, NPI, Rate Per Patient */}
+        <div className="grid grid-cols-3 gap-4">
           <div>
             <FieldLabel label="Tax ID (EIN)" />
             <Input
@@ -82,6 +96,17 @@ export function AddOrgDetails({ formData, onChange }: Props) {
               className={inputClass}
             />
             <FieldHint text="National Provider Identifier for the organization" />
+          </div>
+          <div>
+            <FieldLabel label="Rate Per Patient ($/month)" required />
+            <Input
+              type="number"
+              placeholder="25"
+              value={formData.ratePerPatient?.toString() || ""}
+              onChange={(e) => onChange("ratePerPatient", e.target.value)}
+              className={inputClass}
+            />
+            <FieldHint text="Monthly charge per patient for this organization" />
           </div>
         </div>
 

@@ -10,7 +10,7 @@ import { Card } from "@/lib/core-ui/card";
 import { Skeleton } from "@/lib/core-ui/skeleton";
 import { serverDrizzle } from "@/lib/database/drizzle";
 import { cn } from "@/lib/tailwind-utils";
-import * as Icons from "../../../../home/~lib/icons";
+import * as Icons from "../../../../caseloads/~lib/icons";
 
 type StatCardProps = {
   icon: React.ReactNode;

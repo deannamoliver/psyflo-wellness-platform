@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, Ban, CheckCircle, Users } from "lucide-react";
+import { CheckCircle, Mail, Users, UserX } from "lucide-react";
 import { cn } from "@/lib/tailwind-utils";
 import type { StudentStats } from "./students-data";
 
@@ -36,26 +36,26 @@ export function StudentsStats({ stats }: { stats: StudentStats }) {
       <StatCard
         icon={<Users className="size-5 text-blue-600" />}
         iconBg="bg-blue-100"
-        label="Total Clients"
+        label="Total Patients"
         value={stats.total}
       />
       <StatCard
         icon={<CheckCircle className="size-5 text-green-600" />}
         iconBg="bg-green-100"
-        label="Active Clients"
+        label="Active"
         value={stats.active}
       />
       <StatCard
-        icon={<Ban className="size-5 text-red-600" />}
-        iconBg="bg-red-100"
-        label="Blocked"
-        value={stats.blocked}
+        icon={<UserX className="size-5 text-gray-600" />}
+        iconBg="bg-gray-100"
+        label="Inactive"
+        value={stats.inactive}
       />
       <StatCard
-        icon={<Archive className="size-5 text-gray-600" />}
-        iconBg="bg-gray-100"
-        label="Archived"
-        value={stats.archived}
+        icon={<Mail className="size-5 text-amber-600" />}
+        iconBg="bg-amber-100"
+        label="Invite Sent"
+        value={stats.inviteSent}
       />
     </div>
   );

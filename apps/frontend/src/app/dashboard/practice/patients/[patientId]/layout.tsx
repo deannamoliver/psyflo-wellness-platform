@@ -20,35 +20,9 @@ import * as Icons from "../../../counselor/caseloads/~lib/icons";
 import { ChartViewTracker } from "../../../counselor/students/[studentId]/~lib/chart-view-tracker";
 import { QuickActions } from "../../../counselor/students/[studentId]/~lib/quick-actions";
 import { PatientTabs } from "./tabs";
-import { AccessDenied } from "./~lib/access-denied";
 
-// Mock: Provider assignments for demo purposes
-// In production, this would come from patient_assignments table
-const MOCK_PROVIDERS = ["Dr. Sarah Johnson", "Dr. Michael Chen", "Lisa Martinez, LCSW", "Dr. Emily Williams"];
-const CURRENT_USER_PROVIDER = "Lisa Martinez, LCSW";
-
-// Simple deterministic hash for consistent mock data
-function hash(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) {
-    h = ((h << 5) - h) + s.charCodeAt(i);
-    h |= 0;
-  }
-  return Math.abs(h);
-}
-
-// Check if patient is on current user's caseload (mock implementation)
-function isPatientOnMyCaseload(patientId: string): boolean {
-  const assignedProviderIndex = hash(patientId) % MOCK_PROVIDERS.length;
-  const assignedProvider = MOCK_PROVIDERS[assignedProviderIndex];
-  return assignedProvider === CURRENT_USER_PROVIDER;
-}
-
-// Get assigned provider for a patient (mock implementation)
-function getAssignedProvider(patientId: string): string {
-  const assignedProviderIndex = hash(patientId) % MOCK_PROVIDERS.length;
-  return MOCK_PROVIDERS[assignedProviderIndex] ?? "Unknown Provider";
-}
+// For demo purposes, all patients at the user's location are accessible
+// In production, this would check actual patient-provider assignments
 
 export default async function PatientLayout({
   params,
@@ -60,20 +34,6 @@ export default async function PatientLayout({
   const { patientId } = await params;
   const db = await serverDrizzle();
   const userId = db.userId();
-
-  // Check if patient is on user's caseload (HIPAA boundary)
-  const hasAccess = isPatientOnMyCaseload(patientId);
-  
-  if (!hasAccess) {
-    const assignedProvider = getAssignedProvider(patientId);
-    return (
-      <PageContainer>
-        <PageContent>
-          <AccessDenied assignedProvider={assignedProvider} />
-        </PageContent>
-      </PageContainer>
-    );
-  }
 
   // Get user's school (no role restriction for practice managers)
   const userSchool = await db.admin
@@ -192,8 +152,24 @@ export default async function PatientLayout({
           {age && <span>Age {age}</span>}
           {email && <span>{email}</span>}
           {phone && <span>{phone}</span>}
+        </div>
+
+        {/* RTM Enrollment Info */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg bg-gray-50 px-4 py-2.5 font-dm text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500">RTM Enrolled:</span>
+            <span className="font-medium text-gray-700">Feb 1, 2026</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500">Monitoring Days:</span>
+            <span className="font-semibold text-blue-600">14/16</span>
+            <span className="text-gray-400">this period</span>
+          </div>
           {lastActive && (
-            <span className="text-gray-400">Last Engagement: {formatRelativeTime(lastActive)}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500">Last Active:</span>
+              <span className="font-medium text-gray-700">{formatRelativeTime(lastActive)}</span>
+            </div>
           )}
         </div>
 

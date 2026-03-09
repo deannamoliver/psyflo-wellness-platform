@@ -3,7 +3,7 @@ export type UserRole =
   | "Provider"
   | "Practice Management";
 
-export type UserStatus = "Active" | "Inactive" | "Suspended";
+export type UserStatus = "Active" | "Inactive" | "Invite Sent";
 
 export type AdminUser = {
   id: string;
@@ -35,7 +35,7 @@ export const ROLE_OPTIONS: UserRole[] = [
   "Practice Management",
 ];
 
-export const STATUS_OPTIONS: UserStatus[] = ["Active", "Inactive", "Suspended"];
+export const STATUS_OPTIONS: UserStatus[] = ["Active", "Inactive", "Invite Sent"];
 
 export const ROLE_BADGE_CONFIG: Record<
   UserRole,
@@ -64,5 +64,5 @@ export const STATUS_BADGE_CONFIG: Record<
 > = {
   Active: { bg: "bg-green-50", text: "text-green-600" },
   Inactive: { bg: "bg-gray-100", text: "text-gray-500" },
-  Suspended: { bg: "bg-red-100", text: "text-red-600" },
+  "Invite Sent": { bg: "bg-amber-50", text: "text-amber-600" },
 };

@@ -214,7 +214,8 @@ export async function loadLocationFormData(
 
   const formData: LocationFormData = {
     parentOrganizationId: school.organizationId ?? "",
-    locationName: school.name,
+    legalName: school.name,
+    dba: "",
     schoolCode: school.schoolCode ?? "",
     phone: school.phone ?? "",
     streetAddress: school.streetAddress ?? "",

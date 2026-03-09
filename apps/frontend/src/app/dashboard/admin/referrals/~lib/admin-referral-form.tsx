@@ -125,7 +125,7 @@ export function AdminReferralForm({
             </DialogTitle>
           </div>
           <DialogDescription className="font-dm text-gray-500 text-sm">
-            This sends a referral request to the PsyFlo care coordination team.
+            This sends a referral request to the Psyflo care coordination team.
             We&apos;ll reach out to the family to connect them with an
             appropriate provider.
           </DialogDescription>

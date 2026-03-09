@@ -52,15 +52,39 @@ export function Step1Profile({ formData, updateForm, organizations }: Props) {
           </FormField>
 
           <div className="grid grid-cols-2 gap-4">
-            <FormField label="Location/Site Name" required>
+            <FormField label="Legal Name" required>
               <Input
-                value={formData.locationName}
-                onChange={(e) => updateForm({ locationName: e.target.value })}
+                value={formData.legalName}
+                onChange={(e) => updateForm({ legalName: e.target.value })}
                 className="h-10 border-gray-200 font-dm"
-                placeholder=""
+                placeholder="e.g., Wellness Clinic LLC"
               />
               <p className="mt-1 text-gray-400 text-xs">
-                Official name of the clinic
+                Official legal name of the location
+              </p>
+            </FormField>
+            <FormField label="DBA (Doing Business As)">
+              <Input
+                value={formData.dba}
+                onChange={(e) => updateForm({ dba: e.target.value })}
+                className="h-10 border-gray-200 font-dm"
+                placeholder="e.g., Wellness Clinic"
+              />
+              <p className="mt-1 text-gray-400 text-xs">
+                Trade name if different from legal name
+              </p>
+            </FormField>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Tax ID (EIN)">
+              <Input
+                value={formData.taxId ?? ""}
+                onChange={(e) => updateForm({ taxId: e.target.value })}
+                className="h-10 border-gray-200 font-dm"
+                placeholder="XX-XXXXXXX"
+              />
+              <p className="mt-1 text-gray-400 text-xs">
+                Federal tax ID number for this location
               </p>
             </FormField>
             <FormField label="Location NPI">
@@ -76,6 +100,14 @@ export function Step1Profile({ formData, updateForm, organizations }: Props) {
             </FormField>
           </div>
           <div className="grid grid-cols-2 gap-4">
+            <FormField label="Phone Number" required>
+              <Input
+                value={formData.phone}
+                onChange={(e) => updateForm({ phone: e.target.value })}
+                className="h-10 border-gray-200 font-dm"
+                placeholder=""
+              />
+            </FormField>
             <FormField label="Location Code">
               <Input
                 value={formData.schoolCode}
@@ -86,14 +118,6 @@ export function Step1Profile({ formData, updateForm, organizations }: Props) {
               <p className="mt-1 text-gray-400 text-xs">
                 Internal identification code (optional)
               </p>
-            </FormField>
-            <FormField label="Phone Number" required>
-              <Input
-                value={formData.phone}
-                onChange={(e) => updateForm({ phone: e.target.value })}
-                className="h-10 border-gray-200 font-dm"
-                placeholder=""
-              />
             </FormField>
           </div>
         </div>

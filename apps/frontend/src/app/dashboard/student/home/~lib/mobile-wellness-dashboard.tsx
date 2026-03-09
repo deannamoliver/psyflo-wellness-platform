@@ -167,9 +167,9 @@ export default function MobileWellnessDashboard({
   const completedDays = 5;
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden bg-[#EDF2F9]">
+    <div className="flex h-full w-full flex-col overflow-hidden bg-white">
       {/* Header */}
-      <header className="flex items-center justify-between bg-primary px-4 py-3">
+      <header className="flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3">
         <div className="flex items-center gap-2">
           {soliImage && !isLoading ? (
             <Image
@@ -180,11 +180,11 @@ export default function MobileWellnessDashboard({
               className="object-contain"
             />
           ) : (
-            <Skeleton className="h-8 w-8 rounded-full bg-white/20" />
+            <Skeleton className="h-8 w-8 rounded-full bg-gray-100" />
           )}
-          <span className="font-semibold text-white">Psyflo</span>
+          <span className="font-semibold text-gray-900">Psyflo</span>
         </div>
-        <button className="rounded-lg p-2 text-white hover:bg-white/10">
+        <button className="rounded-lg p-2 text-gray-600 hover:bg-gray-50">
           <Menu className="h-5 w-5" />
         </button>
       </header>
@@ -192,10 +192,10 @@ export default function MobileWellnessDashboard({
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {/* Status Card */}
-        <div className="mb-4 rounded-2xl bg-gradient-to-br from-primary to-cyan-500 p-4 text-white shadow-sm">
+        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_20px_-5px_rgba(210,233,255,0.5)]">
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm">You are thriving!</span>
+              <span className="font-semibold text-gray-900 text-sm">You are thriving!</span>
               <span>🎉</span>
             </div>
             {soliImage && !isLoading ? (
@@ -207,41 +207,41 @@ export default function MobileWellnessDashboard({
                 className="object-contain"
               />
             ) : (
-              <Skeleton className="h-10 w-10 rounded-full bg-white/20" />
+              <Skeleton className="h-10 w-10 rounded-full bg-gray-100" />
             )}
           </div>
 
           {/* Stats */}
           <div className="mb-3 grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-white/10 p-2 text-center">
-              <p className="font-bold text-xl">{soliStateData.streak}</p>
-              <p className="text-white/80 text-xs">Days</p>
+            <div className="rounded-xl bg-blue-50 p-2 text-center">
+              <p className="font-bold text-gray-900 text-xl">{soliStateData.streak}</p>
+              <p className="text-gray-500 text-xs">Days</p>
             </div>
-            <div className="rounded-xl bg-white/10 p-2 text-center">
-              <p className="font-bold text-xl">42</p>
-              <p className="text-white/80 text-xs">Check-ins</p>
+            <div className="rounded-xl bg-blue-50 p-2 text-center">
+              <p className="font-bold text-gray-900 text-xl">42</p>
+              <p className="text-gray-500 text-xs">Check-ins</p>
             </div>
-            <div className="rounded-xl bg-white/10 p-2 text-center">
-              <p className="font-bold text-xl">15</p>
-              <p className="text-white/80 text-xs">Badges</p>
+            <div className="rounded-xl bg-blue-50 p-2 text-center">
+              <p className="font-bold text-gray-900 text-xl">15</p>
+              <p className="text-gray-500 text-xs">Badges</p>
             </div>
           </div>
 
           {/* Weekly Progress */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs">Weekly Progress</span>
-              <span className="text-xs">{completedDays}/7</span>
+              <span className="text-gray-700 text-xs">Weekly Progress</span>
+              <span className="text-gray-700 text-xs">{completedDays}/7</span>
             </div>
             <div className="flex gap-1">
               {weekDays.map((day, i) => (
                 <div
                   key={day + i}
                   className={cn(
-                    "flex h-7 w-7 flex-1 items-center justify-center rounded-lg text-xs",
+                    "flex h-7 w-7 flex-1 items-center justify-center rounded-full text-xs font-medium",
                     i < completedDays
-                      ? "bg-white text-primary"
-                      : "bg-white/20 text-white/60"
+                      ? "bg-primary text-white"
+                      : "bg-gray-100 text-gray-400"
                   )}
                 >
                   {i < completedDays ? <Check className="h-3 w-3" /> : day}
@@ -252,7 +252,7 @@ export default function MobileWellnessDashboard({
         </div>
 
         {/* Welcome Header */}
-        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_20px_-5px_rgba(210,233,255,0.5)]">
           <h1 className="mb-2 font-bold text-xl text-gray-900">
             Welcome back, {firstName}!
           </h1>
@@ -263,7 +263,7 @@ export default function MobileWellnessDashboard({
         </div>
 
         {/* Daily Check-In Card */}
-        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_20px_-5px_rgba(210,233,255,0.5)]">
           <div className="mb-4 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <Calendar className="h-4 w-4 text-white" />
@@ -324,13 +324,13 @@ export default function MobileWellnessDashboard({
           </div>
 
           {/* Complete Check-In Button */}
-          <button className="mt-4 w-full rounded-xl bg-primary py-3 font-semibold text-white text-sm transition-colors hover:bg-primary/90">
+          <button className="mt-4 w-full rounded-full bg-gray-900 py-3 font-semibold text-white text-sm transition-colors hover:bg-gray-800">
             Complete Check-In
           </button>
         </div>
 
         {/* Start Your Day */}
-        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_20px_-5px_rgba(255,234,209,0.5)]">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-100">
               <Sparkles className="h-4 w-4 text-yellow-600" />
@@ -339,6 +339,17 @@ export default function MobileWellnessDashboard({
           </div>
 
           <div className="space-y-2">
+            {/* Daily Check-In - shows completion status based on whether check-in form is completed */}
+            <div className="flex items-center gap-3 rounded-xl bg-blue-50 p-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">
+                <Calendar className="h-4 w-4 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900 text-sm">Daily Check-In</p>
+                <p className="text-gray-500 text-xs">How are you feeling today?</p>
+              </div>
+            </div>
+
             <div className="flex items-center gap-3 rounded-xl bg-cyan-50 p-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-100">
                 <Heart className="h-4 w-4 text-cyan-600" />
@@ -372,7 +383,7 @@ export default function MobileWellnessDashboard({
         </div>
 
         {/* Wellness Toolbox */}
-        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_20px_-5px_rgba(240,228,255,0.5)]">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-100">
               <Sparkles className="h-4 w-4 text-cyan-600" />
@@ -406,7 +417,7 @@ export default function MobileWellnessDashboard({
         </div>
 
         {/* Achievements */}
-        <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_20px_-5px_rgba(255,220,235,0.5)]">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-100">
               <Award className="h-4 w-4 text-pink-600" />
@@ -440,13 +451,13 @@ export default function MobileWellnessDashboard({
         </div>
 
         {/* Daily Tip */}
-        <div className="mb-4 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 p-4 text-white shadow-sm">
+        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_8px_20px_-5px_rgba(255,220,235,0.5)]">
           <div className="mb-2 flex items-center gap-2">
-            <Lightbulb className="h-4 w-4" />
-            <h2 className="font-bold">Daily Tip</h2>
+            <Lightbulb className="h-4 w-4 text-pink-500" />
+            <h2 className="font-bold text-gray-900">Daily Tip</h2>
           </div>
-          <p className="mb-3 text-sm text-white/90">"{dailyTip}"</p>
-          <button className="rounded-full bg-white px-4 py-2 font-medium text-pink-600 text-sm">
+          <p className="mb-3 text-gray-600 text-sm">"{dailyTip}"</p>
+          <button className="rounded-full bg-gray-900 px-4 py-2 font-medium text-white text-sm hover:bg-gray-800">
             Try Breathing Exercise
           </button>
         </div>

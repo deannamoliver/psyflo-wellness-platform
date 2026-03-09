@@ -160,8 +160,8 @@ export function StudentsTable({
               key={student.id}
               className={cn(
                 "border-gray-100 border-b transition-colors",
-                student.status === "Blocked"
-                  ? "bg-red-50/60 hover:bg-red-50"
+                student.status === "Inactive"
+                  ? "bg-gray-50/60 hover:bg-gray-100"
                   : "hover:bg-gray-50",
               )}
             >

@@ -89,7 +89,7 @@ export default function TopNav({
             <div className="flex size-8 items-center justify-center rounded-lg bg-blue-600">
               <UsersRound className="size-4 text-white" />
             </div>
-            <span className="font-semibold text-gray-900">PsyFlo</span>
+            <span className="font-semibold text-gray-900">Psyflo</span>
           </Link>
           <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
             Provider

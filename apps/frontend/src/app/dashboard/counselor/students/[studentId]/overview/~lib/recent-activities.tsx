@@ -12,7 +12,7 @@ import { H3, Muted } from "@/lib/core-ui/typography";
 import { serverDrizzle } from "@/lib/database/drizzle";
 import { titleCase } from "@/lib/string-utils";
 import { cn } from "@/lib/tailwind-utils";
-import * as Icons from "../../../../home/~lib/icons";
+import * as Icons from "../../../../caseloads/~lib/icons";
 
 type Activity = {
   id: string;

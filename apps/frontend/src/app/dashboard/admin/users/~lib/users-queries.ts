@@ -1,7 +1,7 @@
 "server-only";
 
 import { profiles, schools, userSchools, users } from "@feelwell/database";
-import { and, eq, isNull, ne, or } from "drizzle-orm";
+import { and, eq, isNull, ne, or, sql } from "drizzle-orm";
 import { serverDrizzle } from "@/lib/database/drizzle";
 import { getUserFullName } from "@/lib/user/utils";
 import type {
@@ -17,9 +17,9 @@ function mapRole(platformRole: string, schoolRole: string | null): UserRole {
   return "Practice Management";
 }
 
-function mapStatus(accountStatus: string): UserStatus {
-  if (accountStatus === "blocked") return "Suspended";
-  if (accountStatus === "archived") return "Inactive";
+function mapStatus(accountStatus: string, isActivated: boolean): UserStatus {
+  if (!isActivated) return "Invite Sent";
+  if (accountStatus === "blocked" || accountStatus === "archived") return "Inactive";
   return "Active";
 }
 
@@ -35,6 +35,8 @@ export async function fetchAdminUsers(): Promise<UsersPageData> {
       user: users,
       schoolRole: userSchools.role,
       schoolName: schools.name,
+      // Check if user has confirmed their email (activated their account)
+      emailConfirmedAt: sql<Date | null>`auth.users.email_confirmed_at`,
     })
     .from(profiles)
     .innerJoin(users, eq(profiles.id, users.id))
@@ -60,6 +62,7 @@ export async function fetchAdminUsers(): Promise<UsersPageData> {
       createdAt: Date;
       schoolRole: string | null;
       schoolNames: Set<string>;
+      isActivated: boolean;
     }
   >();
 
@@ -78,6 +81,7 @@ export async function fetchAdminUsers(): Promise<UsersPageData> {
         createdAt: row.createdAt,
         schoolRole: row.schoolRole,
         schoolNames,
+        isActivated: row.emailConfirmedAt !== null,
       });
     }
   }
@@ -111,7 +115,7 @@ export async function fetchAdminUsers(): Promise<UsersPageData> {
       role,
       organization: org,
       locations: schoolArr,
-      status: mapStatus(entry.accountStatus),
+      status: mapStatus(entry.accountStatus, entry.isActivated),
       createdAt: entry.createdAt,
     });
   }

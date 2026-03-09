@@ -1,4 +1,6 @@
-export type OrgType = "mental_health" | "primary_care" | "pediatrics" | "multi_specialty" | "substance_abuse" | "neurology" | "geriatrics" | "womens_health" | "integrative" | "telehealth";
+export type OrgType = "private_practice" | "group_practice" | "hospital_system" | "community_health" | "academic_medical" | "other";
+
+export type OrgSpecialty = "mental_health" | "primary_care" | "pediatrics" | "substance_abuse" | "multi_specialty" | "other";
 
 export type ContactInfo = {
   id: string;
@@ -22,9 +24,12 @@ export function createContact(): ContactInfo {
 
 export type OrgFormData = {
   type: OrgType | "";
-  name: string;
+  specialty: OrgSpecialty | "";
+  legalName: string;
+  dba: string;
   taxId: string;
   npi: string;
+  ratePerPatient: number;
   streetAddress: string;
   streetAddress2: string;
   city: string;
@@ -39,7 +44,14 @@ export type OrgFormData = {
   billingContact: ContactInfo;
   billingSameAsAdmin: boolean;
   technicalContact: ContactInfo;
-  status: "active" | "suspended" | "onboarding" | "archived";
+  billingAddress: string;
+  billingCity: string;
+  billingState: string;
+  billingZipCode: string;
+  billingEmail: string;
+  billingPhone: string;
+  documents: { name: string; type: string; uploadedAt: string }[];
+  status: "active" | "archived" | "onboarding";
   internalNotes: string;
   additionalContacts: ContactInfo[];
 };
@@ -54,9 +66,12 @@ export const EMPTY_CONTACT: ContactInfo = {
 
 export const INITIAL_FORM_DATA: OrgFormData = {
   type: "",
-  name: "",
+  specialty: "",
+  legalName: "",
+  dba: "",
   taxId: "",
   npi: "",
+  ratePerPatient: 25,
   streetAddress: "",
   streetAddress2: "",
   city: "",
@@ -71,6 +86,13 @@ export const INITIAL_FORM_DATA: OrgFormData = {
   billingContact: { ...EMPTY_CONTACT, id: "billing" },
   billingSameAsAdmin: false,
   technicalContact: { ...EMPTY_CONTACT, id: "technical" },
+  billingAddress: "",
+  billingCity: "",
+  billingState: "",
+  billingZipCode: "",
+  billingEmail: "",
+  billingPhone: "",
+  documents: [],
   status: "onboarding",
   internalNotes: "",
   additionalContacts: [createContact()],

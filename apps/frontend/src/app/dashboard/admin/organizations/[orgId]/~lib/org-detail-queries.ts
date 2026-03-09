@@ -13,9 +13,9 @@ import type { OrgDetail } from "./org-detail-data";
 
 const STATUS_DISPLAY: Record<string, OrgDetail["status"]> = {
   active: "Active",
-  suspended: "Suspended",
+  suspended: "Inactive",
   onboarding: "Onboarding",
-  archived: "Archived",
+  archived: "Inactive",
 };
 
 const TYPE_DISPLAY: Record<string, string> = {

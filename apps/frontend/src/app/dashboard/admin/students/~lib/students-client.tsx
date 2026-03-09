@@ -30,7 +30,7 @@ const DEFAULT_FILTERS: StudentsFiltersState = {
   sortBy: "recently-added",
 };
 
-type ConfirmAction = "export" | "archive" | "unarchive" | null;
+type ConfirmAction = "export" | "deactivate" | "reactivate" | null;
 
 type Props = { data: StudentsPageData };
 
@@ -95,11 +95,11 @@ export function StudentsClient({ data }: Props) {
     paginatedRows.length > 0 &&
     paginatedRows.every((r) => selectedIds.has(r.id));
 
-  const isUnarchive =
+  const isReactivate =
     selectedIds.size > 0 &&
     data.students
       .filter((s) => selectedIds.has(s.id))
-      .every((s) => s.status === "Archived");
+      .every((s) => s.status === "Inactive");
 
   function handleFilterChange(key: keyof StudentsFiltersState, value: string) {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -150,11 +150,11 @@ export function StudentsClient({ data }: Props) {
 
   const confirmLabel =
     confirmAction === "export"
-      ? "export the selected clients"
-      : confirmAction === "archive"
-        ? "archive the selected clients"
-        : confirmAction === "unarchive"
-          ? "unarchive the selected clients"
+      ? "export the selected patients"
+      : confirmAction === "deactivate"
+        ? "deactivate the selected patients"
+        : confirmAction === "reactivate"
+          ? "reactivate the selected patients"
           : "";
 
   async function handleConfirmedAction() {
@@ -166,13 +166,13 @@ export function StudentsClient({ data }: Props) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `students-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `patients-export-${new Date().toISOString().slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
-    } else if (confirmAction === "archive") {
+    } else if (confirmAction === "deactivate") {
       await archiveStudents(ids);
       router.refresh();
-    } else if (confirmAction === "unarchive") {
+    } else if (confirmAction === "reactivate") {
       await unarchiveStudents(ids);
       router.refresh();
     }
@@ -227,7 +227,7 @@ export function StudentsClient({ data }: Props) {
 
       <BlockedStudentsSection
         blockedStudents={data.blockedStudents}
-        blockedCount={data.stats.blocked}
+        blockedCount={data.blockedStudents.length}
         onUnblock={(id) => {
           setUnblockStudentId(id);
           setUnblockModalOpen(true);
@@ -236,11 +236,10 @@ export function StudentsClient({ data }: Props) {
 
       <BulkActions
         selectedCount={selectedIds.size}
-        isUnarchive={isUnarchive}
+        isReactivate={isReactivate}
         onExport={() => setConfirmAction("export")}
-        onBlock={() => setBlockModalOpen(true)}
-        onArchive={() =>
-          setConfirmAction(isUnarchive ? "unarchive" : "archive")
+        onDeactivate={() =>
+          setConfirmAction(isReactivate ? "reactivate" : "deactivate")
         }
         onImport={() => setImportModalOpen(true)}
       />

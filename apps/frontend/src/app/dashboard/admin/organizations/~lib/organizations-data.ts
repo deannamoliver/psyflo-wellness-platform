@@ -4,17 +4,18 @@ import { serverDrizzle } from "@/lib/database/drizzle";
 import type { Organization, OrgStatus, OrgType } from "./organizations-types";
 
 const TYPE_DISPLAY: Record<string, OrgType> = {
-  k12: "Private Practice",
-  college: "Group Practice",
-  clinic: "Clinic",
-  cbo: "CBO",
+  private_practice: "Private Practice",
+  group_practice: "Group Practice",
+  hospital_system: "Hospital System",
+  community_health: "Community Health",
+  academic_medical: "Academic Medical",
 };
 
 const STATUS_DISPLAY: Record<string, OrgStatus> = {
   active: "Active",
-  suspended: "Suspended",
+  suspended: "Inactive",
   onboarding: "Onboarding",
-  archived: "Archived",
+  archived: "Inactive",
 };
 
 export async function getOrganizations(): Promise<Organization[]> {

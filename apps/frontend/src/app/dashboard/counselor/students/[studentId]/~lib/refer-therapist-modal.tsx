@@ -81,7 +81,7 @@ const INSURANCE = [
 ];
 
 const NEXT_STEPS = [
-  "PsyFlo care coordination team receives your referral immediately",
+  "Psyflo care coordination team receives your referral immediately",
   "Family is contacted within the specified urgency timeline",
   "You\u2019ll receive email updates on referral status and provider matching",
   "Track progress in the Referrals section of your dashboard",
@@ -175,7 +175,7 @@ export function ReferTherapistModal({ open, onOpenChange, student }: Props) {
             Refer to Therapist
           </DialogTitle>
           <DialogDescription className="font-dm text-gray-500 text-sm">
-            This sends a referral request to the PsyFlo care coordination team.
+            This sends a referral request to the Psyflo care coordination team.
             We&apos;ll reach out to the family to connect them with an
             appropriate provider.
           </DialogDescription>

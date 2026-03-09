@@ -57,9 +57,17 @@ export function LocationOverviewTab({
           Location Details
         </h2>
         <div className="grid grid-cols-4 gap-x-8 gap-y-6">
-          <DetailField label="Location Name">
-            {location.locationName}
+          <DetailField label="Legal Name">
+            {location.legalName}
           </DetailField>
+          {location.dba && (
+            <DetailField label="DBA (Doing Business As)">
+              {location.dba}
+            </DetailField>
+          )}
+          {location.taxId && (
+            <DetailField label="Tax ID (EIN)">{location.taxId}</DetailField>
+          )}
           <DetailField label="Location NPI">{location.locationNpi || "--"}</DetailField>
           <DetailField label="Location Code">{location.locationCode}</DetailField>
           <DetailField label="Location Type">{location.locationType}</DetailField>
@@ -121,10 +129,10 @@ export function LocationOverviewTab({
         </div>
       </div>
 
-      {/* General Contact Information */}
+      {/* Primary Contact Information */}
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-6 font-bold text-gray-900 text-lg">
-          General Contact Information
+          Contact Information
         </h2>
         {location.generalContacts.length > 0 ? (
           <div className="flex flex-col gap-6">
@@ -137,52 +145,6 @@ export function LocationOverviewTab({
           </div>
         ) : (
           <p className="text-gray-500 text-sm">No contacts added.</p>
-        )}
-      </div>
-
-      {/* School Emergency Contact Information */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 font-bold text-gray-900 text-lg">
-          School Emergency Contact Information
-        </h2>
-        {location.emergencyContacts.length > 0 ? (
-          <div className="flex flex-col gap-6">
-            {location.emergencyContacts.map((contact) => (
-              <ContactRow
-                key={`emergency-${contact.role}-${contact.email}`}
-                contact={contact}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 text-sm">No emergency contacts added.</p>
-        )}
-      </div>
-
-      {/* External Contacts */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 font-bold text-gray-900 text-lg">
-          External Contacts
-        </h2>
-        {location.externalContacts && location.externalContacts.length > 0 ? (
-          <div className="grid grid-cols-5 gap-x-6">
-            {location.externalContacts.map((contact) => (
-              <div key={contact.label} className="flex flex-col gap-1">
-                <span className="text-gray-500 text-sm">{contact.label}</span>
-                <div className="text-gray-900">
-                  <div>{contact.name}</div>
-                  <div>{contact.phone}</div>
-                  {contact.address.map((line: string) => (
-                    <div key={line}>{line}</div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 text-sm">
-            No external contacts added.
-          </p>
         )}
       </div>
     </div>

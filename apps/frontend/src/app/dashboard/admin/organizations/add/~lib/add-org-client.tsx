@@ -9,6 +9,7 @@ import {
   updateOrganizationAction,
 } from "./add-org-actions";
 import { AddOrgAdditionalContacts } from "./add-org-additional-contacts";
+import { AddOrgBilling } from "./add-org-billing";
 import { AddOrgContacts } from "./add-org-contacts";
 import { AddOrgDetails } from "./add-org-details";
 import { AddOrgSettings } from "./add-org-settings";
@@ -18,6 +19,7 @@ import {
   createContact,
   INITIAL_FORM_DATA,
   type OrgFormData,
+  type OrgSpecialty,
   type OrgType,
 } from "./add-org-types";
 
@@ -48,6 +50,10 @@ export function AddOrgClient({ orgId, initialData }: Props) {
 
   function updateType(type: OrgType) {
     setFormData((prev) => ({ ...prev, type }));
+  }
+
+  function updateSpecialty(specialty: OrgSpecialty) {
+    setFormData((prev) => ({ ...prev, specialty }));
   }
 
   function updateContact(
@@ -91,6 +97,20 @@ export function AddOrgClient({ orgId, initialData }: Props) {
     }));
   }
 
+  function addDocument(doc: { name: string; type: string; uploadedAt: string }) {
+    setFormData((prev) => ({
+      ...prev,
+      documents: [...(prev.documents || []), doc],
+    }));
+  }
+
+  function removeDocument(index: number) {
+    setFormData((prev) => ({
+      ...prev,
+      documents: (prev.documents || []).filter((_, i) => i !== index),
+    }));
+  }
+
   function handleSave() {
     setError(null);
     startTransition(async () => {
@@ -130,7 +150,7 @@ export function AddOrgClient({ orgId, initialData }: Props) {
                 href={`/dashboard/admin/organizations/${orgId}`}
                 className="text-gray-500 transition-colors hover:text-blue-600"
               >
-                {formData.name || "Organization"}
+                {formData.legalName || formData.dba || "Organization"}
               </Link>
               <span className="text-gray-400">&gt;</span>
             </>
@@ -150,7 +170,12 @@ export function AddOrgClient({ orgId, initialData }: Props) {
       </div>
 
       {/* Form Sections */}
-      <AddOrgTypeSelector selected={formData.type} onSelect={updateType} />
+      <AddOrgTypeSelector
+        selectedType={formData.type}
+        selectedSpecialty={formData.specialty}
+        onSelectType={updateType}
+        onSelectSpecialty={updateSpecialty}
+      />
 
       <AddOrgDetails formData={formData} onChange={updateField} />
 
@@ -161,6 +186,13 @@ export function AddOrgClient({ orgId, initialData }: Props) {
       />
 
       <AddOrgSettings formData={formData} onChange={updateField} />
+
+      <AddOrgBilling
+        formData={formData}
+        onChange={updateField}
+        onDocumentUpload={addDocument}
+        onDocumentRemove={removeDocument}
+      />
 
       <AddOrgAdditionalContacts
         contacts={formData.additionalContacts}

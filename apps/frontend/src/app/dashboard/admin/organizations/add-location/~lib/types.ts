@@ -27,7 +27,12 @@ export type StaffMember = {
   notes: string;
   patients?: PatientContact[];
   patientEmails?: string[];
-  acceptedInsurance?: string[];
+  acceptsInsurance?: boolean;
+  acceptedInsurance?: Record<string, string[]>;
+  npi?: string;
+  licenseType?: string;
+  licenseTypes?: string[];
+  licensedStates?: string[];
 };
 
 export type EmergencyContact = {
@@ -43,7 +48,9 @@ export type EmergencyContact = {
 export type LocationFormData = {
   // Step 1 - Location Profile
   parentOrganizationId: string;
-  locationName: string;
+  legalName: string;
+  dba: string;
+  taxId?: string;
   locationNpi?: string;
   schoolCode: string;
   phone: string;
@@ -122,7 +129,9 @@ export type LocationFormData = {
 
 export const INITIAL_FORM_DATA: LocationFormData = {
   parentOrganizationId: "",
-  locationName: "",
+  legalName: "",
+  dba: "",
+  taxId: "",
   schoolCode: "",
   phone: "",
   streetAddress: "",

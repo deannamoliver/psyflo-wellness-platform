@@ -1,9 +1,8 @@
 "server-only";
 
 import { profiles, schools, userSchools, users } from "@feelwell/database";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { serverDrizzle } from "@/lib/database/drizzle";
-import { getUserFullName } from "@/lib/user/utils";
 import type {
   BlockedStudent,
   Student,
@@ -64,8 +63,17 @@ export async function fetchAdminStudents(): Promise<StudentsPageData> {
       userId: userSchools.userId,
       schoolName: schools.name,
       districtCode: schools.districtCode,
-      profile: profiles,
-      user: users,
+      accountStatus: profiles.accountStatus,
+      studentCode: profiles.studentCode,
+      grade: profiles.grade,
+      createdAt: profiles.createdAt,
+      blockedAt: profiles.blockedAt,
+      blockedUntil: profiles.blockedUntil,
+      blockedReason: profiles.blockedReason,
+      email: users.email,
+      rawUserMetaData: users.rawUserMetaData,
+      // Check if user has confirmed their email (activated their account)
+      emailConfirmedAt: sql<Date | null>`auth.users.email_confirmed_at`,
     })
     .from(userSchools)
     .innerJoin(schools, eq(userSchools.schoolId, schools.id))
@@ -74,56 +82,70 @@ export async function fetchAdminStudents(): Promise<StudentsPageData> {
     .where(and(eq(userSchools.role, "student"), isNull(profiles.deletedAt)));
 
   let activeCount = 0;
-  let blockedCount = 0;
-  let archivedCount = 0;
+  let inactiveCount = 0;
+  let inviteSentCount = 0;
   const blockedStudents: BlockedStudent[] = [];
 
   const now = new Date();
 
   const studentList: Student[] = rows.map((row) => {
-    const status = row.profile.accountStatus;
+    const status = row.accountStatus;
+    const isActivated = row.emailConfirmedAt !== null;
     const blockExpired =
       status === "blocked" &&
-      row.profile.blockedUntil !== null &&
-      row.profile.blockedUntil < now;
+      row.blockedUntil !== null &&
+      row.blockedUntil < now;
 
-    if (blockExpired || status === "active") activeCount++;
-    else if (status === "blocked") blockedCount++;
-    else if (status === "archived") archivedCount++;
+    // Count based on activation status
+    if (!isActivated) {
+      inviteSentCount++;
+    } else if (blockExpired || status === "active") {
+      activeCount++;
+    } else {
+      // blocked or archived -> Inactive
+      inactiveCount++;
+    }
 
-    const displayStatus: StudentStatus = blockExpired
-      ? "Active"
-      : status === "blocked"
-        ? "Blocked"
-        : status === "archived"
-          ? "Archived"
-          : "Active";
-    const name = getUserFullName(row.user);
+    // Determine display status - prioritize "Invite Sent" for unactivated accounts
+    let displayStatus: StudentStatus;
+    if (!isActivated) {
+      displayStatus = "Invite Sent";
+    } else if (blockExpired || status === "active") {
+      displayStatus = "Active";
+    } else {
+      // blocked or archived -> Inactive
+      displayStatus = "Inactive";
+    }
+    // @ts-expect-error - User metadata is not typed
+    const firstName = row.rawUserMetaData?.first_name ?? "";
+    // @ts-expect-error - User metadata is not typed
+    const lastName = row.rawUserMetaData?.last_name ?? "";
+    const name = `${firstName} ${lastName}`.trim() || row.email || "Unknown";
 
     if (status === "blocked" && !blockExpired) {
       blockedStudents.push({
         id: row.userId,
         name,
         school: row.schoolName,
-        grade: `${formatGrade(row.profile.grade)} Grade`,
-        blockedAgo: row.profile.blockedAt
-          ? `Blocked ${formatRelativeTime(row.profile.blockedAt)}`
+        grade: `${formatGrade(row.grade)} Grade`,
+        blockedAgo: row.blockedAt
+          ? `Blocked ${formatRelativeTime(row.blockedAt)}`
           : "Blocked",
-        reason: formatBlockedReason(row.profile.blockedReason),
+        reason: formatBlockedReason(row.blockedReason),
       });
     }
 
     return {
       id: row.userId,
-      studentId: row.profile.studentCode
-        ? `#${row.profile.studentCode}`
+      studentId: row.studentCode
+        ? `#${row.studentCode}`
         : `#${row.userId.slice(0, 6).toUpperCase()}`,
       name,
       school: row.schoolName,
       district: row.districtCode ?? "--",
-      grade: formatGrade(row.profile.grade),
+      grade: formatGrade(row.grade),
       status: displayStatus,
-      createdDate: formatDate(row.profile.createdAt),
+      createdDate: formatDate(row.createdAt),
     };
   });
 
@@ -138,8 +160,8 @@ export async function fetchAdminStudents(): Promise<StudentsPageData> {
     stats: {
       total: rows.length,
       active: activeCount,
-      blocked: blockedCount,
-      archived: archivedCount,
+      inactive: inactiveCount,
+      inviteSent: inviteSentCount,
     },
     schools: schoolNames,
     districts,

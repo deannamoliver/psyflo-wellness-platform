@@ -12,7 +12,7 @@ import { cn } from "@/lib/tailwind-utils";
 const PLATFORMS = [
   {
     value: "internal" as const,
-    label: "PSYFLO Internal",
+    label: "Psyflo Internal",
     description: "For Psyflo platform administrators",
     icon: Settings,
     iconBg: "bg-purple-600",

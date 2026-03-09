@@ -25,7 +25,7 @@ type DashboardOption = {
 const DASHBOARD_OPTIONS: DashboardOption[] = [
   {
     id: "admin",
-    label: "PsyFlo Admin",
+    label: "Psyflo Admin",
     description: "Internal administration — no patient data",
     href: "/dashboard/admin",
     icon: Settings,

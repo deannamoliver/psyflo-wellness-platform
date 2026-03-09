@@ -98,39 +98,64 @@ export function Step2Roles({ formData, updateForm }: Props) {
                   </span>
                 </div>
                 <div className="grid gap-3">
-                  {practiceManagers.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition-shadow"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-teal-700 font-semibold">
-                          {member.firstName.charAt(0)}{member.lastName.charAt(0)}
+                  {practiceManagers.map((member) => {
+                    const patientCount = member.patients?.length || member.patientEmails?.length || 0;
+                    const insuranceCount = member.acceptedInsurance 
+                      ? Object.values(member.acceptedInsurance).flat().length 
+                      : 0;
+                    
+                    return (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition-shadow"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-teal-700 font-semibold">
+                            {member.firstName.charAt(0)}{member.lastName.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{member.firstName} {member.lastName}</p>
+                            <p className="text-gray-500 text-sm">{member.email}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{member.firstName} {member.lastName}</p>
-                          <p className="text-gray-500 text-sm">{member.email}</p>
+                        <div className="flex items-center gap-4">
+                          {/* Stats */}
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1.5 text-sm">
+                              <Users className="h-4 w-4 text-blue-500" />
+                              <span className={patientCount > 0 ? "text-gray-700 font-medium" : "text-gray-400"}>
+                                {patientCount} patient{patientCount !== 1 ? 's' : ''}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-sm">
+                              <CreditCard className="h-4 w-4 text-green-500" />
+                              <span className={insuranceCount > 0 ? "text-gray-700 font-medium" : "text-gray-400"}>
+                                {insuranceCount} plan{insuranceCount !== 1 ? 's' : ''}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Actions */}
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => openEdit(member.id)}
+                              className="flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-50"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeStaff(member.id)}
+                              className="flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-red-500 text-sm hover:bg-red-50 hover:border-red-200"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => openEdit(member.id)}
-                          className="flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-gray-600 text-sm hover:bg-gray-50"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeStaff(member.id)}
-                          className="flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-red-500 text-sm hover:bg-red-50 hover:border-red-200"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -149,7 +174,9 @@ export function Step2Roles({ formData, updateForm }: Props) {
                   {providers.map((member) => {
                     const isExpanded = expandedId === member.id;
                     const patientCount = member.patients?.length || member.patientEmails?.length || 0;
-                    const insuranceCount = member.acceptedInsurance?.length || 0;
+                    const insuranceCount = member.acceptedInsurance 
+                      ? Object.values(member.acceptedInsurance).flat().length 
+                      : 0;
                     
                     return (
                       <div
@@ -264,7 +291,7 @@ export function Step2Roles({ formData, updateForm }: Props) {
                                 </div>
                                 {insuranceCount > 0 ? (
                                   <div className="flex flex-wrap gap-2">
-                                    {member.acceptedInsurance?.map((insurance) => (
+                                    {member.acceptedInsurance && Object.values(member.acceptedInsurance).flat().map((insurance) => (
                                       <span
                                         key={insurance}
                                         className="inline-flex items-center rounded-full bg-green-50 border border-green-200 px-3 py-1 text-green-700 text-sm"

@@ -3,7 +3,6 @@
 import { profiles, schools, userSchools, users } from "@feelwell/database";
 import { eq } from "drizzle-orm";
 import { serverDrizzle } from "@/lib/database/drizzle";
-import { getUserFullName } from "@/lib/user/utils";
 
 export type UserDetail = {
   id: string;
@@ -34,8 +33,7 @@ function displayRole(platform: string, school: string | null): string {
 }
 
 function displayStatus(status: string): string {
-  if (status === "blocked") return "Suspended";
-  if (status === "archived") return "Inactive";
+  if (status === "blocked" || status === "archived") return "Inactive";
   return "Active";
 }
 
@@ -46,8 +44,19 @@ export async function fetchUserDetail(
 
   const [profileRow] = await db.admin
     .select({
-      profile: profiles,
-      user: users,
+      profileId: profiles.id,
+      platformRole: profiles.platformRole,
+      accountStatus: profiles.accountStatus,
+      phone: profiles.phone,
+      internalNotes: profiles.internalNotes,
+      canManageUsers: profiles.canManageUsers,
+      receivesAlertNotifications: profiles.receivesAlertNotifications,
+      addedBy: profiles.addedBy,
+      createdAt: profiles.createdAt,
+      updatedAt: profiles.updatedAt,
+      userId: users.id,
+      email: users.email,
+      rawUserMetaData: users.rawUserMetaData,
     })
     .from(profiles)
     .innerJoin(users, eq(profiles.id, users.id))
@@ -68,13 +77,22 @@ export async function fetchUserDetail(
     .where(eq(userSchools.userId, userId));
 
   let addedByName: string | null = null;
-  if (profileRow.profile.addedBy) {
+  if (profileRow.addedBy) {
     const [addedByUser] = await db.admin
-      .select({ user: users })
+      .select({ 
+        email: users.email,
+        rawUserMetaData: users.rawUserMetaData,
+      })
       .from(users)
-      .where(eq(users.id, profileRow.profile.addedBy))
+      .where(eq(users.id, profileRow.addedBy))
       .limit(1);
-    if (addedByUser) addedByName = getUserFullName(addedByUser.user);
+    if (addedByUser) {
+      // @ts-expect-error - User metadata is not typed
+      const addedByFirstName = addedByUser.rawUserMetaData?.first_name ?? "";
+      // @ts-expect-error - User metadata is not typed
+      const addedByLastName = addedByUser.rawUserMetaData?.last_name ?? "";
+      addedByName = `${addedByFirstName} ${addedByLastName}`.trim() || addedByUser.email || "Unknown";
+    }
   }
 
   const schoolRole = schoolRows.find((r) => r.role === "counselor")
@@ -84,27 +102,28 @@ export async function fetchUserDetail(
       : null;
 
   // @ts-expect-error - User metadata is not typed
-  const firstName = profileRow.user.rawUserMetaData?.first_name ?? "";
+  const firstName = profileRow.rawUserMetaData?.first_name ?? "";
   // @ts-expect-error - User metadata is not typed
-  const lastName = profileRow.user.rawUserMetaData?.last_name ?? "";
+  const lastName = profileRow.rawUserMetaData?.last_name ?? "";
+  const name = `${firstName} ${lastName}`.trim() || profileRow.email || "Unknown";
 
   return {
     id: userId,
     firstName,
     lastName,
-    name: getUserFullName(profileRow.user),
-    email: profileRow.user.email ?? "",
-    phone: profileRow.profile.phone,
-    platformRole: profileRow.profile.platformRole,
-    displayRole: displayRole(profileRow.profile.platformRole, schoolRole),
-    accountStatus: profileRow.profile.accountStatus,
-    displayStatus: displayStatus(profileRow.profile.accountStatus),
-    createdAt: profileRow.profile.createdAt,
-    updatedAt: profileRow.profile.updatedAt,
+    name,
+    email: profileRow.email ?? "",
+    phone: profileRow.phone,
+    platformRole: profileRow.platformRole,
+    displayRole: displayRole(profileRow.platformRole, schoolRole),
+    accountStatus: profileRow.accountStatus,
+    displayStatus: displayStatus(profileRow.accountStatus),
+    createdAt: profileRow.createdAt,
+    updatedAt: profileRow.updatedAt,
     addedByName,
-    internalNotes: profileRow.profile.internalNotes,
-    canManageUsers: profileRow.profile.canManageUsers,
-    receivesAlertNotifications: profileRow.profile.receivesAlertNotifications,
+    internalNotes: profileRow.internalNotes,
+    canManageUsers: profileRow.canManageUsers,
+    receivesAlertNotifications: profileRow.receivesAlertNotifications,
     organizations: schoolRows
       .filter((r) => !r.orgId)
       .map((r) => ({ id: r.schoolId, name: r.schoolName })),

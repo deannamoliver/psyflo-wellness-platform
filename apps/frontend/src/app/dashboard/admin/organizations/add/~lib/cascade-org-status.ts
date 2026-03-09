@@ -4,14 +4,11 @@ import { profiles, schools, userSchools } from "@feelwell/database";
 import { eq, inArray } from "drizzle-orm";
 import { serverDrizzle } from "@/lib/database/drizzle";
 
-export async function cascadeOrgStatus(
-  orgId: string,
-  newStatus: "suspended" | "archived",
-) {
+export async function cascadeOrgStatus(orgId: string) {
   const db = await serverDrizzle();
 
-  const locationStatus = newStatus;
-  const accountStatus = newStatus === "suspended" ? "blocked" : "archived";
+  const locationStatus = "archived";
+  const accountStatus = "archived";
 
   // Update child locations
   await db.admin

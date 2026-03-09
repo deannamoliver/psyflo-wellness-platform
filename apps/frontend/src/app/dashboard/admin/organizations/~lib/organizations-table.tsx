@@ -74,9 +74,8 @@ function StatusBadge({ status }: { status: OrgStatus }) {
   const colors = STATUS_BADGE_COLORS[status];
   const dotColors: Record<OrgStatus, string> = {
     Active: "bg-green-500",
-    Suspended: "bg-red-500",
+    Inactive: "bg-gray-400",
     Onboarding: "bg-yellow-500",
-    Archived: "bg-gray-400",
   };
 
   return (
@@ -102,7 +101,7 @@ export function OrganizationsTable({ rows, sortField, onSort }: Props) {
   if (rows.length === 0) {
     return (
       <div className="flex h-32 items-center justify-center rounded-lg border border-gray-200 bg-white font-dm text-gray-500 shadow-sm">
-        No practices found.
+        No organizations found.
       </div>
     );
   }
@@ -114,7 +113,7 @@ export function OrganizationsTable({ rows, sortField, onSort }: Props) {
           <TableRow className="border-gray-200 border-b bg-gray-50/50">
             <TableHead className="px-6 py-3 font-semibold text-gray-500 text-xs tracking-wider">
               <SortableHeader
-                label="Practice"
+                label="Organization"
                 field="name"
                 currentField={sortField}
                 onSort={onSort}
@@ -129,14 +128,14 @@ export function OrganizationsTable({ rows, sortField, onSort }: Props) {
               />
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-              Location
+              State
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
               # of Locations
             </TableHead>
             <TableHead className="px-4 py-3 font-semibold text-gray-500 text-xs tracking-wider">
               <SortableHeader
-                label="Clients"
+                label="Patients"
                 field="students"
                 currentField={sortField}
                 onSort={onSort}

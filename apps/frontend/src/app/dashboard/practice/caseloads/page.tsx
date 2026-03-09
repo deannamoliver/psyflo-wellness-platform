@@ -23,12 +23,14 @@ export type OrgPatientRow = {
   email: string;
   assignedProvider: string;
   status: "active" | "inactive";
+  inviteStatus: "active" | "invite_sent" | "deactivated";
   lastActivity: string;
   billableDays: number;
   providerMinutes: number;
   treatmentPlan: string | null;
   daysAgo: number;
   riskLevel: "low" | "moderate" | "high" | "emergency" | null;
+  careTeam?: string[];
 };
 
 const MOCK_PROVIDERS = ["Dr. Sarah Johnson", "Dr. Michael Chen", "Lisa Martinez, LCSW", "Dr. Emily Williams"];
@@ -95,18 +97,30 @@ async function CaseloadsWrapper({ schoolId }: { schoolId: string }) {
     const isActive = h % 10 > 1; // ~80% active
     const riskLevels: (OrgPatientRow["riskLevel"])[] = [null, null, null, null, null, "low", "moderate", "high"];
     
+    // Mock invite status - in production this would come from actual invite data
+    const inviteStatuses: OrgPatientRow["inviteStatus"][] = ["active", "active", "active", "invite_sent", "deactivated"];
+    
+    // Mock care team - some patients have multiple providers
+    const careTeamOptions = [
+      [CURRENT_USER_PROVIDER],
+      [CURRENT_USER_PROVIDER, "Dr. Sarah Johnson"],
+      [CURRENT_USER_PROVIDER, "Dr. Michael Chen"],
+    ];
+    
     return {
       id: row.user.id,
       name: getUserFullName(row.user),
       email: row.user.email ?? "",
-      assignedProvider: MOCK_PROVIDERS[index % MOCK_PROVIDERS.length] ?? "Unknown Provider",
+      assignedProvider: CURRENT_USER_PROVIDER,
       status: isActive ? "active" : "inactive",
+      inviteStatus: inviteStatuses[h % inviteStatuses.length] ?? "active",
       lastActivity: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000).toISOString(),
       billableDays,
       providerMinutes,
       treatmentPlan: treatmentPlans[h % treatmentPlans.length] ?? null,
       daysAgo,
       riskLevel: riskLevels[h % riskLevels.length] ?? null,
+      careTeam: careTeamOptions[h % careTeamOptions.length],
     };
   });
 

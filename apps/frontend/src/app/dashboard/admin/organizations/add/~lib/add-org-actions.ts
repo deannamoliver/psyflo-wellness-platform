@@ -281,13 +281,13 @@ export async function updateOrganizationAction(
     })
     .where(eq(schools.id, orgId));
 
-  // Cascade status to child locations and users
+  // Cascade status to child locations and users when deactivating
   if (
     currentOrg &&
     currentOrg.status !== newStatus &&
-    (newStatus === "suspended" || newStatus === "archived")
+    newStatus === "archived"
   ) {
-    await cascadeOrgStatus(orgId, newStatus);
+    await cascadeOrgStatus(orgId);
   }
 
   // Delete existing contacts

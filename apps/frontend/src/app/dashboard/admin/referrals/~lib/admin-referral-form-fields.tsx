@@ -43,7 +43,7 @@ export const INSURANCE = [
 ];
 
 export const NEXT_STEPS = [
-  "PsyFlo care coordination team receives your referral immediately",
+  "Psyflo care coordination team receives your referral immediately",
   "Family is contacted within the specified urgency timeline",
   "You\u2019ll receive email updates on referral status and provider matching",
   "Track progress in the Referrals section of your dashboard",

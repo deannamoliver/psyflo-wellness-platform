@@ -19,7 +19,7 @@ import { Skeleton } from "@/lib/core-ui/skeleton";
 import { H2, Muted } from "@/lib/core-ui/typography";
 import { serverDrizzle } from "@/lib/database/drizzle";
 import { getUserFullName } from "@/lib/user/utils";
-import { AlertIcon } from "../../../counselor/home/~lib/icons";
+import { AlertIcon } from "../../../counselor/caseloads/~lib/icons";
 import { BlockStudentButton } from "./~lib/block-student-button";
 import { BlockedStatusSections } from "./~lib/blocked-status-sections";
 import { StudentTabs } from "./tabs";
