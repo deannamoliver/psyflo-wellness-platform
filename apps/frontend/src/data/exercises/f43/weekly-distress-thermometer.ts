@@ -1,0 +1,91 @@
+import type { TrackerConfig } from "@/lib/exercises/types";
+
+export const weeklyDistressThermometer: TrackerConfig = {
+  id: "f43-1-01",
+  type: "tracker",
+  title: "Weekly Distress Thermometer",
+  subtitle: "Simple distress monitoring",
+  description: "A simple 0-10 distress rating with context note. Track your overall distress level over time.",
+  estimatedMinutes: 2,
+  completionMessage: "Distress level logged. Tracking helps you and your clinician monitor progress.",
+  applicableCodes: ["F43"],
+  frequency: "weekly",
+  showTrend: true,
+  showStreak: true,
+  fields: [
+    {
+      id: "distress_level",
+      label: "Rate your overall distress this week (0-10)",
+      type: "likert",
+      min: 0,
+      max: 10,
+      minLabel: "No distress",
+      maxLabel: "Extreme distress",
+      required: true,
+    },
+    {
+      id: "context",
+      label: "Brief context (what contributed to this rating)",
+      type: "text",
+      required: false,
+      helpText: "What's been happening? Any specific triggers or stressors?",
+    },
+    {
+      id: "intrusions",
+      label: "How often did you have intrusive memories or thoughts?",
+      type: "select",
+      options: [
+        { value: "none", label: "None" },
+        { value: "rarely", label: "Rarely (1-2 times)" },
+        { value: "sometimes", label: "Sometimes (a few times)" },
+        { value: "often", label: "Often (daily)" },
+        { value: "very_often", label: "Very often (multiple times daily)" },
+      ],
+      required: true,
+    },
+    {
+      id: "avoidance",
+      label: "How much did you avoid reminders of the stressful event?",
+      type: "likert",
+      min: 0,
+      max: 10,
+      minLabel: "Not at all",
+      maxLabel: "Completely avoided",
+      required: true,
+    },
+    {
+      id: "sleep_quality",
+      label: "How was your sleep this week?",
+      type: "select",
+      options: [
+        { value: "good", label: "Good - restful" },
+        { value: "fair", label: "Fair - some disruption" },
+        { value: "poor", label: "Poor - significant problems" },
+        { value: "very_poor", label: "Very poor - severe insomnia or nightmares" },
+      ],
+      required: true,
+    },
+    {
+      id: "functioning",
+      label: "How well did you function in daily activities?",
+      type: "likert",
+      min: 0,
+      max: 10,
+      minLabel: "Not at all",
+      maxLabel: "Fully functioning",
+      required: true,
+    },
+  ],
+  alertRules: [
+    {
+      fieldId: "distress_level",
+      condition: "gte",
+      value: 8,
+      severity: "warning",
+      message: "Distress level is very high. Consider discussing with clinician.",
+      notifyClinician: true,
+    },
+  ],
+};
+
+export default weeklyDistressThermometer;

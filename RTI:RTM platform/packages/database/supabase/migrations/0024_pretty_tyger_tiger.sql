@@ -1,0 +1,1 @@
+ALTER TYPE "public"."alert_type" ADD VALUE 'well_being' BEFORE 'safety';

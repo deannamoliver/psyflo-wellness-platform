@@ -1,0 +1,1 @@
+ALTER TABLE "screener_sessions" ALTER COLUMN "grade" SET NOT NULL;

@@ -1,0 +1,100 @@
+import type { ExerciseConfig } from "@/lib/exercises/types";
+
+export const pausePlanProceed: ExerciseConfig = {
+  id: "f90-2-01",
+  type: "exercise",
+  title: "Pause-Plan-Proceed Protocol",
+  subtitle: "Decision-making for high-impulse moments",
+  description: "A 3-step protocol for moments when you feel the urge to act impulsively: Pause, Plan, Proceed intentionally.",
+  estimatedMinutes: 8,
+  completionMessage: "You've practiced the Pause-Plan-Proceed protocol. Use it whenever you notice an impulse arising.",
+  applicableCodes: ["F90"],
+  allowBackNavigation: true,
+  showProgressBar: true,
+  steps: [
+    {
+      id: "intro",
+      type: "instruction",
+      label: "The Impulse Challenge",
+      content: "With ADHD, impulses can feel like they bypass your brain entirely — you've already acted before thinking.\n\nThe **Pause-Plan-Proceed** protocol creates a gap between impulse and action.\n\n**PAUSE** — Notice the urge without acting\n**PLAN** — Consider consequences and alternatives\n**PROCEED** — Make a conscious choice\n\nLet's practice with a recent impulse.",
+    },
+    {
+      id: "recent-impulse",
+      type: "text-input",
+      label: "Describe a recent impulsive urge you had (or have right now)",
+      helpText: "e.g., Urge to interrupt, buy something, say something snarky, abandon a task, check phone",
+      placeholder: "I had/have the urge to...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "step1-pause",
+      type: "instruction",
+      label: "Step 1: PAUSE",
+      content: "**PAUSE** — Notice the urge without acting on it.\n\nTake a breath. Name what you're experiencing:\n• \"I notice an urge to...\"\n• \"My impulse right now is to...\"\n\nYou don't have to suppress it — just observe it. There's a space between stimulus and response. Find it.\n\nPhysical cues that help:\n• Take a breath\n• Put your hands in your pockets\n• Count to 5\n• Say \"let me think about that\" (if talking to someone)",
+    },
+    {
+      id: "pause-cue",
+      type: "text-input",
+      label: "What physical cue will help you PAUSE?",
+      placeholder: "e.g., Take a deep breath, squeeze my fist, say 'hold on'",
+      required: true,
+    },
+    {
+      id: "step2-plan",
+      type: "instruction",
+      label: "Step 2: PLAN",
+      content: "**PLAN** — Quickly consider:\n\n1. **Consequences**: What happens if I act on this impulse?\n   • Short-term: Might feel good for a moment\n   • Long-term: Might hurt relationships, finances, goals\n\n2. **Alternatives**: What else could I do?\n   • Wait 10 minutes\n   • Do a modified version\n   • Redirect the energy elsewhere\n\n3. **Values check**: Is this aligned with who I want to be?",
+    },
+    {
+      id: "consequences",
+      type: "text-input",
+      label: "What are the likely consequences of acting on this impulse?",
+      placeholder: "Short-term: ...\nLong-term: ...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "alternatives",
+      type: "text-input",
+      label: "What are some alternatives to the impulsive action?",
+      placeholder: "1. \n2. \n3. ",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "step3-proceed",
+      type: "instruction",
+      label: "Step 3: PROCEED",
+      content: "**PROCEED** — Make a conscious choice.\n\nYou might choose to:\n• **Act** — but now it's a choice, not a reaction\n• **Wait** — delay to see if the urge passes\n• **Redirect** — channel the energy into something else\n• **Skip** — decide it's not worth it\n\nThere's no single right answer — the goal is **intentionality** over automaticity.",
+    },
+    {
+      id: "decision",
+      type: "select",
+      label: "What did you decide to do with this impulse?",
+      options: [
+        { value: "acted_conscious", label: "Acted on it — but as a conscious choice" },
+        { value: "waited", label: "Waited to see if the urge would pass" },
+        { value: "redirected", label: "Redirected the energy to something else" },
+        { value: "skipped", label: "Decided not to act on it" },
+      ],
+      required: true,
+    },
+    {
+      id: "outcome",
+      type: "text-input",
+      label: "What was the outcome?",
+      placeholder: "How did it go? What did you notice?",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "reflection",
+      type: "reflection",
+      label: "Reflection",
+      prompt: "What did you learn from practicing Pause-Plan-Proceed? When will you use this protocol again?",
+    },
+  ],
+};
+
+export default pausePlanProceed;

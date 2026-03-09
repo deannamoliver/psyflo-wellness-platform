@@ -1,0 +1,98 @@
+import type { ExerciseConfig } from "@/lib/exercises/types";
+
+export const selfCompassionBreak: ExerciseConfig = {
+  id: "r45-2-02",
+  type: "exercise",
+  title: "Self-Compassion Break",
+  subtitle: "3-step practice for moments of suffering",
+  description: "A brief self-compassion practice based on Kristin Neff's model: Acknowledge suffering → Common humanity → Self-kindness.",
+  estimatedMinutes: 5,
+  completionMessage: "You've practiced self-compassion. Use this anytime you're struggling.",
+  applicableCodes: ["R45", "F32", "F33"],
+  allowBackNavigation: true,
+  showProgressBar: true,
+  steps: [
+    {
+      id: "intro",
+      type: "instruction",
+      label: "What is Self-Compassion?",
+      content: "When we suffer, we often make it worse with self-criticism: 'I shouldn't feel this way' or 'What's wrong with me?'\n\nSelf-compassion means treating yourself with the same kindness you'd offer a good friend.\n\nIt has three components:\n1. **Mindfulness** — Acknowledge the suffering without over-identifying\n2. **Common humanity** — Remember that suffering is part of being human\n3. **Self-kindness** — Offer yourself warmth and understanding",
+    },
+    {
+      id: "current-struggle",
+      type: "text-input",
+      label: "What are you struggling with right now?",
+      helpText: "It can be something big or small. Whatever is causing you pain.",
+      placeholder: "I'm struggling with...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "distress-level",
+      type: "likert",
+      label: "How much distress is this causing you?",
+      min: 0,
+      max: 10,
+      minLabel: "Mild",
+      maxLabel: "Severe",
+      required: true,
+    },
+    {
+      id: "step1",
+      type: "instruction",
+      label: "Step 1: Acknowledge the Suffering",
+      content: "First, simply acknowledge that this is a moment of suffering.\n\nYou might say to yourself:\n• \"This is hard.\"\n• \"This hurts.\"\n• \"This is a moment of suffering.\"\n• \"I'm having a really difficult time right now.\"\n\nTake a moment to acknowledge your pain without judgment. Don't push it away or dramatize it — just acknowledge it.",
+    },
+    {
+      id: "acknowledge",
+      type: "text-input",
+      label: "How will you acknowledge your suffering?",
+      placeholder: "e.g., 'This is hard. I'm really struggling right now.'",
+      required: true,
+    },
+    {
+      id: "step2",
+      type: "instruction",
+      label: "Step 2: Common Humanity",
+      content: "Suffering often makes us feel isolated, like we're the only one who feels this way.\n\nRemind yourself that suffering is part of being human:\n• \"Suffering is part of life.\"\n• \"I'm not alone in this. Others have felt this too.\"\n• \"This is part of the human experience.\"\n• \"Everyone struggles sometimes.\"\n\nThis isn't minimizing your pain — it's connecting you to the shared human experience.",
+    },
+    {
+      id: "humanity",
+      type: "text-input",
+      label: "How will you remind yourself of common humanity?",
+      placeholder: "e.g., 'I'm not the only one who has ever felt this way. Many people struggle with this.'",
+      required: true,
+    },
+    {
+      id: "step3",
+      type: "instruction",
+      label: "Step 3: Self-Kindness",
+      content: "Now, offer yourself kindness and warmth.\n\nWhat would you say to a dear friend in this situation? Say that to yourself:\n• \"May I be kind to myself.\"\n• \"May I give myself the compassion I need.\"\n• \"It's okay. I'm doing my best.\"\n• \"May I accept myself as I am.\"\n\nYou can also place a hand on your heart as a gesture of self-care.",
+    },
+    {
+      id: "kindness",
+      type: "text-input",
+      label: "What kind words will you offer yourself?",
+      placeholder: "e.g., 'May I be kind to myself. I'm doing the best I can.'",
+      required: true,
+    },
+    {
+      id: "distress-after",
+      type: "likert",
+      label: "How much distress are you feeling now?",
+      min: 0,
+      max: 10,
+      minLabel: "Mild",
+      maxLabel: "Severe",
+      required: true,
+    },
+    {
+      id: "reflection",
+      type: "reflection",
+      label: "Reflection",
+      prompt: "What did you notice during this practice? What part was hardest? What might you remember for next time?",
+    },
+  ],
+};
+
+export default selfCompassionBreak;

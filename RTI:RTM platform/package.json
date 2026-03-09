@@ -1,0 +1,48 @@
+{
+  "name": "feelwell",
+  "private": true,
+  "scripts": {
+    "test": "turbo run test",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "ultracite lint",
+    "format": "ultracite format",
+    "setup-env": "bun run scripts/setup-env.ts",
+    "gen-openapi": "turbo run gen-openapi",
+    "db:start": "turbo run db:start",
+    "db:stop": "turbo run db:stop",
+    "db:generate": "turbo run db:generate",
+    "db:migrate": "turbo run db:migrate",
+    "db:reset": "turbo run db:reset",
+    "db:seed": "turbo run db:seed",
+    "deploy:init": "bun run scripts/deploy.ts init",
+    "deploy:push": "bun run scripts/deploy.ts push",
+    "langsmith": "cd apps/frontend && bunx @langchain/langgraph-cli dev"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "tsup": "^8.5.0",
+    "typescript": "5.8.3",
+    "ultracite": "5.0.36"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.18",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "bun-types": "^1.2.19",
+    "google-auth-library": "^10.3.0",
+    "lefthook": "^1.12.2",
+    "supabase": "^2.31.8",
+    "turbo": "^2.5.5",
+    "xlsx": "^0.18.5"
+  },
+  "trustedDependencies": [
+    "lefthook"
+  ]
+}

@@ -1,0 +1,133 @@
+import type { TrackerConfig } from "@/lib/exercises/types";
+
+export const sleepDiary: TrackerConfig = {
+  id: "f32-3-02",
+  type: "tracker",
+  title: "Sleep Diary",
+  subtitle: "Track your sleep patterns",
+  description: "Log your nightly sleep with auto-calculated sleep efficiency to identify patterns and track improvement over time.",
+  estimatedMinutes: 3,
+  completionMessage: "Sleep logged! Consistent tracking helps identify patterns and improve sleep quality.",
+  applicableCodes: ["F32", "F33", "F51"],
+  frequency: "daily",
+  showTrend: true,
+  showStreak: true,
+  fields: [
+    {
+      id: "bedtime",
+      label: "What time did you get into bed?",
+      type: "time",
+      required: true,
+    },
+    {
+      id: "sleep_attempt_time",
+      label: "What time did you try to fall asleep?",
+      type: "time",
+      required: true,
+    },
+    {
+      id: "time_to_fall_asleep",
+      label: "How long did it take to fall asleep? (minutes)",
+      type: "number",
+      required: true,
+      unit: "min",
+      validation: { min: 0, max: 300 },
+    },
+    {
+      id: "night_wakings",
+      label: "How many times did you wake up during the night?",
+      type: "number",
+      required: true,
+      validation: { min: 0, max: 20 },
+    },
+    {
+      id: "total_awake_time",
+      label: "Total time awake during the night (minutes)",
+      type: "number",
+      required: true,
+      unit: "min",
+      validation: { min: 0, max: 480 },
+      helpText: "Estimate total minutes awake after initially falling asleep",
+    },
+    {
+      id: "final_wake_time",
+      label: "What time did you finally wake up?",
+      type: "time",
+      required: true,
+    },
+    {
+      id: "out_of_bed_time",
+      label: "What time did you get out of bed?",
+      type: "time",
+      required: true,
+    },
+    {
+      id: "sleep_quality",
+      label: "Rate your sleep quality",
+      type: "likert",
+      min: 1,
+      max: 5,
+      minLabel: "Very poor",
+      maxLabel: "Excellent",
+      required: true,
+    },
+    {
+      id: "restfulness",
+      label: "How rested do you feel this morning?",
+      type: "likert",
+      min: 1,
+      max: 5,
+      minLabel: "Not at all",
+      maxLabel: "Very rested",
+      required: true,
+    },
+    {
+      id: "caffeine",
+      label: "Did you have caffeine after 2pm yesterday?",
+      type: "select",
+      options: [
+        { value: "no", label: "No" },
+        { value: "yes", label: "Yes" },
+      ],
+      required: true,
+    },
+    {
+      id: "alcohol",
+      label: "Did you have alcohol within 3 hours of bed?",
+      type: "select",
+      options: [
+        { value: "no", label: "No" },
+        { value: "yes", label: "Yes" },
+      ],
+      required: true,
+    },
+    {
+      id: "screens",
+      label: "Did you use screens in the hour before bed?",
+      type: "select",
+      options: [
+        { value: "no", label: "No" },
+        { value: "yes", label: "Yes" },
+      ],
+      required: true,
+    },
+    {
+      id: "notes",
+      label: "Notes (anything that affected your sleep)",
+      type: "text",
+      required: false,
+    },
+  ],
+  alertRules: [
+    {
+      fieldId: "sleep_quality",
+      condition: "lte",
+      value: 2,
+      severity: "warning",
+      message: "Sleep quality has been poor. Consider reviewing sleep hygiene practices.",
+      notifyClinician: false,
+    },
+  ],
+};
+
+export default sleepDiary;

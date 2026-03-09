@@ -1,0 +1,107 @@
+import type { ExerciseConfig } from "@/lib/exercises/types";
+
+export const ruminationInterruptionPractice: ExerciseConfig = {
+  id: "f33-1-01",
+  type: "exercise",
+  title: "Rumination Interruption Practice",
+  subtitle: "MBCT-informed thought pattern interruption",
+  description: "Learn to notice rumination, label it, and redirect your attention using breathing, grounding, or movement.",
+  estimatedMinutes: 10,
+  completionMessage: "Well done! Each time you interrupt rumination, you're building a new neural pathway.",
+  applicableCodes: ["F33"],
+  allowBackNavigation: true,
+  showProgressBar: true,
+  steps: [
+    {
+      id: "intro",
+      type: "instruction",
+      label: "Understanding Rumination",
+      content: "Rumination is the mind's tendency to replay the same thoughts over and over — often about past events, mistakes, or 'what ifs.'\n\nUnlike problem-solving (which moves toward a solution), rumination keeps you stuck in a loop without resolution. It's exhausting and maintains depression.\n\nThe goal isn't to suppress thoughts, but to **notice** when you're ruminating and **redirect** your attention to something else.",
+    },
+    {
+      id: "current-rumination",
+      type: "text-input",
+      label: "What have you been ruminating about recently?",
+      helpText: "Briefly describe the thought pattern you've been stuck in.",
+      placeholder: "I keep thinking about...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "step1-label",
+      type: "instruction",
+      label: "Step 1: Label the Pattern",
+      content: "When you notice yourself ruminating, mentally label it:\n\n**\"This is rumination.\"**\n\nOr use a phrase like:\n• \"There goes the worry machine again\"\n• \"My mind is doing that thing\"\n• \"Replaying mode activated\"\n\nLabeling creates distance between you and the thought pattern. You are not your thoughts — you are the one noticing them.",
+    },
+    {
+      id: "personal-label",
+      type: "text-input",
+      label: "Create your personal labeling phrase",
+      placeholder: "e.g., 'There goes the replay loop'",
+      required: true,
+    },
+    {
+      id: "step2-choose",
+      type: "instruction",
+      label: "Step 2: Choose a Redirect",
+      content: "Once you've labeled the rumination, redirect your attention. Choose one:\n\n**Breathing Space**: Take 3 deep breaths, focusing fully on the sensation of breathing.\n\n**Grounding**: Use 5-4-3-2-1 (5 things you see, 4 hear, 3 touch, 2 smell, 1 taste).\n\n**Movement**: Stand up, stretch, take a short walk, or do jumping jacks.\n\nThe goal is to shift from 'thinking mode' to 'sensing mode.'",
+    },
+    {
+      id: "redirect-choice",
+      type: "select",
+      label: "Which redirect will you try right now?",
+      options: [
+        { value: "breathing", label: "Breathing Space (3 deep breaths)" },
+        { value: "grounding", label: "5-4-3-2-1 Grounding" },
+        { value: "movement", label: "Physical Movement" },
+      ],
+      required: true,
+    },
+    {
+      id: "practice-prompt",
+      type: "instruction",
+      label: "Practice Now",
+      content: "Take the next 1-2 minutes to practice your chosen redirect.\n\nIf you chose **Breathing**: Take 3 slow, deep breaths. Notice the air entering and leaving.\n\nIf you chose **Grounding**: Name 5 things you can see, 4 you can hear, 3 you can touch, 2 you can smell, 1 you can taste.\n\nIf you chose **Movement**: Stand up and stretch, do 10 jumping jacks, or walk around the room.\n\nWhen you're done, continue to the next step.",
+    },
+    {
+      id: "effectiveness",
+      type: "likert",
+      label: "How effective was the redirect at interrupting the rumination?",
+      min: 1,
+      max: 10,
+      minLabel: "Not at all",
+      maxLabel: "Very effective",
+      required: true,
+    },
+    {
+      id: "step3-log",
+      type: "instruction",
+      label: "Step 3: Log What Helped",
+      content: "Tracking what triggers rumination and which redirects work best helps you build a personalized toolkit.\n\nOver time, you'll notice patterns and can catch rumination earlier.",
+    },
+    {
+      id: "trigger",
+      type: "text-input",
+      label: "What triggered this rumination episode?",
+      helpText: "Situation, time of day, emotion, etc.",
+      placeholder: "e.g., Lying in bed at night, after receiving criticism",
+      required: true,
+    },
+    {
+      id: "what-helped",
+      type: "text-input",
+      label: "What helped most with interrupting it?",
+      placeholder: "e.g., The grounding exercise helped because...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "reflection",
+      type: "reflection",
+      label: "Reflection",
+      prompt: "What did you learn about your rumination patterns today? What will you try next time you notice yourself ruminating?",
+    },
+  ],
+};
+
+export default ruminationInterruptionPractice;

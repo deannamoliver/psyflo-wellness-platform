@@ -1,0 +1,1 @@
+ALTER TABLE "screener_session_responses" ADD COLUMN "ordinal" integer NOT NULL;

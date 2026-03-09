@@ -1,0 +1,172 @@
+{
+  "id": "22ce97c5-82e5-46d9-ae6a-15e2ea907ccb",
+  "prevId": "c07508af-5176-4f4f-8b14-af5deb982e2d",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.profiles": {
+      "name": "profiles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pronouns": {
+          "name": "pronouns",
+          "type": "pronoun",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "language": {
+          "name": "language",
+          "type": "language",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ethnicity": {
+          "name": "ethnicity",
+          "type": "ethnicity",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "onboarding_completed_at": {
+          "name": "onboarding_completed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "profiles_id_users_id_fk": {
+          "name": "profiles_id_users_id_fk",
+          "tableFrom": "profiles",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "authenticated can manage own profile": {
+          "name": "authenticated can manage own profile",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": ["authenticated"],
+          "using": "(select auth.uid()) = id"
+        },
+        "admin can manage all profiles": {
+          "name": "admin can manage all profiles",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": ["supabase_auth_admin"],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.ethnicity": {
+      "name": "ethnicity",
+      "schema": "public",
+      "values": [
+        "american_indian_or_alaska_native",
+        "asian",
+        "black_or_african_american",
+        "hispanic_or_latino",
+        "middle_eastern_or_north_african",
+        "native_hawaiian_or_pacific_islander",
+        "white",
+        "prefer_not_to_answer"
+      ]
+    },
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": ["male", "female", "non-binary", "prefer not to say", "other"]
+    },
+    "public.language": {
+      "name": "language",
+      "schema": "public",
+      "values": [
+        "english",
+        "spanish",
+        "french",
+        "chinese_simplified",
+        "arabic",
+        "haitian_creole",
+        "bengali",
+        "russian",
+        "urdu",
+        "vietnamese",
+        "portuguese"
+      ]
+    },
+    "public.pronoun": {
+      "name": "pronoun",
+      "schema": "public",
+      "values": ["he/him", "she/her", "they/them", "other"]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

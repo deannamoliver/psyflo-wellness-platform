@@ -1,0 +1,107 @@
+{
+  "id": "7c1c50d9-736a-4d14-9c78-0b6a61fdd060",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.profiles": {
+      "name": "profiles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pronouns": {
+          "name": "pronouns",
+          "type": "pronoun",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "race": {
+          "name": "race",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "profiles_id_users_id_fk": {
+          "name": "profiles_id_users_id_fk",
+          "tableFrom": "profiles",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "authenticated can manage own profile": {
+          "name": "authenticated can manage own profile",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": ["authenticated"],
+          "using": "(select auth.uid()) = id"
+        },
+        "admin can manage all profiles": {
+          "name": "admin can manage all profiles",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": ["supabase_auth_admin"],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": ["male", "female", "non-binary", "prefer not to say", "other"]
+    },
+    "public.pronoun": {
+      "name": "pronoun",
+      "schema": "public",
+      "values": ["he/him", "she/her", "they/them", "other"]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

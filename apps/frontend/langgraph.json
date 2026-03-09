@@ -1,0 +1,13 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "main_graph": "./src/lib/langgraph/main-graph.ts:getMainGraph",
+    "base_agent": "./src/lib/langgraph/base-agent.ts:buildBaseAgentGraph",
+    "main_router": "./src/lib/langgraph/risk-protocol/risk-router.ts:buildMainRouterGraph",
+    "direct_risk": "./src/lib/langgraph/risk-protocol/subgraphs/direct-risk.ts:buildDirectRiskGraph",
+    "indirect_risk": "./src/lib/langgraph/risk-protocol/subgraphs/indirect-risk.ts:buildIndirectRiskGraph",
+    "ambiguous_risk": "./src/lib/langgraph/risk-protocol/subgraphs/ambiguous-risk.ts:buildAmbiguousRiskGraph",
+    "abuse_neglect": "./src/lib/langgraph/risk-protocol/subgraphs/abuse-neglect.ts:abuseNeglectGraph"
+  },
+  "env": ".env"
+}

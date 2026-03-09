@@ -1,0 +1,53 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "globalEnv": [
+    "SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "POSTGRES_URL",
+    "GOOGLE_API_KEY",
+    "GOOGLE_API_KEY"
+  ],
+  "tasks": {
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "gen-openapi": {
+      "cache": false
+    },
+    "db:start": {
+      "cache": false
+    },
+    "db:stop": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:reset": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false,
+      "persistent": true
+    },
+    "//#format": {},
+    "//#lint": {},
+    "//#format-and-lint:fix": {
+      "cache": false
+    }
+  }
+}

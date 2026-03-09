@@ -1,0 +1,10 @@
+Do not edit or modify any files in:
+- packages/database/
+- **/supabase/
+- **/.env*
+- **/migrations/
+- apps/frontend/src/lib/langgraph/
+
+Do not make changes to database schemas, Supabase configuration, environment variables, or chatbot/AI logic.
+
+Only make frontend UI changes when requested.

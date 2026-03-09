@@ -1,0 +1,133 @@
+import type { WorksheetConfig } from "@/lib/exercises/types";
+
+export const brainDumpActionPlan: WorksheetConfig = {
+  id: "f90-3-01",
+  type: "worksheet",
+  title: "Brain Dump to Action Plan",
+  subtitle: "From overwhelm to clarity",
+  description: "Step 1: Brain dump everything. Step 2: Categorize. Step 3: Identify your top 3 priorities for today.",
+  estimatedMinutes: 10,
+  completionMessage: "You've transformed mental chaos into a clear action plan!",
+  applicableCodes: ["F90"],
+  printable: true,
+  sections: [
+    {
+      id: "header",
+      type: "header",
+      content: "Brain Dump to Action Plan",
+      level: 1,
+    },
+    {
+      id: "date",
+      type: "text-field",
+      label: "Date",
+      required: true,
+    },
+    {
+      id: "header-dump",
+      type: "header",
+      content: "Step 1: Brain Dump",
+      level: 2,
+    },
+    {
+      id: "dump-intro",
+      type: "text-field",
+      label: "Write EVERYTHING that's on your mind. Don't organize, just dump. Tasks, worries, ideas, reminders — all of it.",
+      multiline: false,
+    },
+    {
+      id: "brain-dump",
+      type: "text-field",
+      label: "Brain dump (everything on your mind)",
+      placeholder: "Just write... tasks, thoughts, worries, ideas, reminders, everything...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "header-categorize",
+      type: "header",
+      content: "Step 2: Categorize",
+      level: 2,
+    },
+    {
+      id: "categorize-intro",
+      type: "text-field",
+      label: "Now sort items from your brain dump into categories:",
+      multiline: false,
+    },
+    {
+      id: "urgent",
+      type: "text-field",
+      label: "🔴 URGENT — Must be done today",
+      placeholder: "Items that absolutely must happen today...",
+      multiline: true,
+    },
+    {
+      id: "important",
+      type: "text-field",
+      label: "🟡 IMPORTANT — Should be done this week",
+      placeholder: "Items that matter but aren't emergencies...",
+      multiline: true,
+    },
+    {
+      id: "can-wait",
+      type: "text-field",
+      label: "🟢 CAN WAIT — Nice to do eventually",
+      placeholder: "Items with no pressing deadline...",
+      multiline: true,
+    },
+    {
+      id: "delegate",
+      type: "text-field",
+      label: "👥 DELEGATE — Someone else can do",
+      placeholder: "Items you can ask for help with or hand off...",
+      multiline: true,
+    },
+    {
+      id: "discard",
+      type: "text-field",
+      label: "🗑️ DISCARD — Not actually necessary",
+      placeholder: "Items that don't really need to be done...",
+      multiline: true,
+    },
+    {
+      id: "header-top3",
+      type: "header",
+      content: "Step 3: Today's Top 3",
+      level: 2,
+    },
+    {
+      id: "top3-intro",
+      type: "text-field",
+      label: "From your URGENT items, pick the 3 most important. If you only accomplish these 3 things, today is a success.",
+      multiline: false,
+    },
+    {
+      id: "priority1",
+      type: "text-field",
+      label: "#1 Priority",
+      required: true,
+    },
+    {
+      id: "priority2",
+      type: "text-field",
+      label: "#2 Priority",
+      required: true,
+    },
+    {
+      id: "priority3",
+      type: "text-field",
+      label: "#3 Priority",
+      required: true,
+    },
+    {
+      id: "first-action",
+      type: "text-field",
+      label: "What's the VERY FIRST action step for #1?",
+      helpText: "Make it so small you can't say no. e.g., 'Open the document'",
+      required: true,
+    },
+  ],
+};
+
+export default brainDumpActionPlan;

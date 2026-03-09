@@ -1,0 +1,102 @@
+import type { ExerciseConfig } from "@/lib/exercises/types";
+
+export const distressToleranceToolkit: ExerciseConfig = {
+  id: "r45-2-01",
+  type: "exercise",
+  title: "Distress Tolerance Toolkit",
+  subtitle: "DBT-informed skills for managing intense emotions",
+  description: "Learn and practice TIPP, ACCEPTS, and self-soothe skills. Build your personalized toolkit for managing emotional crises.",
+  estimatedMinutes: 15,
+  completionMessage: "You've explored key distress tolerance skills. Practice makes them automatic when you need them most.",
+  applicableCodes: ["R45"],
+  allowBackNavigation: true,
+  showProgressBar: true,
+  steps: [
+    {
+      id: "intro",
+      type: "instruction",
+      label: "Distress Tolerance Skills",
+      content: "Sometimes emotions feel so intense that you just need to **survive the moment** without making things worse.\n\nDistress tolerance skills don't solve problems — they help you get through crisis moments until you can think clearly again.\n\nWe'll explore three skill sets:\n• **TIPP** — Fast-acting physiological reset\n• **ACCEPTS** — Distraction strategies\n• **Self-Soothe** — Using your senses to comfort yourself",
+    },
+    {
+      id: "tipp-intro",
+      type: "instruction",
+      label: "TIPP: Fast Physiological Reset",
+      content: "**T**emperature — Cold water on face, ice on wrists\n**I**ntense Exercise — 20+ minutes of vigorous movement\n**P**aced Breathing — Exhale longer than inhale (e.g., 4-7-8)\n**P**rogressive/Paired Muscle Relaxation — Tense and release\n\nThese work by directly changing your body's physiological state, which then affects your emotions.",
+    },
+    {
+      id: "tipp-try",
+      type: "select",
+      label: "Which TIPP skill appeals to you most?",
+      options: [
+        { value: "temperature", label: "Temperature (cold water/ice)" },
+        { value: "exercise", label: "Intense exercise" },
+        { value: "breathing", label: "Paced breathing" },
+        { value: "muscle", label: "Muscle relaxation" },
+      ],
+      required: true,
+    },
+    {
+      id: "accepts-intro",
+      type: "instruction",
+      label: "ACCEPTS: Healthy Distraction",
+      content: "**A**ctivities — Do something engaging (game, chore, hobby)\n**C**ontributing — Help someone else\n**C**omparisons — Compare to times you coped, or others who are struggling\n**E**motions — Generate a different emotion (comedy, music)\n**P**ushing Away — Mentally leave the situation temporarily\n**T**houghts — Occupy your mind (puzzles, counting, lists)\n**S**ensations — Intense but safe sensations (ice, strong mint)\n\nDistraction isn't avoidance when used temporarily during crisis.",
+    },
+    {
+      id: "accepts-try",
+      type: "select",
+      label: "Which ACCEPTS skills resonate with you?",
+      helpText: "Select all that might work for you",
+      options: [
+        { value: "activities", label: "Activities" },
+        { value: "contributing", label: "Contributing (helping others)" },
+        { value: "comparisons", label: "Comparisons" },
+        { value: "emotions", label: "Generating different emotions" },
+        { value: "pushing_away", label: "Pushing away temporarily" },
+        { value: "thoughts", label: "Occupying thoughts" },
+        { value: "sensations", label: "Intense sensations" },
+      ],
+      allowMultiple: true,
+      required: true,
+    },
+    {
+      id: "soothe-intro",
+      type: "instruction",
+      label: "Self-Soothe with Senses",
+      content: "Comforting your senses can calm your nervous system:\n\n**Vision** — Look at something beautiful (nature, art, photos)\n**Hearing** — Listen to calming or uplifting sounds/music\n**Smell** — Use soothing scents (lavender, vanilla, fresh air)\n**Taste** — Enjoy a comforting flavor (tea, chocolate)\n**Touch** — Soft blanket, warm bath, pet an animal\n\nThink about what sensory experiences are most comforting for you.",
+    },
+    {
+      id: "soothe-plan",
+      type: "text-input",
+      label: "List one self-soothe option for each sense",
+      placeholder: "Vision: ...\nHearing: ...\nSmell: ...\nTaste: ...\nTouch: ...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "build-toolkit",
+      type: "text-input",
+      label: "Your personal distress tolerance toolkit",
+      helpText: "From all the skills you've explored, list your top 5 go-to strategies",
+      placeholder: "1. \n2. \n3. \n4. \n5. ",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "when-use",
+      type: "text-input",
+      label: "When will you use these skills?",
+      placeholder: "Describe the situations or warning signs that tell you to use distress tolerance skills",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "reflection",
+      type: "reflection",
+      label: "Reflection",
+      prompt: "Which skill category (TIPP, ACCEPTS, Self-Soothe) do you think will be most helpful for you? Why?",
+    },
+  ],
+};
+
+export default distressToleranceToolkit;

@@ -1,0 +1,355 @@
+"use client";
+
+import { ArrowUpDown, ChevronLeft, ChevronRight, Filter, Search, X } from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { Avatar, AvatarFallback } from "@/lib/core-ui/avatar";
+import { getInitials } from "@/lib/string-utils";
+import { RISK_BADGE_CONFIG } from "@/lib/student-alerts/risk-level-badge";
+import { cn } from "@/lib/tailwind-utils";
+import type { StudentRow } from "./data";
+
+type SortKey = "name" | "lastCheckIn";
+type SortDir = "asc" | "desc";
+type PageSize = 10 | 25 | 50;
+
+const INDICATOR_BADGE_STYLES: Record<string, string> = {
+  anxiety: "bg-blue-100 text-blue-800",
+  depression: "bg-purple-100 text-purple-800",
+};
+
+function formatLastCheckIn(dateStr: string | null): string {
+  if (!dateStr) return "No check-ins";
+  const checkIn = new Date(dateStr);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const checkInDay = new Date(
+    checkIn.getFullYear(),
+    checkIn.getMonth(),
+    checkIn.getDate(),
+  );
+  const todayStart = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
+  const diffDays = Math.round(
+    (checkInDay.getTime() - todayStart.getTime()) / (24 * 60 * 60 * 1000),
+  );
+  if (diffDays === 0) return "Today";
+  if (diffDays === -1) return "Yesterday";
+  return checkIn.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+  });
+}
+
+export function StudentsClient({ students }: { students: StudentRow[] }) {
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [pageSize, setPageSize] = useState<PageSize>(10);
+  const [page, setPage] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
+  const [safetyFilter, setSafetyFilter] = useState<string>("all");
+  const [mentalHealthFilter, setMentalHealthFilter] = useState<string>("all");
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const filtered = useMemo(() => {
+    let result = students;
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((s) => s.name.toLowerCase().includes(q));
+    }
+    if (safetyFilter === "none") {
+      result = result.filter((s) => s.safetyRisk === null);
+    } else if (safetyFilter === "has_alert") {
+      result = result.filter((s) => s.safetyRisk !== null);
+    } else if (safetyFilter !== "all") {
+      result = result.filter((s) => s.safetyRisk === safetyFilter);
+    }
+    if (mentalHealthFilter === "none") {
+      result = result.filter((s) => s.mentalHealth.length === 0);
+    } else if (mentalHealthFilter !== "all") {
+      result = result.filter((s) =>
+        s.mentalHealth.some((m) => m.category === mentalHealthFilter),
+      );
+    }
+    return [...result].sort((a, b) => {
+      const dir = sortDir === "asc" ? 1 : -1;
+      if (sortKey === "name") return a.name.localeCompare(b.name) * dir;
+      if (sortKey === "lastCheckIn") {
+        const aDate = a.lastCheckIn ? new Date(a.lastCheckIn).getTime() : 0;
+        const bDate = b.lastCheckIn ? new Date(b.lastCheckIn).getTime() : 0;
+        return (aDate - bDate) * dir;
+      }
+      return 0;
+    });
+  }, [students, search, safetyFilter, mentalHealthFilter, sortKey, sortDir]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages - 1);
+  const paginated = filtered.slice(safePage * pageSize, safePage * pageSize + pageSize);
+  const activeFilterCount = (safetyFilter !== "all" ? 1 : 0) + (mentalHealthFilter !== "all" ? 1 : 0);
+
+  const resetFilters = () => {
+    setSafetyFilter("all");
+    setMentalHealthFilter("all");
+  };
+
+  function SortHeader({ label, sortKeyName }: { label: string; sortKeyName: SortKey }) {
+    const active = sortKey === sortKeyName;
+    return (
+      <button
+        type="button"
+        onClick={() => toggleSort(sortKeyName)}
+        className="flex items-center gap-1 text-left"
+      >
+        <span>{label}</span>
+        <ArrowUpDown className={cn("h-3 w-3", active ? "text-gray-900" : "text-gray-300")} />
+      </button>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border bg-white">
+      <div className="flex items-center justify-between border-b px-5 py-4">
+        <h3 className="text-sm font-semibold text-gray-900">All Patients</h3>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search patients..."
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+              className="rounded-lg border bg-gray-50 py-1.5 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowFilters(!showFilters)}
+            className={cn(
+              "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors",
+              showFilters || activeFilterCount > 0
+                ? "border-blue-300 bg-blue-50 text-blue-700"
+                : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50",
+            )}
+          >
+            <Filter className="h-3.5 w-3.5" />
+            Filter
+            {activeFilterCount > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Filter Panel */}
+      {showFilters && (
+        <div className="flex flex-wrap items-center gap-3 border-b bg-gray-50/50 px-5 py-3">
+          <div className="flex items-center gap-1.5">
+            <label className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Alert Status</label>
+            <select
+              value={safetyFilter}
+              onChange={(e) => { setSafetyFilter(e.target.value); setPage(0); }}
+              className="rounded-md border bg-white px-2 py-1 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
+            >
+              <option value="all">All</option>
+              <option value="has_alert">Has Alert</option>
+              <option value="emergency">Emergency</option>
+              <option value="high">High</option>
+              <option value="moderate">Moderate</option>
+              <option value="low">Low</option>
+              <option value="none">No Alerts</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <label className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Mental Health</label>
+            <select
+              value={mentalHealthFilter}
+              onChange={(e) => { setMentalHealthFilter(e.target.value); setPage(0); }}
+              className="rounded-md border bg-white px-2 py-1 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
+            >
+              <option value="all">All</option>
+              <option value="anxiety">Anxiety</option>
+              <option value="depression">Depression</option>
+              <option value="none">No Indicators</option>
+            </select>
+          </div>
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            >
+              <X className="h-3 w-3" />
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b bg-gray-50/50">
+              <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <SortHeader label="Patient" sortKeyName="name" />
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                Alert Status
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                Clinical Indicators
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <SortHeader label="Last Engagement" sortKeyName="lastCheckIn" />
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {paginated.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-5 py-8 text-center text-sm text-gray-400">
+                  No patients found.
+                </td>
+              </tr>
+            ) : (
+              paginated.map((s) => <StudentTableRow key={s.id} student={s} />)
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer: pagination + page size */}
+      <div className="flex items-center justify-between border-t px-5 py-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400">Show</span>
+          {([10, 25, 50] as const).map((size) => (
+            <button
+              key={size}
+              type="button"
+              onClick={() => { setPageSize(size); setPage(0); }}
+              className={cn(
+                "rounded-md px-2 py-0.5 text-xs font-medium transition-colors",
+                pageSize === size
+                  ? "bg-gray-900 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+              )}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+        <span className="text-xs text-gray-400">
+          Showing {filtered.length === 0 ? 0 : safePage * pageSize + 1}–{Math.min((safePage + 1) * pageSize, filtered.length)} of {filtered.length} patients
+        </span>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            disabled={safePage === 0}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            className="rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <span className="px-2 text-xs font-medium text-gray-700">
+            {safePage + 1} / {totalPages}
+          </span>
+          <button
+            type="button"
+            disabled={safePage >= totalPages - 1}
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            className="rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StudentTableRow({ student }: { student: StudentRow }) {
+  return (
+    <tr className="transition-colors hover:bg-gray-50/50">
+      <td className="px-5 py-3">
+        <Link
+          href={`/dashboard/counselor/students/${student.id}/overview`}
+          className="flex items-center gap-3"
+        >
+          <Avatar className="h-8 w-8 shrink-0">
+            <AvatarFallback className="bg-green-500 font-semibold text-white text-xs">
+              {getInitials(student.name)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-sm font-medium text-gray-900 hover:text-blue-600 hover:underline">
+            {student.name}
+          </span>
+        </Link>
+      </td>
+      <td className="px-4 py-3">
+        {student.safetyRisk ? (
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium",
+              RISK_BADGE_CONFIG[student.safetyRisk].bg,
+              RISK_BADGE_CONFIG[student.safetyRisk].text,
+            )}
+          >
+            {RISK_BADGE_CONFIG[student.safetyRisk].label}
+          </span>
+        ) : (
+          <span className="text-xs italic text-gray-400">None</span>
+        )}
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex gap-1.5">
+          {student.mentalHealth.map((indicator) => (
+            <span
+              key={indicator.category}
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium",
+                INDICATOR_BADGE_STYLES[indicator.category] ?? "bg-gray-100 text-gray-800"
+              )}
+            >
+              {indicator.category === "anxiety" ? "Anxiety" : "Depression"}
+              <span className="opacity-60">·</span>
+              <span>{indicator.severity}</span>
+            </span>
+          ))}
+          {student.mentalHealth.length === 0 && (
+            <span className="text-xs italic text-gray-400">None</span>
+          )}
+        </div>
+      </td>
+      <td className="px-4 py-3 text-xs text-gray-500">
+        {formatLastCheckIn(student.lastCheckIn)}
+      </td>
+      <td className="px-4 py-3 text-right">
+        <Link
+          href={`/dashboard/counselor/students/${student.id}/overview`}
+          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50"
+        >
+          View
+          <ChevronRight className="h-3 w-3" />
+        </Link>
+      </td>
+    </tr>
+  );
+}

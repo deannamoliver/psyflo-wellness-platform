@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+
+# Next.js
+.next/
+
+.vscode/*
+.turbo/
+
+build/
+
+.*.bun-build
+
+.cache
+dist
+
+.dump/
+
+# env files (can opt-in for committing if needed)
+.env*
+
+.venv/
+.vercel
+
+vercel-key.json
+
+*.pyc
+
+# Copilot files
+.github/copilot-instructions.md
+risk-protocol-suicide.md
+abuse-neglect.md
+harm-others.md
+
+apps/frontend/src/lib/langgraph/chatbot_test_results
+
+# Provider data store (server-side JSON, replaces localStorage bridge)
+.provider-data/
+
+# Finder (MacOS) folder config
+.DS_Store
+apps/.DS_Store

@@ -1,0 +1,33 @@
+{
+  "name": "@feelwell/database",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "predev": "supabase start",
+    "dev": "tsup src/**/*.ts --watch --format esm",
+    "build": "tsc",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "supabase migration up",
+    "db:reset": "supabase db reset",
+    "db:seed": "bun src/seed/seed.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.31.4"
+  },
+  "peerDependencies": {
+    "@feelwell/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.52.0",
+    "drizzle-orm": "^0.44.3",
+    "drizzle-seed": "^0.3.1",
+    "tsup": "^8.5.0",
+    "uuid": "^11.1.0"
+  }
+}

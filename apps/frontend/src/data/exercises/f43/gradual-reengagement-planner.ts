@@ -1,0 +1,115 @@
+import type { WorksheetConfig } from "@/lib/exercises/types";
+
+export const gradualReengagementPlanner: WorksheetConfig = {
+  id: "f43-3-02",
+  type: "worksheet",
+  title: "Gradual Re-Engagement Planner",
+  subtitle: "Small steps toward restored functioning",
+  description: "Set small, achievable re-engagement steps for areas where functioning has decreased since the stressor.",
+  estimatedMinutes: 15,
+  completionMessage: "Your re-engagement plan is set. Take it one small step at a time.",
+  applicableCodes: ["F43"],
+  printable: true,
+  sections: [
+    {
+      id: "header",
+      type: "header",
+      content: "Gradual Re-Engagement Planner",
+      level: 1,
+    },
+    {
+      id: "intro",
+      type: "text-field",
+      label: "After stress or trauma, it's normal to pull back from activities. This planner helps you gradually re-engage with life at your own pace.",
+      multiline: false,
+    },
+    {
+      id: "domain",
+      type: "text-field",
+      label: "Which life area do you want to work on?",
+      placeholder: "e.g., Work, Relationships, Self-care, Hobbies, Social activities",
+      required: true,
+    },
+    {
+      id: "before",
+      type: "text-field",
+      label: "What did engagement look like BEFORE the stressor?",
+      placeholder: "e.g., I worked full days, saw friends weekly, exercised 3x/week",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "now",
+      type: "text-field",
+      label: "What does engagement look like NOW?",
+      placeholder: "e.g., Struggling to work more than a few hours, avoiding friends, no exercise",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "header-steps",
+      type: "header",
+      content: "Re-Engagement Steps",
+      level: 2,
+    },
+    {
+      id: "steps-intro",
+      type: "text-field",
+      label: "Break down re-engagement into small, achievable steps. Start with the easiest and gradually work up.",
+      multiline: false,
+    },
+    {
+      id: "steps-table",
+      type: "table",
+      label: "My re-engagement steps (easiest to hardest)",
+      columns: [
+        { id: "step", header: "Step", type: "text", width: "50%" },
+        { id: "difficulty", header: "Difficulty (1-10)", type: "number", width: "20%" },
+        { id: "target_date", header: "Target date", type: "text", width: "30%" },
+      ],
+      minRows: 5,
+      maxRows: 10,
+      addRowLabel: "Add step",
+    },
+    {
+      id: "first-step",
+      type: "text-field",
+      label: "Which step will you do first?",
+      required: true,
+    },
+    {
+      id: "when",
+      type: "text-field",
+      label: "When specifically will you do it?",
+      placeholder: "Day and time",
+      required: true,
+    },
+    {
+      id: "obstacles",
+      type: "text-field",
+      label: "What might get in the way?",
+      multiline: true,
+    },
+    {
+      id: "solutions",
+      type: "text-field",
+      label: "How will you handle those obstacles?",
+      multiline: true,
+    },
+    {
+      id: "support",
+      type: "text-field",
+      label: "Who can support you in this re-engagement?",
+      multiline: true,
+    },
+    {
+      id: "self-compassion",
+      type: "text-field",
+      label: "What will you remind yourself if progress feels slow?",
+      placeholder: "e.g., Recovery takes time. Small steps matter. I'm doing my best.",
+      multiline: true,
+    },
+  ],
+};
+
+export default gradualReengagementPlanner;

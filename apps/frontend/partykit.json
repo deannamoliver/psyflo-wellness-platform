@@ -1,0 +1,8 @@
+{
+  "name": "feelwell",
+  "main": "partykit/wellness-party.js",
+  "parties": {
+    "wellness": "partykit/wellness-party.js"
+  },
+  "compatibilityDate": "2026-02-22"
+}

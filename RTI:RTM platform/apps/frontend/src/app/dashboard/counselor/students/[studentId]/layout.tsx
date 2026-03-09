@@ -1,0 +1,183 @@
+import {
+  alerts,
+  chatSessions,
+  moodCheckIns,
+  profiles,
+  screeners,
+  userSchools,
+  users,
+} from "@feelwell/database";
+import { differenceInYears } from "date-fns";
+import { and, count, desc, eq, inArray, or } from "drizzle-orm";
+import { ChevronLeftIcon } from "lucide-react";
+import Link from "next/link";
+import { notFound, unauthorized } from "next/navigation";
+import { H2, Muted } from "@/lib/core-ui/typography";
+import { serverDrizzle } from "@/lib/database/drizzle";
+import { PageContainer, PageContent } from "@/lib/extended-ui/page";
+import { getUserFullName } from "@/lib/user/utils";
+import * as Icons from "../../home/~lib/icons";
+import { ChartViewTracker } from "./~lib/chart-view-tracker";
+import { StudentTabs } from "./tabs";
+
+export default async function StudentLayout({
+  params,
+  children,
+}: {
+  params: Promise<{ studentId: string }>;
+  children: React.ReactNode;
+}) {
+  const { studentId } = await params;
+  const db = await serverDrizzle();
+  const counselorId = db.userId();
+
+  const counselorSchool = await db.admin
+    .select({ schoolId: userSchools.schoolId, role: userSchools.role })
+    .from(userSchools)
+    .where(
+      and(
+        eq(userSchools.userId, counselorId),
+        inArray(userSchools.role, ["counselor", "wellness_coach"]),
+      ),
+    )
+    .limit(1)
+    .then((res) => res[0]);
+
+  if (!counselorSchool) notFound();
+
+  const studentSchool = await db.admin
+    .select({ schoolId: userSchools.schoolId })
+    .from(userSchools)
+    .where(
+      and(eq(userSchools.userId, studentId), eq(userSchools.role, "student")),
+    )
+    .limit(1)
+    .then((res) => res[0]);
+
+  if (studentSchool?.schoolId !== counselorSchool.schoolId) unauthorized();
+
+  const studentRecord = await db.admin
+    .select({ user: users, profile: profiles })
+    .from(users)
+    .innerJoin(profiles, eq(users.id, profiles.id))
+    .where(eq(users.id, studentId))
+    .limit(1)
+    .then((res) => res[0]);
+
+  if (!studentRecord) notFound();
+
+  const activeAlertCount = await db.admin
+    .select({ count: count() })
+    .from(alerts)
+    .where(
+      and(
+        eq(alerts.studentId, studentId),
+        inArray(alerts.status, ["new", "in_progress"]),
+        // Only count safety alerts: coach escalations + PHQ Q9 endorsements
+        or(
+          eq(alerts.source, "coach"),
+          and(eq(alerts.source, "screener"), eq(alerts.type, "safety")),
+        ),
+      ),
+    )
+    .then((res) => res[0]?.count ?? 0);
+
+  const [lastCheckInRow, lastChatRow, lastScreenerRow] = await Promise.all([
+    db.admin
+      .select({ createdAt: moodCheckIns.createdAt })
+      .from(moodCheckIns)
+      .where(eq(moodCheckIns.userId, studentId))
+      .orderBy(desc(moodCheckIns.createdAt))
+      .limit(1)
+      .then((res) => res[0]?.createdAt ?? null),
+    db.admin
+      .select({ updatedAt: chatSessions.updatedAt })
+      .from(chatSessions)
+      .where(eq(chatSessions.userId, studentId))
+      .orderBy(desc(chatSessions.updatedAt))
+      .limit(1)
+      .then((res) => res[0]?.updatedAt ?? null),
+    db.admin
+      .select({ updatedAt: screeners.updatedAt })
+      .from(screeners)
+      .where(eq(screeners.userId, studentId))
+      .orderBy(desc(screeners.updatedAt))
+      .limit(1)
+      .then((res) => res[0]?.updatedAt ?? null),
+  ]);
+
+  const lastActive = [lastCheckInRow, lastChatRow, lastScreenerRow]
+    .filter((t): t is Date => t != null)
+    .reduce<Date | null>(
+      (latest, t) => (!latest || t.getTime() > latest.getTime() ? t : latest),
+      null,
+    );
+
+  const name = getUserFullName(studentRecord.user);
+  const dob = studentRecord.profile.dateOfBirth;
+  const age = dob ? differenceInYears(new Date(), new Date(dob)) : null;
+
+  return (
+    <PageContainer>
+      <PageContent className="flex flex-col">
+        <Link
+          href="/dashboard/counselor/students"
+          className="mb-3 flex w-fit items-center gap-1 font-dm font-medium text-primary text-sm hover:text-primary/80"
+        >
+          <ChevronLeftIcon className="h-4 w-4" />
+          <span>Back to Patients</span>
+        </Link>
+
+        <div className="mb-1 flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <H2 className="font-dm font-semibold">{name}</H2>
+            {activeAlertCount > 0 && (
+              <span
+                className="flex items-center gap-1.5 rounded-full bg-red-50 px-4 py-2 font-medium text-red-600 text-xs"
+                style={{ fontFamily: "var(--font-dm-sans)" }}
+              >
+                <Icons.AlertIcon className="h-4 w-4 shrink-0 text-red-600" />
+                {activeAlertCount} Active Alert
+                {activeAlertCount !== 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col items-end" />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-x-6 font-dm text-gray-600 text-sm">
+          <div className="flex flex-wrap items-center gap-x-6">
+            {age && (
+              <span className="flex items-center gap-1.5">
+                Age {age}
+              </span>
+            )}
+            {lastActive && (
+              <Muted>Last Engagement: {formatRelativeTime(lastActive)}</Muted>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <StudentTabs
+            studentId={studentId}
+          />
+        </div>
+        <ChartViewTracker studentId={studentId} pageViewed="chart" />
+        <div className="mt-6 pb-24">{children}</div>
+      </PageContent>
+    </PageContainer>
+  );
+}
+
+function formatRelativeTime(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffHours < 1) return "Just now";
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
+  return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+}

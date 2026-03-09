@@ -1,0 +1,96 @@
+import type { ExerciseConfig } from "@/lib/exercises/types";
+
+export const worryTimeScheduler: ExerciseConfig = {
+  id: "f41-4-01",
+  type: "exercise",
+  title: "Worry Time Scheduler",
+  subtitle: "Contain worry to a scheduled window",
+  description: "Set a daily 15-30 minute worry window. When worries arise, write them down and postpone them to your scheduled worry time.",
+  estimatedMinutes: 10,
+  completionMessage: "Your worry time is set! Remember: when worries pop up, write them down and postpone.",
+  applicableCodes: ["F41"],
+  allowBackNavigation: true,
+  showProgressBar: true,
+  steps: [
+    {
+      id: "intro",
+      type: "instruction",
+      label: "What is Worry Time?",
+      content: "Chronic worriers often feel like worry controls them — thoughts intrude all day, disrupting focus and peace.\n\n**Worry Time** is a paradoxical technique: instead of trying to stop worry, you **schedule it**.\n\nThe rules:\n1. Set a daily 15-30 minute 'worry window'\n2. When worries come up outside this time, write them down and postpone\n3. During worry time, review your list and worry intentionally\n4. When worry time is over, stop and return to regular activities\n\nThis teaches your brain: worry has a time and place — it doesn't need to be constant.",
+    },
+    {
+      id: "worry-time-start",
+      type: "text-input",
+      label: "When will your daily worry time START?",
+      helpText: "Choose a consistent time. Not right before bed. Allow time to transition afterward.",
+      placeholder: "e.g., 5:30 PM",
+      required: true,
+    },
+    {
+      id: "worry-time-duration",
+      type: "select",
+      label: "How long will your worry time be?",
+      options: [
+        { value: "15", label: "15 minutes" },
+        { value: "20", label: "20 minutes" },
+        { value: "30", label: "30 minutes" },
+      ],
+      required: true,
+    },
+    {
+      id: "worry-location",
+      type: "text-input",
+      label: "Where will you do your worry time?",
+      helpText: "Pick a specific spot — not your bed or favorite relaxation spot.",
+      placeholder: "e.g., Kitchen table, desk in study",
+      required: true,
+    },
+    {
+      id: "worry-capture",
+      type: "instruction",
+      label: "Throughout the Day: Capture & Postpone",
+      content: "When a worry pops up during the day:\n\n1. **Acknowledge it**: 'I notice I'm worrying about...'\n2. **Write it down**: Brief note — just enough to remember\n3. **Postpone it**: 'I'll think about this during worry time'\n4. **Redirect**: Return to what you were doing\n\nYou're not suppressing the worry — you're postponing it. This is crucial: your brain knows the worry will get attention later.",
+    },
+    {
+      id: "current-worries",
+      type: "text-input",
+      label: "What worries are on your mind right now?",
+      helpText: "Write them here as practice. These go on your worry list.",
+      placeholder: "1. \n2. \n3. ",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "during-worry-time",
+      type: "instruction",
+      label: "During Worry Time",
+      content: "When worry time arrives:\n\n1. Go to your designated spot\n2. Review your worry list\n3. Ask about each worry:\n   - Is this still relevant?\n   - Can I do anything about it now?\n   - If yes: make a brief action plan\n   - If no: practice acceptance and let it go\n4. When time is up, **stop**. Close the list.\n\nYou may find that by worry time, some worries no longer feel urgent — they've lost their power.",
+    },
+    {
+      id: "after-worry-time",
+      type: "text-input",
+      label: "What will you do right AFTER worry time to transition?",
+      helpText: "Plan a pleasant or engaging activity to shift out of worry mode.",
+      placeholder: "e.g., Take a walk, make dinner, call a friend",
+      required: true,
+    },
+    {
+      id: "commitment",
+      type: "likert",
+      label: "How committed are you to trying worry time for 1 week?",
+      min: 1,
+      max: 10,
+      minLabel: "Not committed",
+      maxLabel: "Fully committed",
+      required: true,
+    },
+    {
+      id: "reflection",
+      type: "reflection",
+      label: "Reflection",
+      prompt: "What do you hope to gain from containing your worry? What might be challenging about this?",
+    },
+  ],
+};
+
+export default worryTimeScheduler;

@@ -1,0 +1,5683 @@
+{
+  "id": "4e09efd6-7548-4ef8-a5ac-c0f598511380",
+  "prevId": "8bb89353-0644-40eb-914a-6ad439d1cfa9",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.admin_evals": {
+      "name": "admin_evals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "admin_evals_created_by_users_id_fk": {
+          "name": "admin_evals_created_by_users_id_fk",
+          "tableFrom": "admin_evals",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all evals": {
+          "name": "admin can manage all evals",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.admin_prompts": {
+      "name": "admin_prompts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "prompt_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'system'"
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "admin_prompts_created_by_users_id_fk": {
+          "name": "admin_prompts_created_by_users_id_fk",
+          "tableFrom": "admin_prompts",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all prompts": {
+          "name": "admin can manage all prompts",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.admin_test_cases": {
+      "name": "admin_test_cases",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "admin_test_cases_created_by_users_id_fk": {
+          "name": "admin_test_cases_created_by_users_id_fk",
+          "tableFrom": "admin_test_cases",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all test cases": {
+          "name": "admin can manage all test cases",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.admin_test_messages": {
+      "name": "admin_test_messages",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "test_case_id": {
+          "name": "test_case_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "message_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sequence_order": {
+          "name": "sequence_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "admin_test_messages_test_case_id_admin_test_cases_id_fk": {
+          "name": "admin_test_messages_test_case_id_admin_test_cases_id_fk",
+          "tableFrom": "admin_test_messages",
+          "tableTo": "admin_test_cases",
+          "columnsFrom": [
+            "test_case_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all test messages": {
+          "name": "admin can manage all test messages",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alert_resolutions": {
+      "name": "alert_resolutions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "alert_id": {
+          "name": "alert_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counselor_id": {
+          "name": "counselor_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actions_taken": {
+          "name": "actions_taken",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resolution_summary": {
+          "name": "resolution_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_status": {
+          "name": "student_status",
+          "type": "resolution_student_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "follow_up_plan": {
+          "name": "follow_up_plan",
+          "type": "resolution_follow_up_plan",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verification_completed": {
+          "name": "verification_completed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "alert_resolutions_alert_id_alerts_id_fk": {
+          "name": "alert_resolutions_alert_id_alerts_id_fk",
+          "tableFrom": "alert_resolutions",
+          "tableTo": "alerts",
+          "columnsFrom": [
+            "alert_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "alert_resolutions_counselor_id_users_id_fk": {
+          "name": "alert_resolutions_counselor_id_users_id_fk",
+          "tableFrom": "alert_resolutions",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "counselor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "alert_resolutions_alertId_unique": {
+          "name": "alert_resolutions_alertId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "alert_id"
+          ]
+        }
+      },
+      "policies": {
+        "admin can manage all alert resolutions": {
+          "name": "admin can manage all alert resolutions",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alert_actions": {
+      "name": "alert_actions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "timeline_entry_id": {
+          "name": "timeline_entry_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "action_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "alert_actions_timeline_entry_id_alert_timeline_entries_id_fk": {
+          "name": "alert_actions_timeline_entry_id_alert_timeline_entries_id_fk",
+          "tableFrom": "alert_actions",
+          "tableTo": "alert_timeline_entries",
+          "columnsFrom": [
+            "timeline_entry_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all alert actions": {
+          "name": "admin can manage all alert actions",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alert_notes": {
+      "name": "alert_notes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "timeline_entry_id": {
+          "name": "timeline_entry_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counselor_id": {
+          "name": "counselor_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "alert_notes_timeline_entry_id_alert_timeline_entries_id_fk": {
+          "name": "alert_notes_timeline_entry_id_alert_timeline_entries_id_fk",
+          "tableFrom": "alert_notes",
+          "tableTo": "alert_timeline_entries",
+          "columnsFrom": [
+            "timeline_entry_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "alert_notes_counselor_id_users_id_fk": {
+          "name": "alert_notes_counselor_id_users_id_fk",
+          "tableFrom": "alert_notes",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "counselor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all alert notes": {
+          "name": "admin can manage all alert notes",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alert_status_changes": {
+      "name": "alert_status_changes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "timeline_entry_id": {
+          "name": "timeline_entry_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_status": {
+          "name": "from_status",
+          "type": "alert_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_status": {
+          "name": "to_status",
+          "type": "alert_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counselor_id": {
+          "name": "counselor_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "alert_status_changes_timeline_entry_id_alert_timeline_entries_id_fk": {
+          "name": "alert_status_changes_timeline_entry_id_alert_timeline_entries_id_fk",
+          "tableFrom": "alert_status_changes",
+          "tableTo": "alert_timeline_entries",
+          "columnsFrom": [
+            "timeline_entry_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "alert_status_changes_counselor_id_users_id_fk": {
+          "name": "alert_status_changes_counselor_id_users_id_fk",
+          "tableFrom": "alert_status_changes",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "counselor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all alert status changes": {
+          "name": "admin can manage all alert status changes",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alert_timeline_entries": {
+      "name": "alert_timeline_entries",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "alert_id": {
+          "name": "alert_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "timeline_entry_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "alert_timeline_entries_alert_id_alerts_id_fk": {
+          "name": "alert_timeline_entries_alert_id_alerts_id_fk",
+          "tableFrom": "alert_timeline_entries",
+          "tableTo": "alerts",
+          "columnsFrom": [
+            "alert_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all alert timeline entries": {
+          "name": "admin can manage all alert timeline entries",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alerts": {
+      "name": "alerts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "alert_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "alert_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "alert_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resolved_by": {
+          "name": "resolved_by",
+          "type": "alert_resolved_by",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "alerts_student_id_users_id_fk": {
+          "name": "alerts_student_id_users_id_fk",
+          "tableFrom": "alerts",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all alerts": {
+          "name": "admin can manage all alerts",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.chat_alerts": {
+      "name": "chat_alerts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "alert_id": {
+          "name": "alert_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chat_session_id": {
+          "name": "chat_session_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "triggering_statement": {
+          "name": "triggering_statement",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conversation_context": {
+          "name": "conversation_context",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "clarification_responses": {
+          "name": "clarification_responses",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cssr_state": {
+          "name": "cssr_state",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_shutdown": {
+          "name": "is_shutdown",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "shutdown_risk_type": {
+          "name": "shutdown_risk_type",
+          "type": "shutdown_risk_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chat_alerts_alert_id_alerts_id_fk": {
+          "name": "chat_alerts_alert_id_alerts_id_fk",
+          "tableFrom": "chat_alerts",
+          "tableTo": "alerts",
+          "columnsFrom": [
+            "alert_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "chat_alerts_alertId_unique": {
+          "name": "chat_alerts_alertId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "alert_id"
+          ]
+        }
+      },
+      "policies": {
+        "admin can manage all chat alerts": {
+          "name": "admin can manage all chat alerts",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.chat_sessions": {
+      "name": "chat_sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'New Chat'"
+        },
+        "assigned_coach_id": {
+          "name": "assigned_coach_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subject": {
+          "name": "subject",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "student_last_read_at": {
+          "name": "student_last_read_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chat_sessions_user_id_users_id_fk": {
+          "name": "chat_sessions_user_id_users_id_fk",
+          "tableFrom": "chat_sessions",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "chat_sessions_assigned_coach_id_users_id_fk": {
+          "name": "chat_sessions_assigned_coach_id_users_id_fk",
+          "tableFrom": "chat_sessions",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "assigned_coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all chat sessions": {
+          "name": "admin can manage all chat sessions",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.mood_check_ins": {
+      "name": "mood_check_ins",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "universal_emotion": {
+          "name": "universal_emotion",
+          "type": "universal_emotion",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "specific_emotion": {
+          "name": "specific_emotion",
+          "type": "specific_emotion",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "mood_check_ins_user_id_users_id_fk": {
+          "name": "mood_check_ins_user_id_users_id_fk",
+          "tableFrom": "mood_check_ins",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all mood check ins": {
+          "name": "admin can manage all mood check ins",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coach_safety_reports": {
+      "name": "coach_safety_reports",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "alert_id": {
+          "name": "alert_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "handoff_id": {
+          "name": "handoff_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "safety_concern_category",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "risk_level": {
+          "name": "risk_level",
+          "type": "risk_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'moderate'"
+        },
+        "student_disclosure": {
+          "name": "student_disclosure",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "situation_summary": {
+          "name": "situation_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "screening_responses": {
+          "name": "screening_responses",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "submitted_by_coach_id": {
+          "name": "submitted_by_coach_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "report_status": {
+          "name": "report_status",
+          "type": "coach_safety_report_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'draft'"
+        },
+        "submitted_at": {
+          "name": "submitted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "coach_safety_reports_alert_id_alerts_id_fk": {
+          "name": "coach_safety_reports_alert_id_alerts_id_fk",
+          "tableFrom": "coach_safety_reports",
+          "tableTo": "alerts",
+          "columnsFrom": [
+            "alert_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "coach_safety_reports_handoff_id_wellness_coach_handoffs_id_fk": {
+          "name": "coach_safety_reports_handoff_id_wellness_coach_handoffs_id_fk",
+          "tableFrom": "coach_safety_reports",
+          "tableTo": "wellness_coach_handoffs",
+          "columnsFrom": [
+            "handoff_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "coach_safety_reports_submitted_by_coach_id_users_id_fk": {
+          "name": "coach_safety_reports_submitted_by_coach_id_users_id_fk",
+          "tableFrom": "coach_safety_reports",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "submitted_by_coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "coach_safety_reports_alert_id_unique": {
+          "name": "coach_safety_reports_alert_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "alert_id"
+          ]
+        }
+      },
+      "policies": {
+        "admin can manage all coach safety reports": {
+          "name": "admin can manage all coach safety reports",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.conversation_events": {
+      "name": "conversation_events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "handoff_id": {
+          "name": "handoff_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "event_type": {
+          "name": "event_type",
+          "type": "conversation_event_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "performed_by_coach_id": {
+          "name": "performed_by_coach_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "closure_reason": {
+          "name": "closure_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "closing_summary": {
+          "name": "closing_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "student_notified": {
+          "name": "student_notified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "transfer_to_coach_id": {
+          "name": "transfer_to_coach_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transfer_reason": {
+          "name": "transfer_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transfer_notes": {
+          "name": "transfer_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reopen_reason": {
+          "name": "reopen_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reopen_context": {
+          "name": "reopen_context",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "conversation_events_handoff_id_wellness_coach_handoffs_id_fk": {
+          "name": "conversation_events_handoff_id_wellness_coach_handoffs_id_fk",
+          "tableFrom": "conversation_events",
+          "tableTo": "wellness_coach_handoffs",
+          "columnsFrom": [
+            "handoff_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "conversation_events_performed_by_coach_id_users_id_fk": {
+          "name": "conversation_events_performed_by_coach_id_users_id_fk",
+          "tableFrom": "conversation_events",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "performed_by_coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "conversation_events_transfer_to_coach_id_users_id_fk": {
+          "name": "conversation_events_transfer_to_coach_id_users_id_fk",
+          "tableFrom": "conversation_events",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "transfer_to_coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all conversation events": {
+          "name": "admin can manage all conversation events",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.emergency_contacts": {
+      "name": "emergency_contacts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contact_type": {
+          "name": "contact_type",
+          "type": "emergency_contact_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relation": {
+          "name": "relation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag": {
+          "name": "tag",
+          "type": "emergency_contact_tag",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "primary_phone": {
+          "name": "primary_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secondary_phone": {
+          "name": "secondary_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "primary_email": {
+          "name": "primary_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secondary_email": {
+          "name": "secondary_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_emergency_contacts_student_id": {
+          "name": "idx_emergency_contacts_student_id",
+          "columns": [
+            {
+              "expression": "student_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_emergency_contacts_school_id": {
+          "name": "idx_emergency_contacts_school_id",
+          "columns": [
+            {
+              "expression": "school_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_emergency_contacts_contact_type": {
+          "name": "idx_emergency_contacts_contact_type",
+          "columns": [
+            {
+              "expression": "contact_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "emergency_contacts_student_id_users_id_fk": {
+          "name": "emergency_contacts_student_id_users_id_fk",
+          "tableFrom": "emergency_contacts",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "emergency_contacts_school_id_schools_id_fk": {
+          "name": "emergency_contacts_school_id_schools_id_fk",
+          "tableFrom": "emergency_contacts",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all emergency contacts": {
+          "name": "admin can manage all emergency contacts",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {
+        "contact_reference_check": {
+          "name": "contact_reference_check",
+          "value": "(\"emergency_contacts\".\"student_id\" IS NOT NULL AND \"emergency_contacts\".\"school_id\" IS NULL AND \"emergency_contacts\".\"contact_type\" = 'home') OR (\"emergency_contacts\".\"student_id\" IS NULL AND \"emergency_contacts\".\"school_id\" IS NOT NULL AND \"emergency_contacts\".\"contact_type\" = 'school')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.location_blackout_days": {
+      "name": "location_blackout_days",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "location_blackout_days_school_id_schools_id_fk": {
+          "name": "location_blackout_days_school_id_schools_id_fk",
+          "tableFrom": "location_blackout_days",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all location blackout days": {
+          "name": "admin can manage all location blackout days",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.location_contacts": {
+      "name": "location_contacts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_primary": {
+          "name": "is_primary",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "contact_name": {
+          "name": "contact_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "job_title": {
+          "name": "job_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "office_phone": {
+          "name": "office_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mobile_phone": {
+          "name": "mobile_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sort_order": {
+          "name": "sort_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "location_contacts_school_id_schools_id_fk": {
+          "name": "location_contacts_school_id_schools_id_fk",
+          "tableFrom": "location_contacts",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all location contacts": {
+          "name": "admin can manage all location contacts",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.location_emergency_services": {
+      "name": "location_emergency_services",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "police_phone": {
+          "name": "police_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "police_address": {
+          "name": "police_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sro_name": {
+          "name": "sro_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sro_phone": {
+          "name": "sro_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "no_sro": {
+          "name": "no_sro",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "crisis_center_name": {
+          "name": "crisis_center_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "crisis_hotline": {
+          "name": "crisis_hotline",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "crisis_hours": {
+          "name": "crisis_hours",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'24/7'"
+        },
+        "mobile_crisis_available": {
+          "name": "mobile_crisis_available",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "mobile_crisis_number": {
+          "name": "mobile_crisis_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nearest_hospital": {
+          "name": "nearest_hospital",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "er_address": {
+          "name": "er_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "er_phone": {
+          "name": "er_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state_cps_hotline": {
+          "name": "state_cps_hotline",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "local_cps_office": {
+          "name": "local_cps_office",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cps_report_url": {
+          "name": "cps_report_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "location_emergency_services_school_id_schools_id_fk": {
+          "name": "location_emergency_services_school_id_schools_id_fk",
+          "tableFrom": "location_emergency_services",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "location_emergency_services_school_id_unique": {
+          "name": "location_emergency_services_school_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "school_id"
+          ]
+        }
+      },
+      "policies": {
+        "admin can manage all location emergency services": {
+          "name": "admin can manage all location emergency services",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.location_grade_restrictions": {
+      "name": "location_grade_restrictions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grade_level": {
+          "name": "grade_level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "location_grade_restrictions_unique": {
+          "name": "location_grade_restrictions_unique",
+          "columns": [
+            {
+              "expression": "school_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "grade_level",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "location_grade_restrictions_school_id_schools_id_fk": {
+          "name": "location_grade_restrictions_school_id_schools_id_fk",
+          "tableFrom": "location_grade_restrictions",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all location grade restrictions": {
+          "name": "admin can manage all location grade restrictions",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.location_platform_config": {
+      "name": "location_platform_config",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chatbot_enabled": {
+          "name": "chatbot_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "chatbot_schedule_type": {
+          "name": "chatbot_schedule_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'24_7'"
+        },
+        "chatbot_closures_disabled": {
+          "name": "chatbot_closures_disabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "sel_screener_enabled": {
+          "name": "sel_screener_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "sel_screener_frequency": {
+          "name": "sel_screener_frequency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'monthly'"
+        },
+        "sel_screener_first_date": {
+          "name": "sel_screener_first_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phq9_enabled": {
+          "name": "phq9_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "phq9_frequency": {
+          "name": "phq9_frequency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'quarterly'"
+        },
+        "phq9_first_date": {
+          "name": "phq9_first_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gad7_enabled": {
+          "name": "gad7_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "gad7_frequency": {
+          "name": "gad7_frequency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'quarterly'"
+        },
+        "gad7_first_date": {
+          "name": "gad7_first_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "location_platform_config_school_id_schools_id_fk": {
+          "name": "location_platform_config_school_id_schools_id_fk",
+          "tableFrom": "location_platform_config",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "location_platform_config_school_id_unique": {
+          "name": "location_platform_config_school_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "school_id"
+          ]
+        }
+      },
+      "policies": {
+        "admin can manage all location platform config": {
+          "name": "admin can manage all location platform config",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.profiles": {
+      "name": "profiles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pronouns": {
+          "name": "pronouns",
+          "type": "pronoun",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "language": {
+          "name": "language",
+          "type": "language",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ethnicity": {
+          "name": "ethnicity",
+          "type": "ethnicity",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "home_address": {
+          "name": "home_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interests": {
+          "name": "interests",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "learning_styles": {
+          "name": "learning_styles",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "goals": {
+          "name": "goals",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "platform_role": {
+          "name": "platform_role",
+          "type": "platform_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
+        "account_status": {
+          "name": "account_status",
+          "type": "account_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "last_active_at": {
+          "name": "last_active_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "student_code": {
+          "name": "student_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal_notes": {
+          "name": "internal_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "added_by": {
+          "name": "added_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "can_manage_users": {
+          "name": "can_manage_users",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "receives_alert_notifications": {
+          "name": "receives_alert_notifications",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "blocked_reason": {
+          "name": "blocked_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocked_explanation": {
+          "name": "blocked_explanation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocked_duration": {
+          "name": "blocked_duration",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocked_notes": {
+          "name": "blocked_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocked_at": {
+          "name": "blocked_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocked_until": {
+          "name": "blocked_until",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unblocked_reason": {
+          "name": "unblocked_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unblocked_notes": {
+          "name": "unblocked_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unblocked_at": {
+          "name": "unblocked_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "onboarding_completed_at": {
+          "name": "onboarding_completed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "profiles_id_users_id_fk": {
+          "name": "profiles_id_users_id_fk",
+          "tableFrom": "profiles",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "profiles_added_by_users_id_fk": {
+          "name": "profiles_added_by_users_id_fk",
+          "tableFrom": "profiles",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "added_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "authenticated can manage own profile": {
+          "name": "authenticated can manage own profile",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.uid()) = id"
+        },
+        "admin can manage all profiles": {
+          "name": "admin can manage all profiles",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.quotes": {
+      "name": "quotes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quote": {
+          "name": "quote",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author": {
+          "name": "author",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "themes": {
+          "name": "themes",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "authenticated can view quotes": {
+          "name": "authenticated can view quotes",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "authenticated"
+          ],
+          "using": "true"
+        },
+        "admin can manage all quotes": {
+          "name": "admin can manage all quotes",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.safety_workflows": {
+      "name": "safety_workflows",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "handoff_id": {
+          "name": "handoff_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "initiated_by_coach_id": {
+          "name": "initiated_by_coach_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "safety_workflow_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "is_during_school_hours": {
+          "name": "is_during_school_hours",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "activated_at": {
+          "name": "activated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "immediate_danger": {
+          "name": "immediate_danger",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "concern_type": {
+          "name": "concern_type",
+          "type": "safety_concern_category",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "assessment_data": {
+          "name": "assessment_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "risk_level": {
+          "name": "risk_level",
+          "type": "risk_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "professional_judgment": {
+          "name": "professional_judgment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "act_data": {
+          "name": "act_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "document_data": {
+          "name": "document_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alert_id": {
+          "name": "alert_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "safety_workflows_handoff_id_wellness_coach_handoffs_id_fk": {
+          "name": "safety_workflows_handoff_id_wellness_coach_handoffs_id_fk",
+          "tableFrom": "safety_workflows",
+          "tableTo": "wellness_coach_handoffs",
+          "columnsFrom": [
+            "handoff_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "safety_workflows_student_id_users_id_fk": {
+          "name": "safety_workflows_student_id_users_id_fk",
+          "tableFrom": "safety_workflows",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "safety_workflows_initiated_by_coach_id_users_id_fk": {
+          "name": "safety_workflows_initiated_by_coach_id_users_id_fk",
+          "tableFrom": "safety_workflows",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "initiated_by_coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "safety_workflows_school_id_schools_id_fk": {
+          "name": "safety_workflows_school_id_schools_id_fk",
+          "tableFrom": "safety_workflows",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "safety_workflows_alert_id_alerts_id_fk": {
+          "name": "safety_workflows_alert_id_alerts_id_fk",
+          "tableFrom": "safety_workflows",
+          "tableTo": "alerts",
+          "columnsFrom": [
+            "alert_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all safety workflows": {
+          "name": "admin can manage all safety workflows",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.school_allowed_emails": {
+      "name": "school_allowed_emails",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "user_school_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "school_email_role_unique": {
+          "name": "school_email_role_unique",
+          "columns": [
+            {
+              "expression": "school_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "school_allowed_emails_school_id_schools_id_fk": {
+          "name": "school_allowed_emails_school_id_schools_id_fk",
+          "tableFrom": "school_allowed_emails",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all school allowed emails": {
+          "name": "admin can manage all school allowed emails",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.school_contacts": {
+      "name": "school_contacts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_role": {
+          "name": "contact_role",
+          "type": "organization_contact_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "school_contacts_school_id_schools_id_fk": {
+          "name": "school_contacts_school_id_schools_id_fk",
+          "tableFrom": "school_contacts",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all school contacts": {
+          "name": "admin can manage all school contacts",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.school_domains": {
+      "name": "school_domains",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "domain": {
+          "name": "domain",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "domain_unique": {
+          "name": "domain_unique",
+          "columns": [
+            {
+              "expression": "domain",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "school_domains_school_id_schools_id_fk": {
+          "name": "school_domains_school_id_schools_id_fk",
+          "tableFrom": "school_domains",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all school domains": {
+          "name": "admin can manage all school domains",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.school_email_filter_settings": {
+      "name": "school_email_filter_settings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_filtering_enabled": {
+          "name": "student_filtering_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "school_email_filter_settings_school_id_schools_id_fk": {
+          "name": "school_email_filter_settings_school_id_schools_id_fk",
+          "tableFrom": "school_email_filter_settings",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "school_email_filter_settings_school_id_unique": {
+          "name": "school_email_filter_settings_school_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "school_id"
+          ]
+        }
+      },
+      "policies": {
+        "admin can manage all school email filter settings": {
+          "name": "admin can manage all school email filter settings",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.schools": {
+      "name": "schools",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "organization_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "district_code": {
+          "name": "district_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "organization_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'active'"
+        },
+        "website": {
+          "name": "website",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email_domain": {
+          "name": "email_domain",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "street_address": {
+          "name": "street_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "street_address_2": {
+          "name": "street_address_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zip_code": {
+          "name": "zip_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal_notes": {
+          "name": "internal_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "school_code": {
+          "name": "school_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "school_type": {
+          "name": "school_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade_levels": {
+          "name": "grade_levels",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'"
+        },
+        "estimated_student_count": {
+          "name": "estimated_student_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "invite_link_active": {
+          "name": "invite_link_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "invite_link_code": {
+          "name": "invite_link_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "academic_year_start": {
+          "name": "academic_year_start",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "academic_year_end": {
+          "name": "academic_year_end",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "schools_organization_id_schools_id_fk": {
+          "name": "schools_organization_id_schools_id_fk",
+          "tableFrom": "schools",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "organization_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all schools": {
+          "name": "admin can manage all schools",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_schools": {
+      "name": "user_schools",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "user_school_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'student'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_schools_user_id_users_id_fk": {
+          "name": "user_schools_user_id_users_id_fk",
+          "tableFrom": "user_schools",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_schools_school_id_schools_id_fk": {
+          "name": "user_schools_school_id_schools_id_fk",
+          "tableFrom": "user_schools",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all user schools": {
+          "name": "admin can manage all user schools",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.school_hours": {
+      "name": "school_hours",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'America/New_York'"
+        },
+        "day_of_week": {
+          "name": "day_of_week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_time": {
+          "name": "start_time",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_time": {
+          "name": "end_time",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_school_day": {
+          "name": "is_school_day",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "school_hours_school_day_unique": {
+          "name": "school_hours_school_day_unique",
+          "columns": [
+            {
+              "expression": "school_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "day_of_week",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "school_hours_school_id_schools_id_fk": {
+          "name": "school_hours_school_id_schools_id_fk",
+          "tableFrom": "school_hours",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all school hours": {
+          "name": "admin can manage all school hours",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.screener_alerts": {
+      "name": "screener_alerts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "screener_id": {
+          "name": "screener_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alert_id": {
+          "name": "alert_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "screener_alerts_screener_id_screeners_id_fk": {
+          "name": "screener_alerts_screener_id_screeners_id_fk",
+          "tableFrom": "screener_alerts",
+          "tableTo": "screeners",
+          "columnsFrom": [
+            "screener_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "screener_alerts_alert_id_alerts_id_fk": {
+          "name": "screener_alerts_alert_id_alerts_id_fk",
+          "tableFrom": "screener_alerts",
+          "tableTo": "alerts",
+          "columnsFrom": [
+            "alert_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all screener alerts": {
+          "name": "admin can manage all screener alerts",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.screener_frequency_settings": {
+      "name": "screener_frequency_settings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "screener_type": {
+          "name": "screener_type",
+          "type": "screener_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frequency": {
+          "name": "frequency",
+          "type": "screener_frequency",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'quarterly'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "screener_frequency_settings_screener_type_unique": {
+          "name": "screener_frequency_settings_screener_type_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "screener_type"
+          ]
+        }
+      },
+      "policies": {
+        "admin can manage all screener frequency settings": {
+          "name": "admin can manage all screener frequency settings",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.screener_session_responses": {
+      "name": "screener_session_responses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ordinal": {
+          "name": "ordinal",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question_code": {
+          "name": "question_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answer_code": {
+          "name": "answer_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "screener_session_responses_session_id_screener_sessions_id_fk": {
+          "name": "screener_session_responses_session_id_screener_sessions_id_fk",
+          "tableFrom": "screener_session_responses",
+          "tableTo": "screener_sessions",
+          "columnsFrom": [
+            "session_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all screener session responses": {
+          "name": "admin can manage all screener session responses",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.screener_sessions": {
+      "name": "screener_sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "screener_id": {
+          "name": "screener_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_at": {
+          "name": "start_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "part": {
+          "name": "part",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subtype": {
+          "name": "subtype",
+          "type": "screener_subtype",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score": {
+          "name": "score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "max_score": {
+          "name": "max_score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "screener_sessions_screener_id_screeners_id_fk": {
+          "name": "screener_sessions_screener_id_screeners_id_fk",
+          "tableFrom": "screener_sessions",
+          "tableTo": "screeners",
+          "columnsFrom": [
+            "screener_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all screener sessions": {
+          "name": "admin can manage all screener sessions",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.screeners": {
+      "name": "screeners",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "screener_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score": {
+          "name": "score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "max_score": {
+          "name": "max_score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "domain_scores": {
+          "name": "domain_scores",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "last_score": {
+          "name": "last_score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "screeners_user_id_users_id_fk": {
+          "name": "screeners_user_id_users_id_fk",
+          "tableFrom": "screeners",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all screeners": {
+          "name": "admin can manage all screeners",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_settings": {
+      "name": "user_settings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'UTC'"
+        },
+        "soli_color": {
+          "name": "soli_color",
+          "type": "soli_color",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'blue'"
+        },
+        "soli_shape": {
+          "name": "soli_shape",
+          "type": "soli_shape",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'round'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_settings_id_users_id_fk": {
+          "name": "user_settings_id_users_id_fk",
+          "tableFrom": "user_settings",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "authenticated can manage own settings": {
+          "name": "authenticated can manage own settings",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.uid()) = id"
+        },
+        "admin can manage all user settings": {
+          "name": "admin can manage all user settings",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.feedback": {
+      "name": "feedback",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_helpful": {
+          "name": "is_helpful",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "feedback_user_id_users_id_fk": {
+          "name": "feedback_user_id_users_id_fk",
+          "tableFrom": "feedback",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "authenticated can insert own feedback": {
+          "name": "authenticated can insert own feedback",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.uid()) = user_id",
+          "withCheck": "(select auth.uid()) = user_id"
+        },
+        "authenticated can view own feedback": {
+          "name": "authenticated can view own feedback",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(select auth.uid()) = user_id"
+        },
+        "admin can manage all feedback": {
+          "name": "admin can manage all feedback",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.referral_notes": {
+      "name": "referral_notes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "referral_id": {
+          "name": "referral_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author_id": {
+          "name": "author_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author_role": {
+          "name": "author_role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "referral_notes_referral_id_therapist_referrals_id_fk": {
+          "name": "referral_notes_referral_id_therapist_referrals_id_fk",
+          "tableFrom": "referral_notes",
+          "tableTo": "therapist_referrals",
+          "columnsFrom": [
+            "referral_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "referral_notes_author_id_users_id_fk": {
+          "name": "referral_notes_author_id_users_id_fk",
+          "tableFrom": "referral_notes",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all referral notes": {
+          "name": "admin can manage all referral notes",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.therapist_referrals": {
+      "name": "therapist_referrals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counselor_id": {
+          "name": "counselor_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "referral_reason",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "service_types": {
+          "name": "service_types",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "additional_context": {
+          "name": "additional_context",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "urgency": {
+          "name": "urgency",
+          "type": "referral_urgency",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "insurance_status": {
+          "name": "insurance_status",
+          "type": "referral_insurance_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_notification_confirmed": {
+          "name": "parent_notification_confirmed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "insurance_provider": {
+          "name": "insurance_provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "insurance_member_id": {
+          "name": "insurance_member_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "referral_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'submitted'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "therapist_referrals_student_id_users_id_fk": {
+          "name": "therapist_referrals_student_id_users_id_fk",
+          "tableFrom": "therapist_referrals",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "therapist_referrals_counselor_id_users_id_fk": {
+          "name": "therapist_referrals_counselor_id_users_id_fk",
+          "tableFrom": "therapist_referrals",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "counselor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "therapist_referrals_school_id_schools_id_fk": {
+          "name": "therapist_referrals_school_id_schools_id_fk",
+          "tableFrom": "therapist_referrals",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all therapist referrals": {
+          "name": "admin can manage all therapist referrals",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.treatment_plans": {
+      "name": "treatment_plans",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "diagnosis_code": {
+          "name": "diagnosis_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "diagnosis_label": {
+          "name": "diagnosis_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "template_name": {
+          "name": "template_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_data": {
+          "name": "plan_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "treatment_plan_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "frequency": {
+          "name": "frequency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estimated_duration": {
+          "name": "estimated_duration",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "clinical_notes": {
+          "name": "clinical_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "treatment_plans_student_id_idx": {
+          "name": "treatment_plans_student_id_idx",
+          "columns": [
+            {
+              "expression": "student_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "treatment_plans_diagnosis_code_idx": {
+          "name": "treatment_plans_diagnosis_code_idx",
+          "columns": [
+            {
+              "expression": "diagnosis_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.wellness_coach_chat_entries": {
+      "name": "wellness_coach_chat_entries",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "escalation_id": {
+          "name": "escalation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author": {
+          "name": "author",
+          "type": "wellness_coach_chat_entry_author",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sender_user_id": {
+          "name": "sender_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "wellness_coach_chat_entries_escalation_id_wellness_coach_handoffs_id_fk": {
+          "name": "wellness_coach_chat_entries_escalation_id_wellness_coach_handoffs_id_fk",
+          "tableFrom": "wellness_coach_chat_entries",
+          "tableTo": "wellness_coach_handoffs",
+          "columnsFrom": [
+            "escalation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "wellness_coach_chat_entries_sender_user_id_users_id_fk": {
+          "name": "wellness_coach_chat_entries_sender_user_id_users_id_fk",
+          "tableFrom": "wellness_coach_chat_entries",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "sender_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all wellness coach chat entries": {
+          "name": "admin can manage all wellness coach chat entries",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.wellness_coach_handoffs": {
+      "name": "wellness_coach_handoffs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "chat_session_id": {
+          "name": "chat_session_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "topic": {
+          "name": "topic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "other_detail": {
+          "name": "other_detail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "wellness_coach_escalation_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "requested_at": {
+          "name": "requested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "accepted_by_coach_id": {
+          "name": "accepted_by_coach_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "accepted_at": {
+          "name": "accepted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alert_id": {
+          "name": "alert_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origin": {
+          "name": "origin",
+          "type": "wellness_coach_handoff_origin",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "wellness_coach_handoffs_chat_session_id_chat_sessions_id_fk": {
+          "name": "wellness_coach_handoffs_chat_session_id_chat_sessions_id_fk",
+          "tableFrom": "wellness_coach_handoffs",
+          "tableTo": "chat_sessions",
+          "columnsFrom": [
+            "chat_session_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "wellness_coach_handoffs_student_id_users_id_fk": {
+          "name": "wellness_coach_handoffs_student_id_users_id_fk",
+          "tableFrom": "wellness_coach_handoffs",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "wellness_coach_handoffs_school_id_schools_id_fk": {
+          "name": "wellness_coach_handoffs_school_id_schools_id_fk",
+          "tableFrom": "wellness_coach_handoffs",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "wellness_coach_handoffs_accepted_by_coach_id_users_id_fk": {
+          "name": "wellness_coach_handoffs_accepted_by_coach_id_users_id_fk",
+          "tableFrom": "wellness_coach_handoffs",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "accepted_by_coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "wellness_coach_handoffs_alert_id_alerts_id_fk": {
+          "name": "wellness_coach_handoffs_alert_id_alerts_id_fk",
+          "tableFrom": "wellness_coach_handoffs",
+          "tableTo": "alerts",
+          "columnsFrom": [
+            "alert_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "admin can manage all wellness coach handoffs": {
+          "name": "admin can manage all wellness coach handoffs",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "supabase_auth_admin"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.prompt_type": {
+      "name": "prompt_type",
+      "schema": "public",
+      "values": [
+        "system",
+        "user_guidance",
+        "safety_response"
+      ]
+    },
+    "public.message_role": {
+      "name": "message_role",
+      "schema": "public",
+      "values": [
+        "user",
+        "assistant"
+      ]
+    },
+    "public.resolution_follow_up_plan": {
+      "name": "resolution_follow_up_plan",
+      "schema": "public",
+      "values": [
+        "no_follow_up",
+        "routine_check_ins",
+        "scheduled_follow_up",
+        "other"
+      ]
+    },
+    "public.resolution_student_status": {
+      "name": "resolution_student_status",
+      "schema": "public",
+      "values": [
+        "crisis_resolved",
+        "ongoing_support",
+        "transferred_external",
+        "hospitalized",
+        "other"
+      ]
+    },
+    "public.action_type": {
+      "name": "action_type",
+      "schema": "public",
+      "values": [
+        "contacted_988",
+        "notified_staff",
+        "contacted_parents",
+        "triggered_gad7",
+        "triggered_phq9",
+        "emergency_services_contacted",
+        "cps_notified",
+        "assessment_performed"
+      ]
+    },
+    "public.alert_resolved_by": {
+      "name": "alert_resolved_by",
+      "schema": "public",
+      "values": [
+        "counselor",
+        "chatbot"
+      ]
+    },
+    "public.alert_source": {
+      "name": "alert_source",
+      "schema": "public",
+      "values": [
+        "chat",
+        "screener",
+        "coach"
+      ]
+    },
+    "public.alert_status": {
+      "name": "alert_status",
+      "schema": "public",
+      "values": [
+        "new",
+        "in_progress",
+        "resolved"
+      ]
+    },
+    "public.alert_type": {
+      "name": "alert_type",
+      "schema": "public",
+      "values": [
+        "safety",
+        "depression",
+        "anxiety",
+        "abuse_neglect",
+        "harm_to_others",
+        "harm_to_self",
+        "other"
+      ]
+    },
+    "public.shutdown_risk_type": {
+      "name": "shutdown_risk_type",
+      "schema": "public",
+      "values": [
+        "direct",
+        "indirect",
+        "ambiguous",
+        "harm_to_others",
+        "abuse_neglect"
+      ]
+    },
+    "public.timeline_entry_type": {
+      "name": "timeline_entry_type",
+      "schema": "public",
+      "values": [
+        "alert_generated",
+        "emergency_action",
+        "note_added",
+        "status_changed"
+      ]
+    },
+    "public.specific_emotion": {
+      "name": "specific_emotion",
+      "schema": "public",
+      "values": [
+        "playful",
+        "joyful",
+        "curious",
+        "confident",
+        "valued",
+        "creative",
+        "peaceful",
+        "hopeful",
+        "lonely",
+        "left_out",
+        "guilty",
+        "embarrassed",
+        "empty",
+        "hurt",
+        "let_down",
+        "scared",
+        "nervous",
+        "worried",
+        "insecure",
+        "powerless",
+        "threatened",
+        "disrespected",
+        "holding_a_grudge",
+        "mad",
+        "jealous",
+        "aggressive",
+        "frustrated",
+        "annoyed",
+        "grossed_out",
+        "horrified",
+        "disapproving",
+        "disappointed",
+        "offended",
+        "excited",
+        "shocked",
+        "amazed",
+        "confused",
+        "startled",
+        "anxious",
+        "blah",
+        "tired",
+        "stressed",
+        "bored",
+        "overwhelmed",
+        "distracted",
+        "excluded"
+      ]
+    },
+    "public.universal_emotion": {
+      "name": "universal_emotion",
+      "schema": "public",
+      "values": [
+        "happy",
+        "sad",
+        "afraid",
+        "angry",
+        "disgusted",
+        "surprised",
+        "bad"
+      ]
+    },
+    "public.coach_safety_report_status": {
+      "name": "coach_safety_report_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "submitted"
+      ]
+    },
+    "public.risk_level": {
+      "name": "risk_level",
+      "schema": "public",
+      "values": [
+        "emergency",
+        "high",
+        "moderate",
+        "low"
+      ]
+    },
+    "public.safety_concern_category": {
+      "name": "safety_concern_category",
+      "schema": "public",
+      "values": [
+        "harm_to_self",
+        "harm_to_others",
+        "abuse_neglect",
+        "other_safety"
+      ]
+    },
+    "public.conversation_event_type": {
+      "name": "conversation_event_type",
+      "schema": "public",
+      "values": [
+        "closed",
+        "transferred",
+        "reopened",
+        "takeover"
+      ]
+    },
+    "public.emergency_contact_tag": {
+      "name": "emergency_contact_tag",
+      "schema": "public",
+      "values": [
+        "primary",
+        "backup_1",
+        "backup_2"
+      ]
+    },
+    "public.emergency_contact_type": {
+      "name": "emergency_contact_type",
+      "schema": "public",
+      "values": [
+        "home",
+        "school"
+      ]
+    },
+    "public.account_status": {
+      "name": "account_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "blocked",
+        "archived"
+      ]
+    },
+    "public.ethnicity": {
+      "name": "ethnicity",
+      "schema": "public",
+      "values": [
+        "american_indian_or_alaska_native",
+        "asian",
+        "black_or_african_american",
+        "hispanic_or_latino",
+        "middle_eastern_or_north_african",
+        "native_hawaiian_or_pacific_islander",
+        "white",
+        "prefer_not_to_answer"
+      ]
+    },
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": [
+        "male",
+        "female",
+        "non_binary",
+        "prefer_not_to_answer"
+      ]
+    },
+    "public.language": {
+      "name": "language",
+      "schema": "public",
+      "values": [
+        "english",
+        "spanish",
+        "french",
+        "chinese_simplified",
+        "arabic",
+        "haitian_creole",
+        "bengali",
+        "russian",
+        "urdu",
+        "vietnamese",
+        "portuguese"
+      ]
+    },
+    "public.platform_role": {
+      "name": "platform_role",
+      "schema": "public",
+      "values": [
+        "user",
+        "admin",
+        "clinical_supervisor"
+      ]
+    },
+    "public.pronoun": {
+      "name": "pronoun",
+      "schema": "public",
+      "values": [
+        "he/him",
+        "she/her",
+        "they/them",
+        "prefer_not_to_answer"
+      ]
+    },
+    "public.safety_workflow_status": {
+      "name": "safety_workflow_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "completed",
+        "cancelled"
+      ]
+    },
+    "public.organization_contact_role": {
+      "name": "organization_contact_role",
+      "schema": "public",
+      "values": [
+        "admin",
+        "billing",
+        "technical",
+        "additional"
+      ]
+    },
+    "public.organization_status": {
+      "name": "organization_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "suspended",
+        "onboarding",
+        "archived"
+      ]
+    },
+    "public.organization_type": {
+      "name": "organization_type",
+      "schema": "public",
+      "values": [
+        "k12",
+        "college",
+        "clinic",
+        "cbo"
+      ]
+    },
+    "public.user_school_role": {
+      "name": "user_school_role",
+      "schema": "public",
+      "values": [
+        "student",
+        "counselor",
+        "wellness_coach"
+      ]
+    },
+    "public.screener_frequency": {
+      "name": "screener_frequency",
+      "schema": "public",
+      "values": [
+        "monthly",
+        "quarterly",
+        "annually"
+      ]
+    },
+    "public.screener_subtype": {
+      "name": "screener_subtype",
+      "schema": "public",
+      "values": [
+        "sel_self_awareness_self_concept",
+        "sel_self_awareness_emotion_knowledge",
+        "sel_social_awareness",
+        "sel_self_management_emotion_regulation",
+        "sel_self_management_goal_management",
+        "sel_self_management_school_work",
+        "sel_relationship_skills",
+        "sel_responsible_decision_making",
+        "phq_a",
+        "phq_9",
+        "gad_child",
+        "gad_7"
+      ]
+    },
+    "public.screener_type": {
+      "name": "screener_type",
+      "schema": "public",
+      "values": [
+        "sel",
+        "phq_a",
+        "phq_9",
+        "gad_child",
+        "gad_7"
+      ]
+    },
+    "public.soli_color": {
+      "name": "soli_color",
+      "schema": "public",
+      "values": [
+        "blue",
+        "teal",
+        "purple",
+        "pink",
+        "orange",
+        "green",
+        "yellow",
+        "royal"
+      ]
+    },
+    "public.soli_shape": {
+      "name": "soli_shape",
+      "schema": "public",
+      "values": [
+        "round",
+        "tall",
+        "wide",
+        "chunky"
+      ]
+    },
+    "public.referral_insurance_status": {
+      "name": "referral_insurance_status",
+      "schema": "public",
+      "values": [
+        "has_insurance",
+        "uninsured",
+        "unknown"
+      ]
+    },
+    "public.referral_reason": {
+      "name": "referral_reason",
+      "schema": "public",
+      "values": [
+        "anxiety",
+        "depression",
+        "trauma",
+        "behavioral",
+        "family_issues",
+        "grief_loss",
+        "self_harm",
+        "substance_use",
+        "other"
+      ]
+    },
+    "public.referral_status": {
+      "name": "referral_status",
+      "schema": "public",
+      "values": [
+        "submitted",
+        "in_progress",
+        "matched",
+        "completed",
+        "cancelled"
+      ]
+    },
+    "public.referral_urgency": {
+      "name": "referral_urgency",
+      "schema": "public",
+      "values": [
+        "routine",
+        "urgent"
+      ]
+    },
+    "public.treatment_plan_status": {
+      "name": "treatment_plan_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "completed",
+        "discontinued"
+      ]
+    },
+    "public.wellness_coach_chat_entry_author": {
+      "name": "wellness_coach_chat_entry_author",
+      "schema": "public",
+      "values": [
+        "student",
+        "coach"
+      ]
+    },
+    "public.wellness_coach_handoff_origin": {
+      "name": "wellness_coach_handoff_origin",
+      "schema": "public",
+      "values": [
+        "user",
+        "risk_protocol"
+      ]
+    },
+    "public.wellness_coach_escalation_status": {
+      "name": "wellness_coach_escalation_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "accepted",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

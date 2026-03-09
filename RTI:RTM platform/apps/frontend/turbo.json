@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "next-env.d.ts"],
+      "env": ["NODE_ENV", "NEXT_PUBLIC_APP_URL"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
+      ]
+    },
+    "dev": {
+      "persistent": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ]
+    }
+  }
+}

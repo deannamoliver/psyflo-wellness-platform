@@ -1,0 +1,98 @@
+import type { ExerciseConfig } from "@/lib/exercises/types";
+
+export const containmentVisualization: ExerciseConfig = {
+  id: "f43-2-03",
+  type: "exercise",
+  title: "Containment Visualization",
+  subtitle: "Mentally store distressing material",
+  description: "Guided imagery to place distressing thoughts and images in a mental container for use between trauma processing sessions.",
+  estimatedMinutes: 10,
+  completionMessage: "Your container is ready. Use this technique whenever intrusive material feels overwhelming.",
+  applicableCodes: ["F43"],
+  allowBackNavigation: true,
+  showProgressBar: true,
+  steps: [
+    {
+      id: "intro",
+      type: "instruction",
+      label: "What is Containment?",
+      content: "Sometimes distressing memories, images, or feelings arise at times when you can't or shouldn't process them.\n\nContainment is a visualization technique where you **mentally place this material in a secure container** — acknowledging it exists while choosing not to engage with it right now.\n\nThis isn't avoidance or suppression — it's **intentional postponement** with a plan to address it later (in therapy or during a scheduled processing time).",
+    },
+    {
+      id: "current-distress",
+      type: "likert",
+      label: "Rate your current distress level",
+      min: 0,
+      max: 10,
+      minLabel: "None",
+      maxLabel: "Extreme",
+      required: true,
+    },
+    {
+      id: "container-choice",
+      type: "instruction",
+      label: "Step 1: Visualize Your Container",
+      content: "Close your eyes and imagine a container that feels right for holding difficult material.\n\nSome options:\n• A strong safe or vault\n• A locked box or chest\n• A secure filing cabinet\n• A deep well with a cover\n• A ship sailing to the horizon\n• A cloud floating away\n\nMake it as detailed as possible — material, color, size, locking mechanism.\n\n**Important:** This container is strong enough to hold anything. Nothing can escape it.",
+    },
+    {
+      id: "container-description",
+      type: "text-input",
+      label: "Describe your container",
+      helpText: "What does it look like? What is it made of? How does it lock?",
+      placeholder: "My container is...",
+      multiline: true,
+      required: true,
+    },
+    {
+      id: "container-location",
+      type: "text-input",
+      label: "Where is your container located?",
+      helpText: "Somewhere safe, secure, and away from your daily life",
+      placeholder: "e.g., A vault deep underground, a safe in a remote cabin, a chest at the bottom of the ocean",
+      required: true,
+    },
+    {
+      id: "place-material",
+      type: "instruction",
+      label: "Step 2: Place the Material",
+      content: "Now, with your container visualized:\n\n1. **Identify** what you need to contain (you don't need to engage with the content — just acknowledge it exists)\n\n2. **Gather** the distressing material — images, thoughts, feelings — imagine them as objects you can pick up\n\n3. **Place** them gently but firmly into the container\n\n4. **Close and lock** the container securely\n\n5. **Step back** and see the container is sealed\n\nTake your time with this visualization.",
+    },
+    {
+      id: "secure-container",
+      type: "instruction",
+      label: "Step 3: Secure the Container",
+      content: "The container is now closed.\n\nVisualize yourself:\n• Checking that it's locked\n• Perhaps adding an extra lock or seal\n• Stepping back from it\n• Watching it become smaller in the distance\n\nRemind yourself: **This material will be here when you're ready to address it — in therapy, at a designated time. For now, it's safely contained.**",
+    },
+    {
+      id: "return-present",
+      type: "instruction",
+      label: "Step 4: Return to the Present",
+      content: "Now, bring your attention back to the present moment.\n\n• Notice your feet on the floor\n• Notice the chair supporting you\n• Take a slow, deep breath\n• Open your eyes if they were closed\n• Look around and name 3 things you see\n\nYou are here. You are safe. The material is contained.",
+    },
+    {
+      id: "post-distress",
+      type: "likert",
+      label: "Rate your distress level now",
+      min: 0,
+      max: 10,
+      minLabel: "None",
+      maxLabel: "Extreme",
+      required: true,
+    },
+    {
+      id: "retrieval-plan",
+      type: "text-input",
+      label: "When will you open the container? (e.g., in your next therapy session)",
+      placeholder: "I will address this material when...",
+      required: true,
+    },
+    {
+      id: "reflection",
+      type: "reflection",
+      label: "Reflection",
+      prompt: "How did this visualization feel? Will this technique be useful for you?",
+    },
+  ],
+};
+
+export default containmentVisualization;

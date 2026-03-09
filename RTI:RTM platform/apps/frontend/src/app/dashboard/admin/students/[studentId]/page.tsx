@@ -1,0 +1,10 @@
+import { redirect } from "next/navigation";
+
+export default async function StudentPage({
+  params,
+}: {
+  params: Promise<{ studentId: string }>;
+}) {
+  const { studentId } = await params;
+  redirect(`/dashboard/admin/students/${studentId}/overview`);
+}

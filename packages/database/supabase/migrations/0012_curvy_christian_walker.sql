@@ -1,0 +1,1 @@
+ALTER TABLE "screener_sessions" ADD COLUMN "grade" integer;

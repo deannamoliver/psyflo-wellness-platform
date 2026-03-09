@@ -1,0 +1,97 @@
+import type { TrackerConfig } from "@/lib/exercises/types";
+
+export const moodBehaviorDiary: TrackerConfig = {
+  id: "r45-4-01",
+  type: "tracker",
+  title: "Mood-Behavior Diary",
+  subtitle: "3x daily check-in for pattern identification",
+  description: "Track situation, emotion, intensity, behavior, and outcome 3x daily to identify triggers and patterns.",
+  estimatedMinutes: 3,
+  completionMessage: "Entry logged! After 2 weeks, review your patterns with your clinician.",
+  applicableCodes: ["R45"],
+  frequency: "daily",
+  showTrend: true,
+  showStreak: true,
+  fields: [
+    {
+      id: "time_of_day",
+      label: "Time of day",
+      type: "select",
+      options: [
+        { value: "morning", label: "Morning" },
+        { value: "afternoon", label: "Afternoon" },
+        { value: "evening", label: "Evening" },
+      ],
+      required: true,
+    },
+    {
+      id: "situation",
+      label: "Situation (what was happening)",
+      type: "text",
+      required: true,
+      helpText: "Brief description of the context",
+    },
+    {
+      id: "emotion",
+      label: "Primary emotion",
+      type: "select",
+      options: [
+        { value: "happy", label: "Happy/Content" },
+        { value: "sad", label: "Sad" },
+        { value: "anxious", label: "Anxious/Worried" },
+        { value: "angry", label: "Angry/Irritated" },
+        { value: "ashamed", label: "Ashamed/Guilty" },
+        { value: "lonely", label: "Lonely" },
+        { value: "overwhelmed", label: "Overwhelmed" },
+        { value: "numb", label: "Numb/Empty" },
+        { value: "neutral", label: "Neutral" },
+        { value: "other", label: "Other" },
+      ],
+      required: true,
+    },
+    {
+      id: "intensity",
+      label: "Emotion intensity (1-10)",
+      type: "likert",
+      min: 1,
+      max: 10,
+      minLabel: "Barely noticeable",
+      maxLabel: "Overwhelming",
+      required: true,
+    },
+    {
+      id: "behavior",
+      label: "What did you do? (behavior)",
+      type: "text",
+      required: true,
+      helpText: "How did you act or respond?",
+    },
+    {
+      id: "outcome",
+      label: "Outcome (what happened next)",
+      type: "text",
+      required: true,
+      helpText: "Consequence of your behavior — better, worse, neutral?",
+    },
+    {
+      id: "effective",
+      label: "Was your behavior effective (helpful)?",
+      type: "select",
+      options: [
+        { value: "yes", label: "Yes — it helped" },
+        { value: "somewhat", label: "Somewhat" },
+        { value: "no", label: "No — made things worse" },
+        { value: "neutral", label: "Neutral — no impact" },
+      ],
+      required: true,
+    },
+    {
+      id: "alternative",
+      label: "What could you have done differently?",
+      type: "text",
+      required: false,
+    },
+  ],
+};
+
+export default moodBehaviorDiary;
