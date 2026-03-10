@@ -180,12 +180,17 @@ export function PatientsTable({
                 {patient.addedAt || "-"}
               </TableCell>
               <TableCell className="px-4 py-4 text-center">
-                <Link
-                  href={`/dashboard/admin/patients/${patient.id}`}
-                  className="font-medium text-blue-600 text-sm hover:text-blue-800"
-                >
-                  View
-                </Link>
+                {/* Only show View link for real data (UUIDs), not mock data (simple numbers) */}
+                {patient.id.length > 10 ? (
+                  <Link
+                    href={`/dashboard/admin/patients/${patient.id}`}
+                    className="font-medium text-blue-600 text-sm hover:text-blue-800"
+                  >
+                    View
+                  </Link>
+                ) : (
+                  <span className="text-gray-400 text-xs italic">Sample data</span>
+                )}
               </TableCell>
             </TableRow>
           ))}
