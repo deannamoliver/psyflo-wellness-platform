@@ -1,7 +1,7 @@
 import { PatientsClient } from "./~lib/patients-client";
-import { fetchAdminStudents } from "../students/~lib/students-queries";
+import { fetchAdminPatients } from "./~lib/patients-queries";
 
 export default async function PatientsPage() {
-  const data = await fetchAdminStudents();
+  const data = await fetchAdminPatients();
   return <PatientsClient data={data} />;
 }

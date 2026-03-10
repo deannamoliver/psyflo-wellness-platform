@@ -28,6 +28,7 @@ export async function PersonalInformation({
   const firstName = meta?.["first_name"] ?? "";
   const lastName = meta?.["last_name"] ?? "";
   const email = user.email ?? "";
+  const phone = profile.phone ?? "";
   const grade = profile.grade != null ? String(profile.grade) : "";
   const dateOfBirth = profile.dateOfBirth
     ? format(new Date(profile.dateOfBirth), "yyyy-MM-dd")
@@ -46,6 +47,7 @@ export async function PersonalInformation({
         firstName,
         lastName,
         email,
+        phone,
         grade,
         dateOfBirth,
         gender,

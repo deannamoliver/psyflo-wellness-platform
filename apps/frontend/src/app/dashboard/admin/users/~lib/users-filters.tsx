@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDownIcon, Filter, RefreshCw, SearchIcon } from "lucide-react";
+import { ChevronDownIcon, RefreshCw, SearchIcon } from "lucide-react";
 import { Button } from "@/lib/core-ui/button";
 import {
   DropdownMenu,
@@ -129,10 +129,10 @@ export function UsersFilters({
           onChange={onRoleFilterChange}
         />
         <FilterDropdown
-          label="All Practices"
+          label="All Organizations"
           value={orgFilter}
           options={[
-            { value: "all", label: "All Practices" },
+            { value: "all", label: "All Organizations" },
             ...orgs.map((o) => ({ value: o, label: o })),
           ]}
           onChange={onOrgFilterChange}
@@ -146,14 +146,7 @@ export function UsersFilters({
           ]}
           onChange={onStatusFilterChange}
         />
-        <Button
-          variant="outline"
-          className="h-10 gap-2 border-gray-200 bg-white font-dm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-700"
-        >
-          <Filter className="size-4" />
-          More Filters
-        </Button>
-      </div>
+              </div>
     </div>
   );
 }

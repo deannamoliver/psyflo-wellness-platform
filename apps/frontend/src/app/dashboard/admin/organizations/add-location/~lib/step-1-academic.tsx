@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Plus, Trash2, Users } from "lucide-react";
+import { Clock, Users } from "lucide-react";
 import { Input } from "@/lib/core-ui/input";
 import {
   Select,
@@ -45,26 +45,6 @@ const MENTAL_HEALTH_NEEDS = [
   "Relationship Issues",
 ];
 
-const MODALITIES = [
-  "Individual Therapy",
-  "Group Therapy",
-  "Family Therapy",
-  "Couples Therapy",
-  "Telehealth",
-  "In-Person",
-];
-
-const APPROACHES = [
-  "CBT",
-  "DBT",
-  "EMDR",
-  "Psychodynamic",
-  "Mindfulness-Based",
-  "Solution-Focused",
-  "ACT",
-  "Motivational Interviewing",
-];
-
 export function Step1Academic({ formData, updateForm }: Props) {
   function toggleArrayItem(field: keyof LocationFormData, item: string) {
     const current = (formData[field] as string[]) || [];
@@ -72,20 +52,6 @@ export function Step1Academic({ formData, updateForm }: Props) {
       [field]: current.includes(item)
         ? current.filter((i) => i !== item)
         : [...current, item],
-    });
-  }
-
-  function addLanguage() {
-    const lang = prompt("Enter language:");
-    if (lang?.trim()) {
-      const current = formData.languagesSpoken || [];
-      updateForm({ languagesSpoken: [...current, lang.trim()] });
-    }
-  }
-
-  function removeLanguage(lang: string) {
-    updateForm({
-      languagesSpoken: (formData.languagesSpoken || []).filter((l) => l !== lang),
     });
   }
 
@@ -152,96 +118,7 @@ export function Step1Academic({ formData, updateForm }: Props) {
             </div>
           </div>
 
-          {/* Languages Spoken */}
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <label className="font-medium text-gray-700 text-sm">
-                Languages Spoken
-              </label>
-              <button
-                type="button"
-                onClick={addLanguage}
-                className="flex items-center gap-1 font-medium text-blue-600 text-xs hover:text-blue-700"
-              >
-                <Plus className="h-3 w-3" />
-                Add Language
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {(formData.languagesSpoken || ["English"]).map((lang) => (
-                <div
-                  key={lang}
-                  className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1"
-                >
-                  <span className="text-sm text-gray-700">{lang}</span>
-                  {lang !== "English" && (
-                    <button
-                      type="button"
-                      onClick={() => removeLanguage(lang)}
-                      className="text-gray-400 hover:text-red-500"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Modalities */}
-          <div>
-            <label className="mb-2 block font-medium text-gray-700 text-sm">
-              Treatment Modalities
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {MODALITIES.map((mod) => {
-                const selected = (formData.modalities || []).includes(mod);
-                return (
-                  <button
-                    key={mod}
-                    type="button"
-                    onClick={() => toggleArrayItem("modalities", mod)}
-                    className={cn(
-                      "flex h-9 items-center justify-center rounded-md border px-3 font-medium text-sm transition-colors",
-                      selected
-                        ? "border-teal-600 bg-teal-600 text-white"
-                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300",
-                    )}
-                  >
-                    {mod}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Therapeutic Approaches */}
-          <div>
-            <label className="mb-2 block font-medium text-gray-700 text-sm">
-              Therapeutic Approaches
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {APPROACHES.map((approach) => {
-                const selected = (formData.approaches || []).includes(approach);
-                return (
-                  <button
-                    key={approach}
-                    type="button"
-                    onClick={() => toggleArrayItem("approaches", approach)}
-                    className={cn(
-                      "flex h-9 items-center justify-center rounded-md border px-3 font-medium text-sm transition-colors",
-                      selected
-                        ? "border-indigo-600 bg-indigo-600 text-white"
-                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300",
-                    )}
-                  >
-                    {approach}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
+          
           <FormRow>
             <FormField
               label="Estimated Patient Count"

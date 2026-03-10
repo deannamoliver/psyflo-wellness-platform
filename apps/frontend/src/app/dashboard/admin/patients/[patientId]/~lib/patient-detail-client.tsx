@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   AlertTriangle,
-  Archive,
   ArrowLeft,
   Ban,
   Building2,
@@ -52,20 +51,74 @@ function EditAssignmentModal({
   patient: PatientDetail;
   onClose: () => void;
 }) {
-  const [selectedOrganization, setSelectedOrganization] = useState(
-    patient.locations[0]?.id ?? ""
-  );
-  const [selectedProvider, setSelectedProvider] = useState(
-    patient.locations[0]?.assignedProviderId ?? ""
-  );
+  // Get current assignment info
+  const currentOrg = patient.organizations[0];
+  const currentLocation = patient.locations[0];
+  const currentProvider = patient.locations[0]?.assignedProviderId;
 
-  const providersForLocation = patient.availableProviders.filter(
-    (p) => p.locationId === selectedOrganization
-  );
+  const [selectedOrgId, setSelectedOrgId] = useState(currentOrg?.id ?? "");
+  const [selectedLocationId, setSelectedLocationId] = useState(currentLocation?.id ?? "");
+  const [selectedProviderId, setSelectedProviderId] = useState(currentProvider ?? "");
+
+  // Mock data for cascading dropdowns - in production this would come from patient prop
+  const mockOrganizations = [
+    { id: "org1", name: "Downtown Mental Health Center" },
+    { id: "org2", name: "Westside Behavioral Health" },
+    { id: "org3", name: "North County Wellness Clinic" },
+    ...(patient.availableOrganizations || []),
+  ];
+
+  const mockLocationsByOrg: Record<string, { id: string; name: string }[]> = {
+    org1: [
+      { id: "loc1a", name: "Main Office" },
+      { id: "loc1b", name: "Satellite Clinic" },
+    ],
+    org2: [
+      { id: "loc2a", name: "Primary Location" },
+    ],
+    org3: [
+      { id: "loc3a", name: "North Campus" },
+      { id: "loc3b", name: "South Campus" },
+    ],
+  };
+
+  const mockProvidersByLocation: Record<string, { id: string; name: string; email: string }[]> = {
+    loc1a: [
+      { id: "p1", name: "Dr. Sarah Johnson", email: "sarah.j@example.com" },
+      { id: "p2", name: "Dr. Michael Chen", email: "m.chen@example.com" },
+    ],
+    loc1b: [
+      { id: "p3", name: "Lisa Martinez, LCSW", email: "l.martinez@example.com" },
+    ],
+    loc2a: [
+      { id: "p4", name: "Dr. Emily Williams", email: "e.williams@example.com" },
+      { id: "p5", name: "Dr. Robert Taylor", email: "r.taylor@example.com" },
+    ],
+    loc3a: [
+      { id: "p6", name: "Dr. Amanda Foster", email: "a.foster@example.com" },
+    ],
+    loc3b: [
+      { id: "p7", name: "Dr. James Wilson", email: "j.wilson@example.com" },
+    ],
+  };
+
+  const availableLocations = mockLocationsByOrg[selectedOrgId] ?? [];
+  const availableProviders = mockProvidersByLocation[selectedLocationId] ?? patient.availableProviders ?? [];
+
+  const handleOrgChange = (orgId: string) => {
+    setSelectedOrgId(orgId);
+    setSelectedLocationId("");
+    setSelectedProviderId("");
+  };
+
+  const handleLocationChange = (locationId: string) => {
+    setSelectedLocationId(locationId);
+    setSelectedProviderId("");
+  };
 
   const handleSave = () => {
     // TODO: Implement save functionality via server action
-    console.log("Saving assignment:", { selectedOrganization, selectedProvider });
+    console.log("Saving assignment:", { selectedOrgId, selectedLocationId, selectedProviderId });
     onClose();
   };
 
@@ -73,7 +126,7 @@ function EditAssignmentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900 text-lg">Edit Patient Assignment</h3>
+          <h3 className="font-semibold text-gray-900 text-lg">Edit Provider Assignment</h3>
           <button
             onClick={onClose}
             className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
@@ -83,70 +136,89 @@ function EditAssignmentModal({
         </div>
 
         <div className="space-y-4">
-          {/* Organization/Location Selection */}
+          {/* Organization Selection */}
           <div>
-            <label className="mb-1.5 block font-medium text-gray-700 text-sm">
-              Organization / Location
+            <label className="mb-1.5 flex items-center gap-1.5 font-medium text-gray-700 text-sm">
+              <Building2 className="size-4 text-gray-500" />
+              Organization
             </label>
             <select
-              value={selectedOrganization}
-              onChange={(e) => {
-                setSelectedOrganization(e.target.value);
-                // Reset provider when organization changes
-                const firstProvider = patient.availableProviders.find(
-                  (p) => p.locationId === e.target.value
-                );
-                setSelectedProvider(firstProvider?.id ?? "");
-              }}
+              value={selectedOrgId}
+              onChange={(e) => handleOrgChange(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <optgroup label="Current Assignments">
-                {patient.locations.map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.name}
-                  </option>
-                ))}
-              </optgroup>
-              {patient.availableOrganizations.length > 0 && (
-                <optgroup label="Other Organizations">
-                  {patient.availableOrganizations
-                    .filter((org) => !patient.locations.some((l) => l.id === org.id))
-                    .map((org) => (
-                      <option key={org.id} value={org.id}>
-                        {org.name}
-                      </option>
-                    ))}
-                </optgroup>
-              )}
+              <option value="">Select organization...</option>
+              {mockOrganizations.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.name}
+                </option>
+              ))}
             </select>
-            <p className="mt-1 text-gray-500 text-xs">
-              Select the organization or location for this patient.
-            </p>
+          </div>
+
+          {/* Location Selection */}
+          <div>
+            <label className="mb-1.5 flex items-center gap-1.5 font-medium text-gray-700 text-sm">
+              <MapPin className="size-4 text-gray-500" />
+              Location
+            </label>
+            <select
+              value={selectedLocationId}
+              onChange={(e) => handleLocationChange(e.target.value)}
+              disabled={!selectedOrgId}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
+            >
+              <option value="">{selectedOrgId ? "Select location..." : "Select organization first"}</option>
+              {availableLocations.map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  {loc.name}
+                </option>
+              ))}
+            </select>
+            {selectedOrgId && availableLocations.length === 0 && (
+              <p className="mt-1 text-amber-600 text-xs">
+                No locations available for this organization.
+              </p>
+            )}
           </div>
 
           {/* Provider Selection */}
           <div>
-            <label className="mb-1.5 block font-medium text-gray-700 text-sm">
-              Assigned Provider
+            <label className="mb-1.5 flex items-center gap-1.5 font-medium text-gray-700 text-sm">
+              <User className="size-4 text-gray-500" />
+              Provider
             </label>
             <select
-              value={selectedProvider}
-              onChange={(e) => setSelectedProvider(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              value={selectedProviderId}
+              onChange={(e) => setSelectedProviderId(e.target.value)}
+              disabled={!selectedLocationId}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">No provider assigned</option>
-              {providersForLocation.map((provider) => (
+              <option value="">{selectedLocationId ? "Select provider..." : "Select location first"}</option>
+              {availableProviders.map((provider) => (
                 <option key={provider.id} value={provider.id}>
                   {provider.name} ({provider.email})
                 </option>
               ))}
             </select>
-            {providersForLocation.length === 0 && (
+            {selectedLocationId && availableProviders.length === 0 && (
               <p className="mt-1 text-amber-600 text-xs">
-                No providers available at this organization.
+                No providers available at this location.
               </p>
             )}
           </div>
+
+          {/* Summary */}
+          {selectedOrgId && selectedLocationId && selectedProviderId && (
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+              <p className="font-medium text-blue-800 text-sm">Assignment Summary</p>
+              <div className="mt-2 space-y-1 text-blue-700 text-xs">
+                <p><span className="font-medium">Organization:</span> {mockOrganizations.find(o => o.id === selectedOrgId)?.name}</p>
+                <p><span className="font-medium">Location:</span> {availableLocations.find(l => l.id === selectedLocationId)?.name}</p>
+                <p><span className="font-medium">Provider:</span> {availableProviders.find(p => p.id === selectedProviderId)?.name}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
@@ -158,7 +230,8 @@ function EditAssignmentModal({
           </button>
           <button
             onClick={handleSave}
-            className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-sm text-white hover:bg-blue-700"
+            disabled={!selectedOrgId || !selectedLocationId || !selectedProviderId}
+            className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-sm text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
           >
             Save Changes
           </button>
@@ -228,9 +301,11 @@ function ConfirmActionModal({
 
 export function PatientDetailClient({ patient }: Props) {
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showBlockModal, setShowBlockModal] = useState(false);
-  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [showActivateModal, setShowActivateModal] = useState(false);
+  const [showEditContactModal, setShowEditContactModal] = useState(false);
+  const [editEmail, setEditEmail] = useState(patient.email ?? "");
+  const [editPhone, setEditPhone] = useState(patient.phone ?? "");
 
   const statusConfig = {
     active: { bg: "bg-green-100", text: "text-green-700" },
@@ -242,17 +317,11 @@ export function PatientDetailClient({ patient }: Props) {
   const status = patient.accountStatus.toLowerCase() as keyof typeof statusConfig;
   const config = statusConfig[status] ?? statusConfig.active;
   const isActive = status === "active";
-  const isBlocked = status === "blocked";
-  const isArchived = status === "archived";
+  const isInactive = status === "blocked" || status === "archived" || status === "inactive";
 
-  const handleBlock = () => {
-    // TODO: Implement block via server action
-    console.log("Blocking patient:", patient.id);
-  };
-
-  const handleArchive = () => {
-    // TODO: Implement archive via server action
-    console.log("Archiving patient:", patient.id);
+  const handleDeactivate = () => {
+    // TODO: Implement deactivate via server action
+    console.log("Deactivating patient:", patient.id);
   };
 
   const handleActivate = () => {
@@ -260,29 +329,25 @@ export function PatientDetailClient({ patient }: Props) {
     console.log("Activating patient:", patient.id);
   };
 
+  const handleSaveContact = () => {
+    // TODO: Implement save contact via server action
+    console.log("Saving contact:", { email: editEmail, phone: editPhone });
+    setShowEditContactModal(false);
+  };
+
   return (
     <>
       {showEditModal && (
         <EditAssignmentModal patient={patient} onClose={() => setShowEditModal(false)} />
       )}
-      {showBlockModal && (
+      {showDeactivateModal && (
         <ConfirmActionModal
-          title="Block Patient"
-          message={`Are you sure you want to block ${patient.name}? They will no longer be able to access the platform.`}
-          confirmLabel="Block Patient"
-          confirmVariant="danger"
-          onConfirm={handleBlock}
-          onClose={() => setShowBlockModal(false)}
-        />
-      )}
-      {showArchiveModal && (
-        <ConfirmActionModal
-          title="Archive Patient"
-          message={`Are you sure you want to archive ${patient.name}? Their data will be preserved but they will be removed from active lists.`}
-          confirmLabel="Archive Patient"
+          title="Deactivate Patient"
+          message={`Are you sure you want to deactivate ${patient.name}? They will no longer be able to access the platform.`}
+          confirmLabel="Deactivate Patient"
           confirmVariant="warning"
-          onConfirm={handleArchive}
-          onClose={() => setShowArchiveModal(false)}
+          onConfirm={handleDeactivate}
+          onClose={() => setShowDeactivateModal(false)}
         />
       )}
       {showActivateModal && (
@@ -294,6 +359,67 @@ export function PatientDetailClient({ patient }: Props) {
           onConfirm={handleActivate}
           onClose={() => setShowActivateModal(false)}
         />
+      )}
+      {showEditContactModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-semibold text-gray-900 text-lg">Edit Contact Information</h3>
+              <button
+                onClick={() => setShowEditContactModal(false)}
+                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block font-medium text-gray-700 text-sm">
+                  Email Address
+                </label>
+                <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2">
+                  <Mail className="size-4 text-gray-400" />
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    className="flex-1 text-sm outline-none"
+                    placeholder="patient@example.com"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1.5 block font-medium text-gray-700 text-sm">
+                  Phone Number
+                </label>
+                <div className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2">
+                  <Phone className="size-4 text-gray-400" />
+                  <input
+                    type="tel"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    className="flex-1 text-sm outline-none"
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowEditContactModal(false)}
+                className="rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveContact}
+                className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-sm text-white hover:bg-blue-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
       )}
       <div className="flex flex-col gap-6 p-8 font-dm">
       {/* Breadcrumb */}
@@ -342,32 +468,23 @@ export function PatientDetailClient({ patient }: Props) {
         
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
-          {(isBlocked || isArchived) && (
+          {isInactive && (
             <button
               onClick={() => setShowActivateModal(true)}
               className="flex items-center gap-1.5 rounded-lg border border-green-300 bg-green-50 px-3 py-2 font-medium text-green-700 text-sm hover:bg-green-100"
             >
               <CheckCircle className="size-4" />
-              Activate
+              Reactivate
             </button>
           )}
           {isActive && (
-            <>
-              <button
-                onClick={() => setShowBlockModal(true)}
-                className="flex items-center gap-1.5 rounded-lg border border-red-300 bg-red-50 px-3 py-2 font-medium text-red-700 text-sm hover:bg-red-100"
-              >
-                <Ban className="size-4" />
-                Block
-              </button>
-              <button
-                onClick={() => setShowArchiveModal(true)}
-                className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50"
-              >
-                <Archive className="size-4" />
-                Archive
-              </button>
-            </>
+            <button
+              onClick={() => setShowDeactivateModal(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 font-medium text-amber-700 text-sm hover:bg-amber-100"
+            >
+              <Ban className="size-4" />
+              Deactivate
+            </button>
           )}
         </div>
       </div>
@@ -383,9 +500,18 @@ export function PatientDetailClient({ patient }: Props) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Contact Information */}
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-2 font-semibold text-gray-900 text-lg">
-            Contact Information
-          </h2>
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="font-semibold text-gray-900 text-lg">
+              Contact Information
+            </h2>
+            <button
+              onClick={() => setShowEditContactModal(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 font-medium text-gray-700 text-sm hover:bg-gray-50"
+            >
+              <Edit2 className="size-4" />
+              Edit
+            </button>
+          </div>
           <div className="divide-y divide-gray-100">
             <InfoRow icon={Mail} label="Email" value={patient.email} />
             <InfoRow icon={Phone} label="Phone" value={patient.phone} />

@@ -23,6 +23,7 @@ export type PersonalInfoFormData = {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   grade: string;
   dateOfBirth: string;
   gender: string;
@@ -97,6 +98,8 @@ export async function updateStudentPersonalInfo(
 
   const homeAddress = data.homeAddress.trim() || null;
 
+  const phone = data.phone.trim() || null;
+
   await db.admin
     .update(profiles)
     .set({
@@ -107,6 +110,7 @@ export async function updateStudentPersonalInfo(
       language,
       ethnicity,
       homeAddress,
+      phone,
     })
     .where(eq(profiles.id, studentId));
 

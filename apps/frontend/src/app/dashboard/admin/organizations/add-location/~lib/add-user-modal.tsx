@@ -93,12 +93,24 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
   const [roleTitle, setRoleTitle] = useState(initialData?.roleTitle ?? "");
   const [role, setRole] = useState<Role>(initialData?.role === "practice_management" ? "practice_management" : "provider");
   const [notes, setNotes] = useState(initialData?.notes ?? "");
-  const [patients, setPatients] = useState<Array<{ contact: string; type: "email" | "phone" }>>(
-    initialData?.patients ?? 
-    (initialData?.patientEmails?.map(e => ({ contact: e, type: "email" as const })) ?? [])
+  const [patients, setPatients] = useState<Array<{ 
+    email: string;
+    phone: string;
+    insuranceProvider?: string;
+    memberId?: string;
+    groupNumber?: string;
+    planType?: string;
+  }>>(
+    initialData?.patients ?? []
   );
-  const [newPatientContact, setNewPatientContact] = useState("");
-  const [newPatientType, setNewPatientType] = useState<"email" | "phone">("email");
+  const [newPatientEmail, setNewPatientEmail] = useState("");
+  const [newPatientPhone, setNewPatientPhone] = useState("");
+  const [newPatientInsurance, setNewPatientInsurance] = useState({
+    insuranceProvider: "",
+    memberId: "",
+    groupNumber: "",
+    planType: "",
+  });
   const [acceptsInsurance, setAcceptsInsurance] = useState(initialData?.acceptsInsurance ?? true);
   const [acceptedInsurance, setAcceptedInsurance] = useState<Record<string, string[]>>(initialData?.acceptedInsurance ?? { private: [], public: [], other: [] });
   const [insuranceInputs, setInsuranceInputs] = useState<Record<string, string>>({ private: "", public: "", other: "" });
@@ -109,16 +121,18 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
   const [patientUploadMode, setPatientUploadMode] = useState<"single" | "bulk">("single");
   const [bulkPatientText, setBulkPatientText] = useState("");
 
-  function parseBulkPatients(text: string): Array<{ contact: string; type: "email" | "phone" }> {
+  function parseBulkPatients(text: string): Array<{ email: string; phone: string }> {
     const lines = text.trim().split("\n").filter(l => l.trim());
-    const parsed: Array<{ contact: string; type: "email" | "phone" }> = [];
+    const parsed: Array<{ email: string; phone: string }> = [];
     
     for (const line of lines) {
       const values = line.split(",").map(v => v.trim()).filter(v => v);
-      for (const value of values) {
-        if (patients.some(p => p.contact === value)) continue;
-        const isEmail = value.includes("@");
-        parsed.push({ contact: value, type: isEmail ? "email" : "phone" });
+      if (values.length >= 2) {
+        const email = values.find(v => v.includes("@")) ?? "";
+        const phone = values.find(v => !v.includes("@")) ?? "";
+        if (email && phone && !patients.some(p => p.email === email)) {
+          parsed.push({ email, phone });
+        }
       }
     }
     return parsed;
@@ -134,14 +148,20 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
   }
 
   function addPatient() {
-    if (newPatientContact.trim() && !patients.some(p => p.contact === newPatientContact.trim())) {
-      setPatients([...patients, { contact: newPatientContact.trim(), type: newPatientType }]);
-      setNewPatientContact("");
+    if (newPatientEmail.trim() && newPatientPhone.trim() && !patients.some(p => p.email === newPatientEmail.trim())) {
+      setPatients([...patients, { 
+        email: newPatientEmail.trim(),
+        phone: newPatientPhone.trim(),
+        ...newPatientInsurance,
+      }]);
+      setNewPatientEmail("");
+      setNewPatientPhone("");
+      setNewPatientInsurance({ insuranceProvider: "", memberId: "", groupNumber: "", planType: "" });
     }
   }
 
-  function removePatient(contactToRemove: string) {
-    setPatients(patients.filter((p) => p.contact !== contactToRemove));
+  function removePatient(emailToRemove: string) {
+    setPatients(patients.filter((p) => p.email !== emailToRemove));
   }
 
   function addInsuranceToCategory(categoryId: string, value: string) {
@@ -522,69 +542,112 @@ export function AddUserModal({ onClose, onSave, initialData }: Props) {
             
             {/* Add Patient Input */}
             {patientUploadMode === "single" ? (
-              <div className="mb-4 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="flex rounded-lg border border-blue-200 bg-white overflow-hidden">
-                    <button
-                      type="button"
-                      onClick={() => setNewPatientType("email")}
-                      className={cn(
-                        "px-3 py-1.5 text-sm font-medium transition-colors",
-                        newPatientType === "email"
-                          ? "bg-blue-600 text-white"
-                          : "bg-white text-gray-600 hover:bg-gray-50"
-                      )}
-                    >
-                      <Mail className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setNewPatientType("phone")}
-                      className={cn(
-                        "px-3 py-1.5 text-sm font-medium transition-colors",
-                        newPatientType === "phone"
-                          ? "bg-blue-600 text-white"
-                          : "bg-white text-gray-600 hover:bg-gray-50"
-                      )}
-                    >
-                      <Phone className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="flex-1 flex items-center gap-2 rounded-lg border border-blue-200 bg-white p-2">
-                    <UserCircle className="h-5 w-5 shrink-0 text-blue-400" />
+              <div className="mb-4 space-y-3">
+                {/* Email Field - Required */}
+                <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-white p-2">
+                  <Mail className="h-5 w-5 shrink-0 text-blue-500" />
+                  <Input
+                    value={newPatientEmail}
+                    onChange={(e) => setNewPatientEmail(e.target.value)}
+                    className="h-8 flex-1 border-0 bg-transparent font-dm text-sm focus-visible:ring-0"
+                    placeholder="patient@email.com *"
+                  />
+                </div>
+
+                {/* Phone Field - Required */}
+                <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-white p-2">
+                  <Phone className="h-5 w-5 shrink-0 text-blue-500" />
+                  <Input
+                    value={newPatientPhone}
+                    onChange={(e) => setNewPatientPhone(e.target.value)}
+                    className="h-8 flex-1 border-0 bg-transparent font-dm text-sm focus-visible:ring-0"
+                    placeholder="(555) 123-4567 *"
+                  />
+                </div>
+                
+                {/* Patient Insurance Info */}
+                <div className="rounded-lg border border-blue-100 bg-white p-3">
+                  <p className="mb-2 font-medium text-gray-700 text-xs flex items-center gap-1.5">
+                    <CreditCard className="h-3.5 w-3.5 text-blue-500" />
+                    Patient Insurance (Optional)
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
                     <Input
-                      value={newPatientContact}
-                      onChange={(e) => setNewPatientContact(e.target.value)}
-                      className="h-8 flex-1 border-0 bg-transparent font-dm text-sm focus-visible:ring-0"
-                      placeholder={newPatientType === "email" ? "patient@email.com" : "(555) 123-4567"}
-                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addPatient())}
+                      value={newPatientInsurance.insuranceProvider}
+                      onChange={(e) => setNewPatientInsurance(prev => ({ ...prev, insuranceProvider: e.target.value }))}
+                      className="h-8 border-gray-200 text-xs"
+                      placeholder="Insurance Provider"
                     />
-                    <button
-                      type="button"
-                      onClick={addPatient}
-                      disabled={!newPatientContact.trim()}
-                      className="flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 font-medium text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+                    <select
+                      value={newPatientInsurance.planType}
+                      onChange={(e) => setNewPatientInsurance(prev => ({ ...prev, planType: e.target.value }))}
+                      className="h-8 rounded-md border border-gray-200 px-2 text-xs outline-none focus:border-blue-500"
                     >
-                      <Plus className="h-4 w-4" />
-                      Add
-                    </button>
+                      <option value="">Plan Type</option>
+                      <option value="ppo">PPO</option>
+                      <option value="hmo">HMO</option>
+                      <option value="epo">EPO</option>
+                      <option value="pos">POS</option>
+                      <option value="medicare">Medicare</option>
+                      <option value="medicaid">Medicaid</option>
+                    </select>
+                    <Input
+                      value={newPatientInsurance.memberId}
+                      onChange={(e) => setNewPatientInsurance(prev => ({ ...prev, memberId: e.target.value }))}
+                      className="h-8 border-gray-200 text-xs"
+                      placeholder="Member ID"
+                    />
+                    <Input
+                      value={newPatientInsurance.groupNumber}
+                      onChange={(e) => setNewPatientInsurance(prev => ({ ...prev, groupNumber: e.target.value }))}
+                      className="h-8 border-gray-200 text-xs"
+                      placeholder="Group Number"
+                    />
                   </div>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={addPatient}
+                  disabled={!newPatientEmail.trim() || !newPatientPhone.trim()}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 py-2 font-medium text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Patient
+                </button>
               </div>
             ) : (
               <div className="mb-4 space-y-3">
-                <p className="text-gray-500 text-xs">
-                  Paste patient emails or phone numbers (one per line, or comma-separated)
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-500 text-xs">
+                    Paste patient data (email and phone required per line)
+                  </p>
+                  <div className="group relative">
+                    <div className="flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-blue-100 text-blue-600 text-xs font-bold">
+                      ?
+                    </div>
+                    <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden w-72 -translate-x-1/2 rounded-lg border border-gray-200 bg-white p-3 shadow-lg group-hover:block">
+                      <p className="mb-2 font-semibold text-gray-900 text-xs">Bulk Import Format</p>
+                      <p className="mb-2 text-gray-600 text-xs">Each line should contain email and phone separated by comma:</p>
+                      <div className="rounded bg-gray-50 p-2 font-mono text-xs text-gray-700">
+                        <p>email, phone</p>
+                        <p className="mt-1 text-gray-500">Example:</p>
+                        <p>john@email.com, 555-123-4567</p>
+                        <p>jane@email.com, 555-987-6543</p>
+                      </div>
+                      <p className="mt-2 text-gray-500 text-xs">
+                        <strong>Optional columns:</strong> insurance_provider, member_id, group_number, plan_type
+                      </p>
+                    </div>
+                  </div>
+                </div>
                 <textarea
                   value={bulkPatientText}
                   onChange={(e) => setBulkPatientText(e.target.value)}
                   rows={4}
                   className="w-full rounded-md border border-blue-200 px-3 py-2 font-mono text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="patient1@email.com
-patient2@email.com
-555-123-4567
-555-987-6543"
+                  placeholder="john@email.com, 555-123-4567
+jane@email.com, 555-987-6543"
                 />
                 <div className="flex items-center justify-between">
                   <p className="text-gray-400 text-xs">
@@ -608,31 +671,43 @@ patient2@email.com
               <div className="space-y-2">
                 {patients.map((patient, index) => (
                   <div
-                    key={patient.contact}
-                    className="flex items-center gap-3 rounded-lg border border-blue-100 bg-white p-3 shadow-sm transition-all hover:shadow-md"
+                    key={patient.email}
+                    className="rounded-lg border border-blue-100 bg-white p-3 shadow-sm transition-all hover:shadow-md"
                   >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold text-sm">
-                      {patient.contact.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        {patient.type === "email" ? (
-                          <Mail className="h-3.5 w-3.5 text-gray-400" />
-                        ) : (
-                          <Phone className="h-3.5 w-3.5 text-gray-400" />
-                        )}
-                        <p className="font-medium text-gray-900 text-sm truncate">{patient.contact}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold text-sm">
+                        {patient.email.charAt(0).toUpperCase()}
                       </div>
-                      <p className="text-gray-400 text-xs">Patient #{index + 1}</p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 text-sm">
+                          <span className="flex items-center gap-1 text-gray-900">
+                            <Mail className="h-3.5 w-3.5 text-gray-400" />
+                            {patient.email}
+                          </span>
+                          <span className="flex items-center gap-1 text-gray-600">
+                            <Phone className="h-3.5 w-3.5 text-gray-400" />
+                            {patient.phone}
+                          </span>
+                        </div>
+                        <p className="text-gray-400 text-xs">Patient #{index + 1}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removePatient(patient.email)}
+                        className="flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-500 text-xs hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Remove
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removePatient(patient.contact)}
-                      className="flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-500 text-xs hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-colors"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                      Remove
-                    </button>
+                    {patient.insuranceProvider && (
+                      <div className="mt-2 flex items-center gap-2 rounded-md bg-green-50 px-2 py-1.5 text-xs">
+                        <CreditCard className="h-3 w-3 text-green-600" />
+                        <span className="text-green-700">{patient.insuranceProvider}</span>
+                        {patient.planType && <span className="text-green-600">({patient.planType.toUpperCase()})</span>}
+                        {patient.memberId && <span className="text-green-500">• ID: {patient.memberId}</span>}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

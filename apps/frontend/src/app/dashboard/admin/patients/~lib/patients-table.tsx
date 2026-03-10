@@ -11,16 +11,18 @@ import {
   TableRow,
 } from "@/lib/core-ui/table";
 import { cn } from "@/lib/tailwind-utils";
-import {
-  type SortColumn,
-  type SortState,
-  STATUS_BADGE_COLORS,
-  type Student,
-  type StudentStatus,
-} from "../../students/~lib/students-data";
+import type { SortColumn, SortState, Patient } from "./patients-data";
+
+const STATUS_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
+  Active: { bg: "bg-green-100", text: "text-green-700" },
+  Inactive: { bg: "bg-gray-100", text: "text-gray-700" },
+  "Invite Sent": { bg: "bg-yellow-100", text: "text-yellow-700" },
+  Archived: { bg: "bg-gray-100", text: "text-gray-700" },
+  Blocked: { bg: "bg-red-100", text: "text-red-700" },
+};
 
 type Props = {
-  rows: Student[];
+  rows: Patient[];
   selectedIds: Set<string>;
   onToggleSelect: (id: string) => void;
   onToggleSelectAll: () => void;
@@ -62,8 +64,8 @@ function SortableHeader({
   );
 }
 
-function StatusBadge({ status }: { status: StudentStatus }) {
-  const colors = STATUS_BADGE_COLORS[status];
+function StatusBadge({ status }: { status: string }) {
+  const colors = STATUS_BADGE_COLORS[status] ?? { bg: "bg-gray-100", text: "text-gray-700" };
   return (
     <span
       className={cn(
@@ -118,7 +120,7 @@ export function PatientsTable({
             <TableHead className="px-4 py-3 font-semibold text-gray-500 text-xs tracking-wider">
               <SortableHeader
                 label="Organization"
-                column="school"
+                column="organization"
                 sort={sort}
                 onSort={onSort}
               />
@@ -135,7 +137,7 @@ export function PatientsTable({
               <div className="flex justify-center">
                 <SortableHeader
                   label="Created Date"
-                  column="createdDate"
+                  column="addedAt"
                   sort={sort}
                   onSort={onSort}
                 />
@@ -169,13 +171,13 @@ export function PatientsTable({
                 {patient.name || "-"}
               </TableCell>
               <TableCell className="px-4 py-4 text-gray-700">
-                {patient.school || "-"}
+                {patient.organization || "-"}
               </TableCell>
               <TableCell className="px-4 py-4">
                 <StatusBadge status={patient.status} />
               </TableCell>
               <TableCell className="px-4 py-4 text-center text-gray-600">
-                {patient.createdDate || "-"}
+                {patient.addedAt || "-"}
               </TableCell>
               <TableCell className="px-4 py-4 text-center">
                 <Link

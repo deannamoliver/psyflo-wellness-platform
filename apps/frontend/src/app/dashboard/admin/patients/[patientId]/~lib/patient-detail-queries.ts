@@ -48,22 +48,33 @@ export async function fetchPatientDetail(
 ): Promise<PatientDetail | null> {
   const db = await serverDrizzle();
 
-  const userRows = await db.admin
+  // Query profiles first (like user-detail-queries) for consistency
+  const [profileRow] = await db.admin
     .select({
+      profileId: profiles.id,
+      accountStatus: profiles.accountStatus,
+      phone: profiles.phone,
+      createdAt: profiles.createdAt,
+      updatedAt: profiles.updatedAt,
       userId: users.id,
       email: users.email,
       rawUserMetaData: users.rawUserMetaData,
-      accountStatus: profiles.accountStatus,
-      createdAt: profiles.createdAt,
-      updatedAt: profiles.updatedAt,
     })
-    .from(users)
-    .innerJoin(profiles, eq(users.id, profiles.id))
-    .where(eq(users.id, patientId))
+    .from(profiles)
+    .innerJoin(users, eq(profiles.id, users.id))
+    .where(eq(profiles.id, patientId))
     .limit(1);
 
-  const row = userRows[0];
-  if (!row) return null;
+  if (!profileRow) return null;
+  
+  const row = {
+    userId: profileRow.userId,
+    email: profileRow.email,
+    rawUserMetaData: profileRow.rawUserMetaData,
+    accountStatus: profileRow.accountStatus,
+    createdAt: profileRow.createdAt,
+    updatedAt: profileRow.updatedAt,
+  };
 
   // Get locations/schools this patient is associated with, including organization info
   const schoolRows = await db.admin
@@ -125,8 +136,9 @@ export async function fetchPatientDetail(
   const firstName = row.rawUserMetaData?.first_name ?? "";
   // @ts-expect-error - User metadata is not typed
   const lastName = row.rawUserMetaData?.last_name ?? "";
+  // Use profile phone field, fallback to metadata
   // @ts-expect-error - User metadata is not typed
-  const phone = row.rawUserMetaData?.phone ?? null;
+  const phone = profileRow.phone ?? row.rawUserMetaData?.phone ?? null;
 
   // Build locations with provider assignments
   const locations: PatientLocation[] = schoolRows.map((s) => {

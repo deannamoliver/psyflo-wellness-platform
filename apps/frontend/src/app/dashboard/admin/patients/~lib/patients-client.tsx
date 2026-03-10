@@ -2,24 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { archiveStudents, unarchiveStudents } from "../../students/~lib/archive-students";
-import { BlockedStudentsSection } from "../../students/~lib/blocked-students";
-import { BulkActions } from "../../students/~lib/bulk-actions";
-import { BulkBlockModal } from "../../students/~lib/bulk-block-modal";
-import { BulkImportModal } from "../../students/~lib/bulk-import-modal";
-import { ConfirmActionModal } from "../../students/~lib/confirm-action-modal";
-import { exportStudentsCsv } from "../../students/~lib/export-students";
+import { archivePatients, unarchivePatients } from "./archive-patients";
+import { BulkActions } from "./bulk-actions";
+import { ConfirmActionModal } from "./confirm-action-modal";
+import { exportPatientsCsv } from "./export-patients";
 import type {
   SortColumn,
   SortState,
-  Student,
-  StudentsPageData,
-} from "../../students/~lib/students-data";
+  Patient,
+  PatientsPageData,
+} from "./patients-data";
 import { PatientsFilters, type PatientsFiltersState } from "./patients-filters";
-import { StudentsPagination } from "../../students/~lib/students-pagination";
+import { PatientsPagination } from "./patients-pagination";
 import { PatientsStats } from "./patients-stats";
 import { PatientsTable } from "./patients-table";
-import { UnblockModal } from "../../students/~lib/unblock-modal";
 
 const DEFAULT_FILTERS: PatientsFiltersState = {
   search: "",
@@ -28,9 +24,9 @@ const DEFAULT_FILTERS: PatientsFiltersState = {
   sortBy: "recently-added",
 };
 
-type ConfirmAction = "export" | "archive" | "unarchive" | null;
+type ConfirmAction = "export" | "deactivate" | "reactivate" | null;
 
-type Props = { data: StudentsPageData };
+type Props = { data: PatientsPageData };
 
 export function PatientsClient({ data }: Props) {
   const router = useRouter();
@@ -39,26 +35,22 @@ export function PatientsClient({ data }: Props) {
   const [perPage, setPerPage] = useState(15);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
-  const [blockModalOpen, setBlockModalOpen] = useState(false);
-  const [unblockModalOpen, setUnblockModalOpen] = useState(false);
-  const [unblockStudentId, setUnblockStudentId] = useState("");
-  const [importModalOpen, setImportModalOpen] = useState(false);
   const [sort, setSort] = useState<SortState>(null);
 
   const filtered = useMemo(() => {
-    let result: Student[] = data.students;
+    let result: Patient[] = data.patients;
 
     const q = filters.search.toLowerCase().trim();
     if (q) {
       result = result.filter(
         (s) =>
-          s.studentId.toLowerCase().includes(q) ||
-          s.school.toLowerCase().includes(q) ||
+          s.patientId.toLowerCase().includes(q) ||
+          s.organization.toLowerCase().includes(q) ||
           s.name.toLowerCase().includes(q),
       );
     }
     if (filters.organization !== "all") {
-      result = result.filter((s) => s.school === filters.organization);
+      result = result.filter((s) => s.organization === filters.organization);
     }
     if (filters.status !== "all") {
       result = result.filter((s) => s.status === filters.status);
@@ -74,7 +66,7 @@ export function PatientsClient({ data }: Props) {
     }
 
     return result;
-  }, [filters, data.students, sort]);
+  }, [filters, data.patients, sort]);
 
   const totalItems = filtered.length;
   const paginatedRows = filtered.slice(
@@ -86,11 +78,11 @@ export function PatientsClient({ data }: Props) {
     paginatedRows.length > 0 &&
     paginatedRows.every((r) => selectedIds.has(r.id));
 
-  const isUnarchive =
+  const isReactivate =
     selectedIds.size > 0 &&
-    data.students
+    data.patients
       .filter((s) => selectedIds.has(s.id))
-      .every((s) => s.status === "Archived");
+      .every((s) => s.status === "Archived" || s.status === "Inactive");
 
   function handleFilterChange(key: keyof PatientsFiltersState, value: string) {
     setFilters((prev: PatientsFiltersState) => ({ ...prev, [key]: value }));
@@ -142,17 +134,17 @@ export function PatientsClient({ data }: Props) {
   const confirmLabel =
     confirmAction === "export"
       ? "export the selected patients"
-      : confirmAction === "archive"
-        ? "archive the selected patients"
-        : confirmAction === "unarchive"
-          ? "unarchive the selected patients"
+      : confirmAction === "deactivate"
+        ? "deactivate the selected patients"
+        : confirmAction === "reactivate"
+          ? "reactivate the selected patients"
           : "";
 
   async function handleConfirmedAction() {
     const ids = Array.from(selectedIds);
 
     if (confirmAction === "export") {
-      const csv = await exportStudentsCsv(ids);
+      const csv = await exportPatientsCsv(ids);
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -160,11 +152,11 @@ export function PatientsClient({ data }: Props) {
       a.download = `patients-export-${new Date().toISOString().slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
-    } else if (confirmAction === "archive") {
-      await archiveStudents(ids);
+    } else if (confirmAction === "deactivate") {
+      await archivePatients(ids);
       router.refresh();
-    } else if (confirmAction === "unarchive") {
-      await unarchiveStudents(ids);
+    } else if (confirmAction === "reactivate") {
+      await unarchivePatients(ids);
       router.refresh();
     }
 
@@ -184,7 +176,7 @@ export function PatientsClient({ data }: Props) {
         filters={filters}
         onFilterChange={handleFilterChange}
         onReset={handleReset}
-        organizations={data.schools}
+        organizations={data.organizations}
       />
 
       <div>
@@ -204,7 +196,7 @@ export function PatientsClient({ data }: Props) {
         onSort={handleSort}
       />
 
-      <StudentsPagination
+      <PatientsPagination
         currentPage={currentPage}
         totalItems={totalItems}
         perPage={perPage}
@@ -215,24 +207,13 @@ export function PatientsClient({ data }: Props) {
         }}
       />
 
-      <BlockedStudentsSection
-        blockedStudents={data.blockedStudents}
-        blockedCount={data.stats.blocked}
-        onUnblock={(id) => {
-          setUnblockStudentId(id);
-          setUnblockModalOpen(true);
-        }}
-      />
-
       <BulkActions
         selectedCount={selectedIds.size}
-        isUnarchive={isUnarchive}
+        isReactivate={isReactivate}
         onExport={() => setConfirmAction("export")}
-        onBlock={() => setBlockModalOpen(true)}
-        onArchive={() =>
-          setConfirmAction(isUnarchive ? "unarchive" : "archive")
+        onDeactivate={() =>
+          setConfirmAction(isReactivate ? "reactivate" : "deactivate")
         }
-        onImport={() => setImportModalOpen(true)}
       />
 
       <ConfirmActionModal
@@ -242,24 +223,6 @@ export function PatientsClient({ data }: Props) {
         }}
         actionLabel={confirmLabel}
         onConfirm={handleConfirmedAction}
-      />
-
-      <BulkBlockModal
-        open={blockModalOpen}
-        onOpenChange={setBlockModalOpen}
-        studentIds={Array.from(selectedIds)}
-        onComplete={() => setSelectedIds(new Set())}
-      />
-
-      <UnblockModal
-        open={unblockModalOpen}
-        onOpenChange={setUnblockModalOpen}
-        studentId={unblockStudentId}
-      />
-
-      <BulkImportModal
-        open={importModalOpen}
-        onOpenChange={setImportModalOpen}
       />
     </div>
   );

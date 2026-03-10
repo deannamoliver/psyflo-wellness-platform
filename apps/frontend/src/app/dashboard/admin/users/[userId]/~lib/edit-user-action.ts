@@ -35,8 +35,6 @@ export async function updateUser(
     phone: string;
     displayRole: string;
     displayStatus: string;
-    canManageUsers: boolean;
-    receivesAlertNotifications: boolean;
     internalNotes: string;
   },
 ): Promise<Result> {
@@ -65,8 +63,6 @@ export async function updateUser(
         phone: data.phone || null,
         platformRole: mapDisplayRole(data.displayRole),
         accountStatus: mapDisplayStatus(data.displayStatus),
-        canManageUsers: data.canManageUsers,
-        receivesAlertNotifications: data.receivesAlertNotifications,
         internalNotes: data.internalNotes || null,
       })
       .where(eq(profiles.id, userId));

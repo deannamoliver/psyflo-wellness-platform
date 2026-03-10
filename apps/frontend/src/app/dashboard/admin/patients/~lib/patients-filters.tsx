@@ -11,7 +11,12 @@ import {
 } from "@/lib/core-ui/dropdown-menu";
 import { Input } from "@/lib/core-ui/input";
 import { cn } from "@/lib/tailwind-utils";
-import { SORT_OPTIONS, STATUS_OPTIONS } from "../../students/~lib/students-data";
+const STATUS_OPTIONS = ["Active", "Inactive", "Invite Sent"];
+const SORT_OPTIONS = [
+  { value: "recently-added", label: "Recently Added" },
+  { value: "name-asc", label: "Name (A-Z)" },
+  { value: "name-desc", label: "Name (Z-A)" },
+];
 
 function FilterDropdown({
   label,

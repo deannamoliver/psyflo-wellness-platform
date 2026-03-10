@@ -13,7 +13,6 @@ import {
 import { Label } from "@/lib/core-ui/label";
 import { Textarea } from "@/lib/core-ui/textarea";
 import { ROLE_OPTIONS, STATUS_OPTIONS } from "../../~lib/users-data";
-import { ToggleRow } from "../../add/~lib/form-fields";
 import { updateUser } from "./edit-user-action";
 import type { UserDetail } from "./user-detail-queries";
 
@@ -36,10 +35,6 @@ export function EditUserModal({
   const [phone, setPhone] = useState(initialData.phone ?? "");
   const [role, setRole] = useState(initialData.displayRole);
   const [status, setStatus] = useState(initialData.displayStatus);
-  const [canManage, setCanManage] = useState(initialData.canManageUsers);
-  const [receivesAlerts, setReceivesAlerts] = useState(
-    initialData.receivesAlertNotifications,
-  );
   const [notes, setNotes] = useState(initialData.internalNotes ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,8 +53,6 @@ export function EditUserModal({
       phone: phone.trim(),
       displayRole: role,
       displayStatus: status,
-      canManageUsers: canManage,
-      receivesAlertNotifications: receivesAlerts,
       internalNotes: notes.trim(),
     });
     setSaving(false);
@@ -157,22 +150,6 @@ export function EditUserModal({
                 options={STATUS_OPTIONS}
               />
             </div>
-          </div>
-
-          {/* Toggles */}
-          <div className="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
-            <ToggleRow
-              label="Can Manage Users"
-              description="Allow this user to create and manage other user accounts"
-              checked={canManage}
-              onChange={setCanManage}
-            />
-            <ToggleRow
-              label="Receives Alert Notifications"
-              description="Send alert notifications when students are flagged"
-              checked={receivesAlerts}
-              onChange={setReceivesAlerts}
-            />
           </div>
 
           {/* Internal Notes */}

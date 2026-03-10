@@ -93,7 +93,6 @@ export async function activateSafetyWorkflow(
     .returning({ id: safetyWorkflows.id });
 
   revalidatePath(`/dashboard/counselor/conversations/${handoffId}`);
-  revalidatePath(`/dashboard/admin/conversations/${handoffId}`);
   return workflow!.id;
 }
 
@@ -117,7 +116,6 @@ export async function updateWorkflowDanger(
 
   if (workflow) {
     revalidatePath(`/dashboard/counselor/conversations/${workflow.handoffId}`);
-    revalidatePath(`/dashboard/admin/conversations/${workflow.handoffId}`);
   }
 }
 
@@ -141,7 +139,6 @@ export async function updateWorkflowConcernType(
 
   if (workflow) {
     revalidatePath(`/dashboard/counselor/conversations/${workflow.handoffId}`);
-    revalidatePath(`/dashboard/admin/conversations/${workflow.handoffId}`);
   }
 }
 
@@ -162,7 +159,6 @@ export async function cancelSafetyWorkflow(workflowId: string) {
 
   if (workflow) {
     revalidatePath(`/dashboard/counselor/conversations/${workflow.handoffId}`);
-    revalidatePath(`/dashboard/admin/conversations/${workflow.handoffId}`);
   }
 }
 
@@ -186,7 +182,6 @@ export async function updateWorkflowAssessment(
 
   if (workflow) {
     revalidatePath(`/dashboard/counselor/conversations/${workflow.handoffId}`);
-    revalidatePath(`/dashboard/admin/conversations/${workflow.handoffId}`);
   }
 }
 
@@ -211,7 +206,6 @@ export async function updateWorkflowRiskLevel(
 
   if (workflow) {
     revalidatePath(`/dashboard/counselor/conversations/${workflow.handoffId}`);
-    revalidatePath(`/dashboard/admin/conversations/${workflow.handoffId}`);
   }
 }
 
@@ -235,7 +229,6 @@ export async function updateWorkflowActData(
 
   if (workflow) {
     revalidatePath(`/dashboard/counselor/conversations/${workflow.handoffId}`);
-    revalidatePath(`/dashboard/admin/conversations/${workflow.handoffId}`);
   }
 }
 

@@ -9,6 +9,8 @@ import {
   ChevronRight,
   Heart,
   Lightbulb,
+  ListChecks,
+  Smile,
   Sparkles,
   Target,
   Wind,
@@ -53,6 +55,7 @@ const WELLNESS_TOOLS = [
     iconBg: "bg-white/20",
     link: "/dashboard/student/toolbox/meditation",
     linkText: "Start Session",
+    comingSoon: false,
   },
   {
     title: "Breathing",
@@ -62,6 +65,27 @@ const WELLNESS_TOOLS = [
     iconBg: "bg-white/20",
     link: "/dashboard/student/toolbox/breathing",
     linkText: "Try Now",
+    comingSoon: false,
+  },
+  {
+    title: "Mood Tracker",
+    description: "Track your daily moods and emotions",
+    icon: Smile,
+    color: "bg-gradient-to-br from-yellow-400 to-orange-500 text-white",
+    iconBg: "bg-white/20",
+    link: "/dashboard/student/toolbox/mood-tracker",
+    linkText: "Track Mood",
+    comingSoon: false,
+  },
+  {
+    title: "Habit Tracker",
+    description: "Set goals and build healthy habits",
+    icon: ListChecks,
+    color: "bg-gradient-to-br from-emerald-400 to-green-500 text-white",
+    iconBg: "bg-white/20",
+    link: "/dashboard/student/toolbox/habits",
+    linkText: "View Habits",
+    comingSoon: false,
   },
   {
     title: "Journaling",
@@ -70,7 +94,8 @@ const WELLNESS_TOOLS = [
     color: "bg-gradient-to-br from-orange-400 to-pink-500 text-white",
     iconBg: "bg-white/20",
     link: "/dashboard/student/toolbox/journaling",
-    linkText: "Open Journal",
+    linkText: "Coming Soon",
+    comingSoon: true,
   },
 ];
 
@@ -377,9 +402,6 @@ export default function WellnessDashboard({
     };
   }, [soliStateData.state]);
 
-  const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
-  const completedDays = 5; // Demo: 5 days completed
-
   return (
     <div className="flex h-full w-full gap-8 overflow-y-auto bg-white px-16 py-8">
       {/* Left Column - Main Content */}
@@ -424,7 +446,7 @@ export default function WellnessDashboard({
                   Continue your wellness journey with today's activities:
                 </p>
                 <div className="space-y-2">
-                  {START_YOUR_DAY_ITEMS.map((item) => (
+                  {START_YOUR_DAY_ITEMS.filter(item => item.id !== "daily-check-in").map((item) => (
                     <button
                       key={item.id}
                       onClick={() => setActiveActivity(item.id)}
@@ -526,32 +548,25 @@ export default function WellnessDashboard({
           )}
         </div>
 
-        {/* Wellness Toolbox */}
+        {/* Wellness Toolbox - Horizontal Carousel */}
         <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(240,228,255,0.5)]">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-100">
                 <Sparkles className="h-5 w-5 text-cyan-600" />
               </div>
               <h2 className="font-bold text-gray-900 text-xl">Wellness Toolbox</h2>
             </div>
-            <div className="flex gap-2">
-              <button className="rounded-lg border border-gray-200 p-2 hover:bg-gray-50">
-                <ChevronLeft className="h-4 w-4 text-gray-600" />
-              </button>
-              <button className="rounded-lg border border-gray-200 p-2 hover:bg-gray-50">
-                <ChevronRight className="h-4 w-4 text-gray-600" />
-              </button>
-            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
             {WELLNESS_TOOLS.map((tool) => (
               <div
                 key={tool.title}
                 className={cn(
-                  "rounded-xl p-5 shadow-md transition-transform hover:scale-[1.02]",
-                  tool.color
+                  "flex-shrink-0 w-56 rounded-xl p-5 shadow-md transition-transform",
+                  tool.color,
+                  tool.comingSoon ? "opacity-60" : "hover:scale-[1.02]"
                 )}
               >
                 <div
@@ -564,12 +579,18 @@ export default function WellnessDashboard({
                 </div>
                 <h3 className="font-semibold">{tool.title}</h3>
                 <p className="mb-3 text-sm opacity-90">{tool.description}</p>
-                <Link
-                  href={tool.link}
-                  className="inline-flex items-center gap-1 font-medium text-sm opacity-90 hover:opacity-100"
-                >
-                  {tool.linkText} →
-                </Link>
+                {tool.comingSoon ? (
+                  <span className="inline-flex items-center gap-1 font-medium text-sm opacity-70">
+                    {tool.linkText}
+                  </span>
+                ) : (
+                  <Link
+                    href={tool.link}
+                    className="inline-flex items-center gap-1 font-medium text-sm opacity-90 hover:opacity-100"
+                  >
+                    {tool.linkText} →
+                  </Link>
+                )}
               </div>
             ))}
           </div>
@@ -614,26 +635,40 @@ export default function WellnessDashboard({
             </div>
           </div>
 
-          {/* Weekly Progress */}
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-gray-700 text-sm">Weekly Progress</span>
-              <span className="text-gray-700 text-sm">{completedDays}/7</span>
+          {/* Streak info */}
+          <p className="mb-3 flex items-center gap-1 text-gray-600 text-sm">
+            <span>You're on a {soliStateData.streak}-day streak</span>
+            <span className="text-base text-orange-500">🔥</span>
+          </p>
+
+          {/* Energy Hearts */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 text-sm">Energy</span>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((i) => {
+                  const isFilled = i <= soliStateData.heartCount;
+                  return (
+                    <Image
+                      key={i}
+                      src="/soli-heart.svg"
+                      alt="Energy heart"
+                      width={16}
+                      height={16}
+                      className={cn("h-4 w-4", !isFilled && "opacity-30")}
+                    />
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex gap-1">
-              {weekDays.map((day, i) => (
-                <div
-                  key={day + i}
-                  className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium",
-                    i < completedDays
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-gray-400"
-                  )}
-                >
-                  {i < completedDays ? <Check className="h-4 w-4" /> : day}
-                </div>
-              ))}
+
+            <div className="h-2 w-full overflow-hidden rounded-full bg-blue-100">
+              <div
+                className="h-full rounded-full bg-blue-500 transition-all"
+                style={{
+                  width: `${Math.max(0, Math.min(5, soliStateData.heartCount)) * 20}%`,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -703,13 +738,13 @@ export default function WellnessDashboard({
           </div>
         </div>
 
-        {/* Achievements */}
+        {/* Badges */}
         <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_-5px_rgba(255,220,235,0.5)]">
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-100">
               <Award className="h-5 w-5 text-pink-600" />
             </div>
-            <h2 className="font-bold text-gray-900 text-lg">Achievements</h2>
+            <h2 className="font-bold text-gray-900 text-lg">Badges</h2>
           </div>
 
           <div className="space-y-3">

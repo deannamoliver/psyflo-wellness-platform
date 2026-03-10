@@ -123,9 +123,9 @@ export default function DashboardAdminPage() {
 
       {/* Add Patient Modal */}
       {showAddPatientModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <div className="mb-6 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-xl bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-gray-200 p-6">
               <h3 className="font-semibold text-gray-900 text-lg">Add Patient to Caseload</h3>
               <button
                 onClick={() => {
@@ -140,29 +140,30 @@ export default function DashboardAdminPage() {
               </button>
             </div>
 
-            <div className="space-y-4">
-              {/* Organization Selection */}
-              <div>
-                <label className="mb-1.5 block font-medium text-gray-700 text-sm">
-                  Select Organization
-                </label>
-                <select
-                  value={selectedOrg}
-                  onChange={(e) => {
-                    setSelectedOrg(e.target.value);
-                    setSelectedLocation("");
-                    setSelectedProvider("");
-                  }}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                >
-                  <option value="">Choose an organization...</option>
-                  {MOCK_ORGANIZATIONS.map((org) => (
-                    <option key={org.id} value={org.id}>
-                      {org.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-4">
+                {/* Organization Selection */}
+                <div>
+                  <label className="mb-1.5 block font-medium text-gray-700 text-sm">
+                    Select Organization
+                  </label>
+                  <select
+                    value={selectedOrg}
+                    onChange={(e) => {
+                      setSelectedOrg(e.target.value);
+                      setSelectedLocation("");
+                      setSelectedProvider("");
+                    }}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                  >
+                    <option value="">Choose an organization...</option>
+                    {MOCK_ORGANIZATIONS.map((org) => (
+                      <option key={org.id} value={org.id}>
+                        {org.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
               {/* Location Selection */}
               <div>
@@ -237,6 +238,62 @@ export default function DashboardAdminPage() {
                 />
               </div>
 
+              {/* Insurance Information */}
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <label className="mb-3 block font-medium text-gray-700 text-sm">
+                  Insurance Information
+                </label>
+                <div className="space-y-3">
+                  <div>
+                    <label className="mb-1 block text-gray-600 text-xs">
+                      Insurance Provider
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Blue Cross Blue Shield, Aetna, Medicare"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="mb-1 block text-gray-600 text-xs">
+                        Member ID
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Member ID"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-gray-600 text-xs">
+                        Group Number
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Group #"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-gray-600 text-xs">
+                      Plan Type
+                    </label>
+                    <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
+                      <option value="">Select plan type...</option>
+                      <option value="ppo">PPO</option>
+                      <option value="hmo">HMO</option>
+                      <option value="epo">EPO</option>
+                      <option value="pos">POS</option>
+                      <option value="medicare">Medicare</option>
+                      <option value="medicaid">Medicaid</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
               {/* Info Note */}
               <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
                 <p className="text-blue-700 text-sm">
@@ -268,6 +325,7 @@ export default function DashboardAdminPage() {
                 >
                   Add Patient
                 </button>
+              </div>
               </div>
             </div>
           </div>

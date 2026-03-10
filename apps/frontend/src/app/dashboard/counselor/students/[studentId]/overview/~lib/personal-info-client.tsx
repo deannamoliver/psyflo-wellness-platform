@@ -56,6 +56,7 @@ export function PersonalInfoClient({
     firstName: initialData.firstName,
     lastName: initialData.lastName,
     email: initialData.email,
+    phone: initialData.phone,
     grade: initialData.grade,
     dateOfBirth: initialData.dateOfBirth,
     gender: initialData.gender,
@@ -122,6 +123,7 @@ export function PersonalInfoClient({
       firstName: initialData.firstName,
       lastName: initialData.lastName,
       email: initialData.email,
+      phone: initialData.phone,
       grade: initialData.grade,
       dateOfBirth: initialData.dateOfBirth,
       gender: initialData.gender,
@@ -192,6 +194,10 @@ export function PersonalInfoClient({
               value={form.email.trim() || null}
             />
             <ViewField
+              label="Phone Number"
+              value={form.phone.trim() || null}
+            />
+            <ViewField
               label="Home Address"
               value={form.homeAddress.trim() || null}
             />
@@ -232,6 +238,20 @@ export function PersonalInfoClient({
                 onChange={(e) =>
                   setForm((p) => ({ ...p, email: e.target.value }))
                 }
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label className="font-semibold text-gray-500 text-xs uppercase tracking-wider">
+                Phone Number
+              </Label>
+              <Input
+                type="tel"
+                value={form.phone}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, phone: e.target.value }))
+                }
+                placeholder="(555) 123-4567"
                 className="h-9 text-sm"
               />
             </div>

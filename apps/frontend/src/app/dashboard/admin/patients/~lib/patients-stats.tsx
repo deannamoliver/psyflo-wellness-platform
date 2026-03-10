@@ -1,8 +1,8 @@
 "use client";
 
-import { Archive, Ban, CheckCircle, Users } from "lucide-react";
+import { CheckCircle, Mail, Users, UserX } from "lucide-react";
 import { cn } from "@/lib/tailwind-utils";
-import type { StudentStats } from "../../students/~lib/students-data";
+import type { PatientsStats as PatientsStatsType } from "./patients-data";
 
 type StatCardProps = {
   icon: React.ReactNode;
@@ -24,13 +24,13 @@ function StatCard({ icon, iconBg, label, value }: StatCardProps) {
       </div>
       <span className="font-medium text-gray-500 text-sm">{label}</span>
       <span className="font-bold text-2xl text-gray-900">
-        {value.toLocaleString()}
+        {(value ?? 0).toLocaleString()}
       </span>
     </div>
   );
 }
 
-export function PatientsStats({ stats }: { stats: StudentStats }) {
+export function PatientsStats({ stats }: { stats: PatientsStatsType }) {
   return (
     <div className="grid grid-cols-2 gap-4 font-dm lg:grid-cols-4">
       <StatCard
@@ -42,20 +42,20 @@ export function PatientsStats({ stats }: { stats: StudentStats }) {
       <StatCard
         icon={<CheckCircle className="size-5 text-green-600" />}
         iconBg="bg-green-100"
-        label="Active Patients"
+        label="Active"
         value={stats.active}
       />
       <StatCard
-        icon={<Ban className="size-5 text-red-600" />}
-        iconBg="bg-red-100"
-        label="Blocked"
-        value={stats.blocked}
+        icon={<UserX className="size-5 text-gray-600" />}
+        iconBg="bg-gray-100"
+        label="Inactive"
+        value={stats.inactive}
       />
       <StatCard
-        icon={<Archive className="size-5 text-gray-600" />}
-        iconBg="bg-gray-100"
-        label="Archived"
-        value={stats.archived}
+        icon={<Mail className="size-5 text-yellow-600" />}
+        iconBg="bg-yellow-100"
+        label="Invite Sent"
+        value={stats.inviteSent}
       />
     </div>
   );

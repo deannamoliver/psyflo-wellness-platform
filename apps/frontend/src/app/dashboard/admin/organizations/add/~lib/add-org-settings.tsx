@@ -51,7 +51,7 @@ export function AddOrgSettings({ formData, onChange }: Props) {
             </SelectContent>
           </Select>
           <p className="mt-1 text-gray-500 text-xs">
-            Organizations typically start in Onboarding status
+            Set the initial status for this organization
           </p>
         </div>
 

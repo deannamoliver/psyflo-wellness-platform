@@ -30,7 +30,7 @@ export function StudentInfoSection({ student }: Props) {
           </h2>
         </div>
         <Link
-          href={`/dashboard/admin/students/${student.id}`}
+          href={`/dashboard/admin/patients/${student.id}`}
           className="font-medium text-blue-600 text-sm hover:text-blue-800"
         >
           View Profile

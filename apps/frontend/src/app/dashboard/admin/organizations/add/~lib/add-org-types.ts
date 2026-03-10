@@ -51,7 +51,7 @@ export type OrgFormData = {
   billingEmail: string;
   billingPhone: string;
   documents: { name: string; type: string; uploadedAt: string }[];
-  status: "active" | "archived" | "onboarding";
+  status: "active" | "archived";
   internalNotes: string;
   additionalContacts: ContactInfo[];
 };
@@ -93,7 +93,7 @@ export const INITIAL_FORM_DATA: OrgFormData = {
   billingEmail: "",
   billingPhone: "",
   documents: [],
-  status: "onboarding",
+  status: "active",
   internalNotes: "",
   additionalContacts: [createContact()],
 };
@@ -167,8 +167,6 @@ export const COUNTRY_OPTIONS = [
 ];
 
 export const STATUS_OPTIONS = [
-  { value: "onboarding", label: "Onboarding" },
   { value: "active", label: "Active" },
-  { value: "suspended", label: "Suspended" },
-  { value: "archived", label: "Archived" },
+  { value: "archived", label: "Inactive" },
 ];

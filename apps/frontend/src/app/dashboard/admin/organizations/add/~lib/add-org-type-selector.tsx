@@ -151,7 +151,7 @@ export function AddOrgTypeSelector({ selectedType, selectedSpecialty, onSelectTy
         <p className="mt-1 text-gray-500 text-sm">
           What type of organization is this?
         </p>
-        <div className="mt-6 grid grid-cols-5 gap-4">
+        <div className="mt-6 grid grid-cols-6 gap-3">
           {ORG_TYPES.map((org) => {
             const isSelected = selectedType === org.value;
             const Icon = org.icon;
@@ -200,7 +200,7 @@ export function AddOrgTypeSelector({ selectedType, selectedSpecialty, onSelectTy
         <p className="mt-1 text-gray-500 text-sm">
           What is the primary clinical specialty?
         </p>
-        <div className="mt-6 grid grid-cols-4 gap-4">
+        <div className="mt-6 grid grid-cols-6 gap-3">
           {SPECIALTIES.map((spec) => {
             const isSelected = selectedSpecialty === spec.value;
             const Icon = spec.icon;
