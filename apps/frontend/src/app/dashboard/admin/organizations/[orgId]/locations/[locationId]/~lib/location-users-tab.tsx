@@ -89,6 +89,8 @@ function buildUserRows(staff: StaffMember[], patients: StudentRecord[]): UserRow
   const staffRows: UserRow[] = staff.map((s) => {
     const isProvider = s.role.toLowerCase().includes("provider") || s.schoolRole === "wellness_coach";
     const assignments = providerAssignments[s.id] || { patientIds: [], patientNames: [] };
+    // Don't set originalStaff for sample data (IDs starting with "sample-")
+    const isSampleData = s.id.startsWith("sample-");
     return {
       id: s.id,
       name: s.name,
@@ -97,20 +99,24 @@ function buildUserRows(staff: StaffMember[], patients: StudentRecord[]): UserRow
       status: s.status,
       assignedPatients: assignments.patientNames.length,
       assignedPatientNames: assignments.patientNames,
-      originalStaff: s,
+      originalStaff: isSampleData ? undefined : s,
     };
   });
 
-  const patientRows: UserRow[] = patients.map((p) => ({
-    id: p.id,
-    name: p.name,
-    email: p.email,
-    userType: "Patient",
-    status: "Active",
-    assignedProvider: patientToProvider[p.id]?.name,
-    assignedProviderId: patientToProvider[p.id]?.id,
-    originalPatient: p,
-  }));
+  const patientRows: UserRow[] = patients.map((p) => {
+    // Don't set originalPatient for sample data (IDs starting with "sample-")
+    const isSampleData = p.id.startsWith("sample-");
+    return {
+      id: p.id,
+      name: p.name,
+      email: p.email,
+      userType: "Patient",
+      status: "Active",
+      assignedProvider: patientToProvider[p.id]?.name,
+      assignedProviderId: patientToProvider[p.id]?.id,
+      originalPatient: isSampleData ? undefined : p,
+    };
+  });
 
   return [...staffRows, ...patientRows];
 }
