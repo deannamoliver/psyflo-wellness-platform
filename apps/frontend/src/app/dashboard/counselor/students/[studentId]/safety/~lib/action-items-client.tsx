@@ -2,14 +2,17 @@
 
 import { format } from "date-fns";
 import {
+  AlertTriangle,
   CheckCircle2,
   Circle,
   Clock,
+  ExternalLink,
   FileText,
   MessageSquare,
   Phone,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/tailwind-utils";
 
@@ -17,71 +20,87 @@ type ActionItem = {
   id: string;
   title: string;
   description: string;
-  type: "follow_up" | "documentation" | "outreach" | "review";
+  type: "follow_up" | "documentation" | "outreach" | "review" | "safety_review";
   priority: "high" | "medium" | "low";
   status: "pending" | "completed";
   dueDate: Date | null;
   createdAt: Date;
   completedAt: Date | null;
+  link?: string;
 };
 
 type ActionItemsClientProps = {
   patientId: string;
 };
 
-// Mock data for action items
-const MOCK_ACTION_ITEMS: ActionItem[] = [
-  {
-    id: "a1",
-    title: "Follow up on medication adherence",
-    description: "Patient mentioned difficulty remembering to take medication. Discuss reminder strategies.",
-    type: "follow_up",
-    priority: "high",
-    status: "pending",
-    dueDate: new Date(2026, 2, 12),
-    createdAt: new Date(2026, 2, 7),
-    completedAt: null,
-  },
-  {
-    id: "a2",
-    title: "Complete treatment plan update",
-    description: "Update treatment goals based on recent progress. Include new coping strategies discussed.",
-    type: "documentation",
-    priority: "medium",
-    status: "pending",
-    dueDate: new Date(2026, 2, 15),
-    createdAt: new Date(2026, 2, 5),
-    completedAt: null,
-  },
-  {
-    id: "a3",
-    title: "Contact parent/guardian",
-    description: "Schedule call to discuss patient's progress and home support strategies.",
-    type: "outreach",
-    priority: "medium",
-    status: "pending",
-    dueDate: new Date(2026, 2, 14),
-    createdAt: new Date(2026, 2, 6),
-    completedAt: null,
-  },
-  {
-    id: "a4",
-    title: "Review PHQ-9 results",
-    description: "Analyze latest screening results and adjust treatment approach if needed.",
-    type: "review",
-    priority: "low",
-    status: "completed",
-    dueDate: new Date(2026, 2, 8),
-    createdAt: new Date(2026, 2, 1),
-    completedAt: new Date(2026, 2, 8),
-  },
-];
+// Function to generate mock action items with patient-specific links
+function getMockActionItems(patientId: string): ActionItem[] {
+  return [
+    {
+      id: "a0",
+      title: "Review Safety Alert",
+      description: "Patient indicated thoughts of self-harm on PHQ-9 Question 9. Review assessment responses and follow safety protocol.",
+      type: "safety_review",
+      priority: "high",
+      status: "pending",
+      dueDate: new Date(2026, 2, 10),
+      createdAt: new Date(2026, 2, 9),
+      completedAt: null,
+      link: `/dashboard/counselor/alerts/student/${patientId}`,
+    },
+    {
+      id: "a1",
+      title: "Follow up on medication adherence",
+      description: "Patient mentioned difficulty remembering to take medication. Discuss reminder strategies.",
+      type: "follow_up",
+      priority: "high",
+      status: "pending",
+      dueDate: new Date(2026, 2, 12),
+      createdAt: new Date(2026, 2, 7),
+      completedAt: null,
+    },
+    {
+      id: "a2",
+      title: "Complete treatment plan update",
+      description: "Update treatment goals based on recent progress. Include new coping strategies discussed.",
+      type: "documentation",
+      priority: "medium",
+      status: "pending",
+      dueDate: new Date(2026, 2, 15),
+      createdAt: new Date(2026, 2, 5),
+      completedAt: null,
+    },
+    {
+      id: "a3",
+      title: "Contact parent/guardian",
+      description: "Schedule call to discuss patient's progress and home support strategies.",
+      type: "outreach",
+      priority: "medium",
+      status: "pending",
+      dueDate: new Date(2026, 2, 14),
+      createdAt: new Date(2026, 2, 6),
+      completedAt: null,
+    },
+    {
+      id: "a4",
+      title: "Review PHQ-9 results",
+      description: "Analyze latest screening results and adjust treatment approach if needed.",
+      type: "review",
+      priority: "low",
+      status: "completed",
+      dueDate: new Date(2026, 2, 8),
+      createdAt: new Date(2026, 2, 1),
+      completedAt: new Date(2026, 2, 8),
+    },
+  ];
+}
 
 const TYPE_CONFIG = {
   follow_up: { icon: Phone, label: "Follow Up", bg: "bg-blue-50", text: "text-blue-700" },
   documentation: { icon: FileText, label: "Documentation", bg: "bg-violet-50", text: "text-violet-700" },
   outreach: { icon: MessageSquare, label: "Outreach", bg: "bg-emerald-50", text: "text-emerald-700" },
   review: { icon: Clock, label: "Review", bg: "bg-amber-50", text: "text-amber-700" },
+  safety_review: { icon: AlertTriangle, label: "Safety Review", bg: "bg-red-50", text: "text-red-700" },
 };
 
 const PRIORITY_CONFIG = {
@@ -106,13 +125,15 @@ export function ActionItemsClient({ patientId }: ActionItemsClientProps) {
     dueDate: "",
   });
 
-  const filteredItems = MOCK_ACTION_ITEMS.filter((item) => {
+  const actionItems = getMockActionItems(patientId);
+
+  const filteredItems = actionItems.filter((item: ActionItem) => {
     if (filter === "all") return true;
     return item.status === filter;
   });
 
-  const pendingCount = MOCK_ACTION_ITEMS.filter((i) => i.status === "pending").length;
-  const completedCount = MOCK_ACTION_ITEMS.filter((i) => i.status === "completed").length;
+  const pendingCount = actionItems.filter((i: ActionItem) => i.status === "pending").length;
+  const completedCount = actionItems.filter((i: ActionItem) => i.status === "completed").length;
 
   return (
     <div className="space-y-4">
@@ -203,14 +224,25 @@ export function ActionItemsClient({ patientId }: ActionItemsClientProps) {
                         )}
                       </div>
                     </div>
-                    {item.status !== "completed" && (
-                      <button
-                        type="button"
-                        className="shrink-0 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
-                      >
-                        Mark Complete
-                      </button>
-                    )}
+                    <div className="flex shrink-0 items-center gap-2">
+                      {item.link && (
+                        <Link
+                          href={item.link}
+                          className="flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          View Assessment
+                        </Link>
+                      )}
+                      {item.status !== "completed" && (
+                        <button
+                          type="button"
+                          className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                        >
+                          Mark Complete
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

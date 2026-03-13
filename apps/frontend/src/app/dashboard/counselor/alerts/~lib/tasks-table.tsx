@@ -3,11 +3,7 @@
 import { format, formatDistanceToNow } from "date-fns";
 import {
   CheckCircle2,
-  MoreHorizontal,
-  UserIcon,
 } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
 import { Skeleton } from "@/lib/core-ui/skeleton";
 import {
   Table,
@@ -142,8 +138,6 @@ type TaskRowProps = {
 };
 
 function TaskRow({ task, onStatusChange, onTaskClick }: TaskRowProps) {
-  const [showActions, setShowActions] = useState(false);
-
   return (
     <TableRow 
       className="border-gray-100 border-b transition-colors hover:bg-gray-50 cursor-pointer"
@@ -204,13 +198,13 @@ function TaskRow({ task, onStatusChange, onTaskClick }: TaskRowProps) {
       </TableCell>
       <TableCell className="px-4">
         <div className="flex items-center gap-2">
-          <Link
-            href={`/dashboard/counselor/students/${task.patientId}`}
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onTaskClick?.(task); }}
             className="inline-flex items-center gap-1 font-medium text-blue-600 text-sm hover:text-blue-800"
           >
-            View
-            <UserIcon className="size-3.5" />
-          </Link>
+            View Details
+          </button>
           {task.status !== "done" && onStatusChange && (
             <button
               type="button"
@@ -220,13 +214,6 @@ function TaskRow({ task, onStatusChange, onTaskClick }: TaskRowProps) {
               <CheckCircle2 className="size-3.5" />
             </button>
           )}
-          <button
-            type="button"
-            onClick={() => setShowActions(!showActions)}
-            className="p-1 text-gray-400 hover:text-gray-600 rounded"
-          >
-            <MoreHorizontal className="size-4" />
-          </button>
         </div>
       </TableCell>
     </TableRow>

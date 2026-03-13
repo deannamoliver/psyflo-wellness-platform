@@ -38,6 +38,7 @@ import {
   type ProviderData,
 } from "@/app/dashboard/~lib/provider-store";
 import { saveProviderDataServer } from "@/app/dashboard/~lib/provider-data-actions";
+import { ExerciseRouter } from "@/components/exercises/ExerciseRouter";
 
 // ─── ICD-10 Mental Health Diagnosis Codes ────────────────────────────
 
@@ -2510,8 +2511,78 @@ function TreatmentPlansTab({
       .map((e) => e.topicId),
   );
 
+  const [reasonForEnrollment, setReasonForEnrollment] = useState(() => {
+    const stored = loadProviderData(patientId);
+    return stored?.reasonForEnrollment ?? "";
+  });
+  const [editingReason, setEditingReason] = useState(false);
+  const [reasonDraft, setReasonDraft] = useState(reasonForEnrollment);
+
+  const handleSaveReason = () => {
+    setReasonForEnrollment(reasonDraft);
+    setEditingReason(false);
+    // Persist to storage
+    const stored = loadProviderData(patientId);
+    saveProviderData(patientId, { ...stored, reasonForEnrollment: reasonDraft });
+    saveProviderDataServer(patientId, { ...stored, reasonForEnrollment: reasonDraft }).catch(() => {});
+  };
+
   return (
     <div className="space-y-6">
+      {/* Reason for Enrollment Card */}
+      <div className="rounded-xl border bg-white">
+        <div className="flex items-center justify-between border-b px-4 py-3">
+          <div className="flex items-center gap-2">
+            <ClipboardList className="h-4 w-4 text-violet-600" />
+            <h4 className="text-sm font-semibold text-gray-900">Reason for Enrollment</h4>
+          </div>
+          {!editingReason && (
+            <button
+              type="button"
+              onClick={() => { setReasonDraft(reasonForEnrollment); setEditingReason(true); }}
+              className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50"
+            >
+              <Edit3 className="h-3 w-3" />
+              Edit
+            </button>
+          )}
+        </div>
+        <div className="px-4 py-3">
+          {editingReason ? (
+            <div className="space-y-3">
+              <textarea
+                value={reasonDraft}
+                onChange={(e) => setReasonDraft(e.target.value)}
+                placeholder="Enter the reason for RTM enrollment (e.g., presenting symptoms, referral source, treatment goals)..."
+                rows={3}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingReason(false)}
+                  className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveReason}
+                  className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+                >
+                  <Save className="h-3 w-3" />
+                  Save
+                </button>
+              </div>
+            </div>
+          ) : reasonForEnrollment ? (
+            <p className="text-sm text-gray-700 whitespace-pre-wrap">{reasonForEnrollment}</p>
+          ) : (
+            <p className="text-sm text-gray-400 italic">No reason for enrollment documented. Click Edit to add.</p>
+          )}
+        </div>
+      </div>
+
       {/* Diagnosis Multi-Select */}
       <DiagnosisSelector
         selectedDiagnoses={diagnoses}
@@ -2872,54 +2943,16 @@ export default function PatientDetail({
             </div>
             <div className="p-4 space-y-4 max-h-[600px] overflow-y-auto">
               {selectedExercise.mode === "launch" ? (
-                <div className="space-y-4">
-                  <div className="rounded-lg bg-blue-50 p-4">
-                    <p className="text-sm font-medium text-blue-900">{selectedExercise.exercise.topicName}</p>
-                    <p className="mt-1 text-xs text-blue-700">{selectedExercise.exercise.categoryName}</p>
-                    <div className="mt-3 flex items-center gap-2 text-xs text-blue-600">
-                      <span>Frequency: {selectedExercise.exercise.frequency}</span>
-                      <span>·</span>
-                      <span>Assigned: {selectedExercise.exercise.assignedDate}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <p className="text-xs font-medium text-gray-700">Complete this exercise with the patient:</p>
-                    <div className="rounded-lg border p-4 space-y-3">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Response / Notes</label>
-                        <textarea
-                          rows={4}
-                          className="w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                          placeholder="Enter patient's responses or observations..."
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Score (if applicable)</label>
-                        <input
-                          type="number"
-                          className="w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                          placeholder="Enter score..."
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedExercise(null)}
-                        className="rounded-lg border px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedExercise(null)}
-                        className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                      >
-                        Save Response
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <ExerciseRouter
+                  exerciseId={selectedExercise.exercise.topicId}
+                  assignmentId={selectedExercise.exercise.id}
+                  patientId={patient.id}
+                  clinicianId="clinician-1"
+                  onComplete={(response) => {
+                    console.log("Exercise completed:", response);
+                    setSelectedExercise(null);
+                  }}
+                />
               ) : (
                 <div className="space-y-4">
                   <div className="rounded-lg bg-gray-50 p-3">

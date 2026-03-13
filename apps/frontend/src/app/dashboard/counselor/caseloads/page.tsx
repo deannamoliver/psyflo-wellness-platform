@@ -9,7 +9,12 @@ import { notFound } from "next/navigation";
 import type { SearchParams } from "nuqs";
 import { Suspense } from "react";
 import { serverDrizzle } from "@/lib/database/drizzle";
-import { PageContainer, PageContent } from "@/lib/extended-ui/page";
+import {
+  PageContainer,
+  PageContent,
+  PageSubtitle,
+  PageTitle,
+} from "@/lib/extended-ui/page";
 import EmptyLoadingSkeleton from "@/lib/loading/empty-skeleton";
 import { getUserFullName } from "@/lib/user/utils";
 import { searchParamsCache } from "./~lib/cache";
@@ -138,7 +143,13 @@ export default async function CaseloadsPage({
       : firstRow.schoolId;
   return (
     <PageContainer>
-      <PageContent>
+      <PageContent className="space-y-6">
+        <div>
+          <PageTitle className="font-semibold">Caseloads</PageTitle>
+          <PageSubtitle>
+            View patient caseloads. Toggle between your own caseload and organization-wide view.
+          </PageSubtitle>
+        </div>
         <Suspense fallback={<EmptyLoadingSkeleton />}>
           <AllPatientsTableWrapper schoolId={schoolId} />
         </Suspense>

@@ -98,35 +98,6 @@ export default function ProviderSettingsClient({
               </div>
             </div>
           </div>
-
-          {/* Notification Preferences */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h3 className="mb-4 font-semibold text-gray-900 text-lg">Notification Preferences</h3>
-            <div className="space-y-4">
-              <label className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Email Notifications</p>
-                  <p className="text-xs text-gray-500">Receive updates about patient alerts</p>
-                </div>
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-              </label>
-              <label className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Weekly Summary</p>
-                  <p className="text-xs text-gray-500">Get a weekly digest of patient activity</p>
-                </div>
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-          </div>
         </div>
       )}
 
@@ -136,7 +107,7 @@ export default function ProviderSettingsClient({
           <div className="rounded-xl border border-gray-200 bg-white p-6">
             <h3 className="mb-4 font-semibold text-gray-900 text-lg">Password & Security</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex size-10 items-center justify-center rounded-lg bg-gray-100">
                     <Lock className="size-5 text-gray-600" />
@@ -147,20 +118,6 @@ export default function ProviderSettingsClient({
                   </div>
                 </div>
                 <ChevronRight className="size-5 text-gray-400" />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-gray-100">
-                    <Shield className="size-5 text-gray-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Two-Factor Authentication</p>
-                    <p className="text-xs text-gray-500">Add an extra layer of security</p>
-                  </div>
-                </div>
-                <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                  Not enabled
-                </span>
               </div>
             </div>
           </div>

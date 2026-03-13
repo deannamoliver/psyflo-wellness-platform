@@ -345,30 +345,56 @@ export function AlertDetailCard({ data }: { data: StudentAlertsGrouped }) {
 
           {/* Safety Alert Info Banner */}
           {selectedAlert.type === "safety" && (
-            <div className="flex gap-3 rounded-md border border-amber-200 bg-amber-50/50 p-4">
-              <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  className="size-3.5"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-amber-900 text-sm">
-                  Safety Alert Trigger
+            <div className="rounded-lg border border-red-200 bg-red-50/50 p-4">
+              <div className="flex gap-3">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    className="size-4"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6.701 2.25c.577-1 2.02-1 2.598 0l5.196 9a1.5 1.5 0 0 1-1.299 2.25H2.804a1.5 1.5 0 0 1-1.3-2.25l5.197-9ZM8 5a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-1.5 0v-2.5A.75.75 0 0 1 8 5Zm0 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                 </div>
-                <Muted className="mt-1 text-amber-800 text-sm">
-                  This alert was generated because the patient indicated
-                  thoughts of self-harm on Question 9 of the screener.
-                </Muted>
+                <div className="flex-1">
+                  <div className="font-semibold text-red-900 text-sm">
+                    Safety Alert - Immediate Review Required
+                  </div>
+                  <Muted className="mt-1 text-red-800 text-sm">
+                    This alert was generated because the patient indicated thoughts of self-harm on Question 9 of the screener.
+                  </Muted>
+                </div>
               </div>
+              
+              {/* Assessment Score Summary for Safety Alerts */}
+              {selectedAlert.screener && selectedSource.sourceType === "screener" && (
+                <div className="mt-4 grid grid-cols-3 gap-4 rounded-md bg-white/60 p-3">
+                  <div>
+                    <div className="text-xs font-medium text-red-700 uppercase tracking-wide">Assessment</div>
+                    <div className="mt-1 font-semibold text-red-900">
+                      {getScreenerTypeLabel(selectedSource.screenerType)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium text-red-700 uppercase tracking-wide">Total Score</div>
+                    <div className="mt-1 font-bold text-lg text-red-900">
+                      {selectedAlert.screener.score.toFixed(0)} / {selectedAlert.screener.maxScore.toFixed(0)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium text-red-700 uppercase tracking-wide">Severity</div>
+                    <div className="mt-1 font-semibold text-red-900">
+                      {getInterpretationRanges(selectedSource.screenerType, selectedAlert.screener.score)
+                        .find(r => r.isCurrentRange)?.severity ?? "Unknown"}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

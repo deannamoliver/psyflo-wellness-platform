@@ -2,12 +2,14 @@
 
 import { format } from "date-fns";
 import {
+  Activity,
   AlertTriangle,
   ArrowRight,
-  ArrowUp,
   CheckCircle2,
   Circle,
+  ClipboardList,
   Clock,
+  DollarSign,
   Download,
   Eye,
   FileCheck,
@@ -16,7 +18,9 @@ import {
   PenLine,
   SearchIcon,
   Send,
+  Stethoscope,
   TrendingUp,
+  User,
   Users,
   XCircle,
 } from "lucide-react";
@@ -39,6 +43,8 @@ import {
   buildRTMPatients,
   generateBillingReports,
   getBillingEligibility,
+  getTimeEntries,
+  getCommunications,
 } from "./mock-data";
 
 type FilterStatus = "all" | "active" | "action_needed" | "paused" | "billable";
@@ -130,7 +136,11 @@ function ReportStatusBadge({ status }: { status: BillingReport["status"] }) {
   );
 }
 
-function ReportDetailModal({ report, open, onOpenChange, onSign, onSubmit }: { report: BillingReport; open: boolean; onOpenChange: (open: boolean) => void; onSign: (id: string) => void; onSubmit: (id: string) => void }) {
+function ReportDetailModal({ report, patient, open, onOpenChange, onSign, onSubmit }: { report: BillingReport; patient: RTMPatient; open: boolean; onOpenChange: (open: boolean) => void; onSign: (id: string) => void; onSubmit: (id: string) => void }) {
+  const timeEntries = getTimeEntries(patient.id, patient.name);
+  const communications = getCommunications(patient.id, patient.name);
+  const treatmentPlan = patient.treatmentPlan;
+
   const handleDownloadPdf = () => {
     const w = window.open("", "_blank");
     if (!w) return;
@@ -162,7 +172,7 @@ function ReportDetailModal({ report, open, onOpenChange, onSign, onSubmit }: { r
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl bg-white">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <FileText className="h-5 w-5 text-blue-600" />
@@ -170,6 +180,7 @@ function ReportDetailModal({ report, open, onOpenChange, onSign, onSubmit }: { r
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-5 pt-2">
+          {/* Header Summary */}
           <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
             <div>
               <p className="text-sm font-medium text-gray-900">Billing Period: {format(new Date(report.periodStart), "MMM d")} – {format(new Date(report.periodEnd), "MMM d, yyyy")}</p>
@@ -177,34 +188,180 @@ function ReportDetailModal({ report, open, onOpenChange, onSign, onSubmit }: { r
             </div>
             <ReportStatusBadge status={report.status} />
           </div>
-          <div>
-            <h4 className="mb-2 text-sm font-semibold text-gray-900">CPT Codes</h4>
-            <div className="flex flex-wrap gap-2">
-              {report.cptCodes.map((code) => (
-                <Badge key={code} variant="secondary" className="bg-emerald-50 text-emerald-700">{code}</Badge>
-              ))}
+
+          {/* Diagnosis & CPT Codes */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-lg border p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Stethoscope className="h-4 w-4 text-blue-600" />
+                <h4 className="text-sm font-semibold text-gray-900">Diagnosis</h4>
+              </div>
+              <p className="text-sm text-gray-700">{patient.diagnosis}</p>
             </div>
-            <p className="mt-1.5 text-xs text-gray-500">Estimated: <span className="font-semibold text-gray-900">${report.estimatedAmount.toFixed(2)}</span></p>
+            <div className="rounded-lg border p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="h-4 w-4 text-emerald-600" />
+                <h4 className="text-sm font-semibold text-gray-900">CPT Codes & Amount</h4>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {report.cptCodes.map((code) => (
+                  <Badge key={code} variant="secondary" className="bg-emerald-50 text-emerald-700">{code}</Badge>
+                ))}
+              </div>
+              <p className="text-lg font-bold text-gray-900">${report.estimatedAmount.toFixed(2)}</p>
+            </div>
           </div>
-          <div>
-            <h4 className="mb-2 text-sm font-semibold text-gray-900">Evidence Summary</h4>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: "Data Days", value: `${report.evidence.dataDaysCollected} days`, met: report.evidence.dataDaysCollected >= 2 },
-                { label: "Clinician Time", value: `${report.evidence.clinicianMinutesLogged} min`, met: report.evidence.clinicianMinutesLogged >= 20 },
-                { label: "Communications", value: `${report.evidence.interactiveCommunications}`, met: report.evidence.interactiveCommunications >= 1 },
-                { label: "Treatment Plan", value: report.evidence.treatmentPlanActive ? "Active" : "None", met: report.evidence.treatmentPlanActive },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-2 rounded-lg border bg-white px-3 py-2">
-                  {item.met ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" /> : <Clock className="h-4 w-4 shrink-0 text-amber-400" />}
-                  <div className="min-w-0">
-                    <p className="text-xs text-gray-500">{item.label}</p>
-                    <p className="text-sm font-medium text-gray-900">{item.value}</p>
-                  </div>
+
+          {/* Treatment Plan */}
+          {treatmentPlan && (
+            <div className="rounded-lg border">
+              <div className="flex items-center gap-2 px-4 py-3 border-b bg-gray-50">
+                <ClipboardList className="h-4 w-4 text-violet-600" />
+                <h4 className="text-sm font-semibold text-gray-900">Treatment Plan: {treatmentPlan.title}</h4>
+              </div>
+              <div className="p-4">
+                <div className="mb-3">
+                  <p className="text-xs font-medium text-gray-500 mb-1">Goals:</p>
+                  <ul className="text-xs text-gray-600 space-y-0.5">
+                    {treatmentPlan.goals.map((goal, i) => (
+                      <li key={i} className="flex items-start gap-1">
+                        <span className="text-gray-400">•</span>
+                        {goal}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
+                {treatmentPlan.activities.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-gray-500 mb-2">Activities:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {treatmentPlan.activities.filter(a => a.assigned).map((activity) => (
+                        <div key={activity.id} className="rounded-lg bg-blue-50 px-3 py-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-blue-900">{activity.name}</span>
+                            <span className="text-xs text-blue-600">
+                              {activity.completionsThisPeriod}/{activity.targetCompletions}
+                            </span>
+                          </div>
+                          <p className="text-xs text-blue-700">{activity.frequency}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
+          )}
+
+          {/* Provider Actions/Times */}
+          <div className="rounded-lg border">
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-teal-50">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-teal-600" />
+                <h4 className="text-sm font-semibold text-gray-900">Provider Actions</h4>
+              </div>
+              <span className="text-xs font-medium text-teal-700">
+                Total: {report.evidence.clinicianMinutesLogged} minutes
+              </span>
+            </div>
+            {timeEntries.length > 0 ? (
+              <div className="divide-y">
+                {timeEntries.map((entry) => (
+                  <div key={entry.id} className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-center text-center min-w-[60px]">
+                        <span className="text-xs font-medium text-gray-900">
+                          {format(new Date(entry.date), "MMM d")}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-900">{entry.description}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">{entry.type.replace(/_/g, " ")}</Badge>
+                          <span className="text-xs text-gray-500">{entry.minutes} min</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Clock className="h-4 w-4 text-teal-500" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="px-4 py-6 text-center text-sm text-gray-400">
+                No provider time entries this period
+              </div>
+            )}
           </div>
+
+          {/* Patient Activities */}
+          <div className="rounded-lg border">
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-blue-50">
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 text-blue-600" />
+                <h4 className="text-sm font-semibold text-gray-900">Patient Activities</h4>
+              </div>
+              <span className="text-xs font-medium text-blue-700">
+                {report.evidence.dataDaysCollected} data days
+              </span>
+            </div>
+            {treatmentPlan && treatmentPlan.activities.filter(a => a.assigned && a.completionsThisPeriod > 0).length > 0 ? (
+              <div className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {treatmentPlan.activities.filter(a => a.assigned && a.completionsThisPeriod > 0).map((activity) => (
+                    <div key={activity.id} className="flex items-center justify-between rounded-lg border px-3 py-2">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{activity.name}</p>
+                        <p className="text-xs text-gray-500">{activity.description.slice(0, 50)}...</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-blue-600">{activity.completionsThisPeriod}</p>
+                        <p className="text-xs text-gray-400">completions</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 py-6 text-center text-sm text-gray-400">
+                No patient activities logged this period
+              </div>
+            )}
+          </div>
+
+          {/* Communications */}
+          {communications.length > 0 && (
+            <div className="rounded-lg border">
+              <div className="flex items-center justify-between px-4 py-3 border-b bg-violet-50">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4 text-violet-600" />
+                  <h4 className="text-sm font-semibold text-gray-900">Communications</h4>
+                </div>
+                <span className="text-xs font-medium text-violet-700">
+                  {communications.length} interactions
+                </span>
+              </div>
+              <div className="divide-y max-h-[150px] overflow-y-auto">
+                {communications.map((comm) => (
+                  <div key={comm.id} className="flex items-center justify-between px-4 py-2.5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-medium text-gray-900 min-w-[50px]">
+                        {format(new Date(comm.date), "MMM d")}
+                      </span>
+                      <div>
+                        <p className="text-sm text-gray-900">{comm.summary}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">{comm.type.replace(/_/g, " ")}</Badge>
+                          <span className="text-xs text-gray-500">{comm.duration} min</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
           <div className="flex items-center justify-between border-t pt-4">
             <Button variant="outline" size="sm" className="gap-2" onClick={handleDownloadPdf}><Download className="h-4 w-4" />Download PDF</Button>
             <div className="flex items-center gap-2">
@@ -222,16 +379,6 @@ function ReportDetailModal({ report, open, onOpenChange, onSign, onSubmit }: { r
   );
 }
 
-// ── Revenue Trend Data ──────────────────────────────────────────────
-const revenueByMonth = [
-  { month: "Oct", revenue: 5100, count: 22 },
-  { month: "Nov", revenue: 5800, count: 24 },
-  { month: "Dec", revenue: 7100, count: 29 },
-  { month: "Jan", revenue: 7800, count: 32 },
-  { month: "Feb", revenue: 8200, count: 34 },
-  { month: "Mar", revenue: 8820, count: 36 },
-];
-
 const cptBreakdown = [
   { code: "98975", desc: "Education (One-Time)", count: 32, revenue: 672, color: "bg-blue-600" },
   { code: "98978", desc: "Device Supply #1 (Monthly)", count: 28, revenue: 1540, color: "bg-blue-500" },
@@ -244,7 +391,7 @@ const cptBreakdown = [
 export default function BillingDashboard({ realStudents }: { realStudents: RealStudent[] }) {
   const [filter, setFilter] = useState<FilterStatus>("all");
   const [search, setSearch] = useState("");
-  const [selectedReport, setSelectedReport] = useState<BillingReport | null>(null);
+  const [selectedReportData, setSelectedReportData] = useState<{ report: BillingReport; patient: RTMPatient } | null>(null);
 
   const patients = useMemo(() => buildRTMPatients(realStudents), [realStudents]);
   const [reports, setReports] = useState<BillingReport[]>(() => generateBillingReports(patients));
@@ -286,15 +433,14 @@ export default function BillingDashboard({ realStudents }: { realStudents: RealS
 
   function handleSign(id: string) {
     setReports((prev) => prev.map((r) => r.id === id ? { ...r, status: "signed" as const, signedAt: new Date().toISOString() } : r));
-    setSelectedReport((prev) => prev?.id === id ? { ...prev, status: "signed", signedAt: new Date().toISOString() } : prev);
+    setSelectedReportData((prev) => prev?.report.id === id ? { ...prev, report: { ...prev.report, status: "signed", signedAt: new Date().toISOString() } } : prev);
   }
 
   function handleSubmit(id: string) {
     setReports((prev) => prev.map((r) => r.id === id ? { ...r, status: "submitted" as const, submittedAt: new Date().toISOString() } : r));
-    setSelectedReport((prev) => prev?.id === id ? { ...prev, status: "submitted", submittedAt: new Date().toISOString() } : prev);
+    setSelectedReportData((prev) => prev?.report.id === id ? { ...prev, report: { ...prev.report, status: "submitted", submittedAt: new Date().toISOString() } } : prev);
   }
 
-  const maxRevenue = Math.max(...revenueByMonth.map((d) => d.revenue));
   const totalCptRevenue = cptBreakdown.reduce((s, c) => s + c.revenue, 0);
 
   return (
@@ -307,119 +453,22 @@ export default function BillingDashboard({ realStudents }: { realStudents: RealS
         <SummaryCard title="Est. Revenue" value={`$${estimatedRevenue.toFixed(0)}`} subtitle="This billing period" icon={TrendingUp} color="bg-violet-500" />
       </div>
 
-      {/* RTM Revenue Trend + CPT Code Breakdown */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-xl border bg-white p-5 shadow-sm lg:col-span-2">
-          <div className="mb-4">
-            <h3 className="font-semibold text-gray-900">RTM Revenue Trend</h3>
-            <p className="text-gray-500 text-sm">Monthly estimated revenue from RTM CPT codes</p>
-          </div>
-          <div className="flex items-end gap-3" style={{ height: 200 }}>
-            {revenueByMonth.map((d, i) => {
-              const isLast = i === revenueByMonth.length - 1;
-              return (
-                <div key={d.month} className="group flex flex-1 flex-col items-center gap-1">
-                  <span className={cn(
-                    "text-xs font-semibold transition-opacity",
-                    isLast ? "text-gray-900" : "text-gray-500 opacity-0 group-hover:opacity-100",
-                  )}>
-                    ${(d.revenue / 1000).toFixed(1)}k
-                  </span>
-                  <div
-                    className={cn(
-                      "w-full rounded-t-md transition-colors",
-                      isLast ? "bg-teal-600" : "bg-gray-200 group-hover:bg-teal-400",
-                    )}
-                    style={{ height: `${(d.revenue / maxRevenue) * 160}px` }}
-                  />
-                  <span className={cn("text-xs", isLast ? "font-semibold text-gray-900" : "text-gray-500")}>{d.month}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-4 flex items-center justify-between border-t pt-3">
-            <span className="text-gray-500 text-sm">6-month trend</span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 font-semibold text-green-700 text-xs">
-              <ArrowUp className="size-3" /> 73% growth
-            </span>
-          </div>
-        </div>
-
-        <div className="rounded-xl border bg-white p-5 shadow-sm">
-          <div className="mb-4">
-            <h3 className="font-semibold text-gray-900">CPT Code Breakdown</h3>
-            <p className="text-gray-500 text-sm">Revenue by billing code</p>
-          </div>
-          <div className="space-y-3">
-            {cptBreakdown.map((c) => {
-              const pct = totalCptRevenue > 0 ? Math.round((c.revenue / totalCptRevenue) * 100) : 0;
-              return (
-                <div key={c.code} className="rounded-lg bg-gray-50 px-3 py-2.5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className={cn("size-2.5 rounded-full", c.color)} />
-                      <div>
-                        <span className="font-semibold text-gray-900 text-sm">{c.code}</span>
-                        <p className="text-gray-500 text-xs">{c.desc}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-gray-900 text-sm">${c.revenue.toLocaleString()}</p>
-                      <p className="text-gray-500 text-xs">{c.count} claims</p>
-                    </div>
-                  </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-gray-200">
-                    <div className={cn("h-full rounded-full", c.color)} style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* RTM Code Eligibility - Compact */}
+      {/* CPT Code Breakdown - Horizontal */}
       <div className="rounded-xl border bg-white p-5 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-gray-900">RTM Code Eligibility</h3>
-            <p className="text-gray-500 text-sm">Eligible patients by CPT code</p>
-          </div>
-          <span className="rounded-full bg-orange-50 px-2.5 py-1 text-[10px] font-medium text-orange-700">
-            98978/98986 and 98980/98979 are mutually exclusive
-          </span>
+        <div className="mb-4">
+          <h3 className="font-semibold text-gray-900">CPT Code Breakdown</h3>
+          <p className="text-gray-500 text-sm">Revenue by billing code</p>
         </div>
-        <div className="grid grid-cols-6 gap-3">
-          <div className="flex flex-col items-center gap-1 rounded-lg border bg-blue-50 p-3">
-            <span className="text-xs font-semibold text-blue-700">98975</span>
-            <p className="text-xl font-bold text-blue-700">32</p>
-            <p className="text-[10px] text-gray-500">Education</p>
-          </div>
-          <div className="flex flex-col items-center gap-1 rounded-lg border bg-blue-50 p-3">
-            <span className="text-xs font-semibold text-blue-700">98978</span>
-            <p className="text-xl font-bold text-blue-700">28</p>
-            <p className="text-[10px] text-gray-500">Device #1</p>
-          </div>
-          <div className="flex flex-col items-center gap-1 rounded-lg border bg-orange-50 p-3">
-            <span className="text-xs font-semibold text-orange-700">98986</span>
-            <p className="text-xl font-bold text-orange-700">18</p>
-            <p className="text-[10px] text-gray-500">Device #2</p>
-          </div>
-          <div className="flex flex-col items-center gap-1 rounded-lg border bg-teal-50 p-3">
-            <span className="text-xs font-semibold text-teal-700">98980</span>
-            <p className="text-xl font-bold text-teal-700">24</p>
-            <p className="text-[10px] text-gray-500">Tx Mgmt</p>
-          </div>
-          <div className="flex flex-col items-center gap-1 rounded-lg border bg-green-50 p-3">
-            <span className="text-xs font-semibold text-green-700">98979</span>
-            <p className="text-xl font-bold text-green-700">22</p>
-            <p className="text-[10px] text-gray-500">Tx Mgmt Alt</p>
-          </div>
-          <div className="flex flex-col items-center gap-1 rounded-lg border bg-teal-50 p-3">
-            <span className="text-xs font-semibold text-teal-700">98981</span>
-            <p className="text-xl font-bold text-teal-700">8</p>
-            <p className="text-[10px] text-gray-500">Addl 20min</p>
-          </div>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          {cptBreakdown.map((c) => (
+            <div key={c.code} className="rounded-lg bg-gray-50 p-3 text-center">
+              <div className={cn("mx-auto mb-2 size-3 rounded-full", c.color)} />
+              <p className="font-bold text-gray-900 text-lg">{c.code}</p>
+              <p className="text-gray-500 text-xs mb-2">{c.desc}</p>
+              <p className="font-bold text-gray-900 text-sm">${c.revenue.toLocaleString()}</p>
+              <p className="text-gray-500 text-xs">{c.count} claims</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -562,7 +611,7 @@ export default function BillingDashboard({ realStudents }: { realStudents: RealS
                           <ReportStatusBadge status={report.status} />
                           <button
                             type="button"
-                            onClick={() => setSelectedReport(report)}
+                            onClick={() => setSelectedReportData({ report, patient })}
                             className="text-[10px] font-medium text-blue-600 hover:text-blue-800"
                           >
                             View
@@ -586,11 +635,12 @@ export default function BillingDashboard({ realStudents }: { realStudents: RealS
       </div>
 
       {/* Report Detail Modal */}
-      {selectedReport && (
+      {selectedReportData && (
         <ReportDetailModal
-          report={selectedReport}
-          open={!!selectedReport}
-          onOpenChange={(open) => !open && setSelectedReport(null)}
+          report={selectedReportData.report}
+          patient={selectedReportData.patient}
+          open={!!selectedReportData}
+          onOpenChange={(open) => !open && setSelectedReportData(null)}
           onSign={handleSign}
           onSubmit={handleSubmit}
         />

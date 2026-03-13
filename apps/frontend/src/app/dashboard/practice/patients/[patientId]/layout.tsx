@@ -150,8 +150,8 @@ export default async function PatientLayout({
         <div className="flex flex-wrap items-center gap-x-4 font-dm text-gray-500 text-sm">
           {dobFormatted && <span>DOB: {dobFormatted}</span>}
           {age && <span>Age {age}</span>}
+          {phone && <span>Phone: {phone}</span>}
           {email && <span>{email}</span>}
-          {phone && <span>{phone}</span>}
         </div>
 
         {/* RTM Enrollment Info */}

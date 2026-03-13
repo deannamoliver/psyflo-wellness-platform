@@ -2,8 +2,11 @@
 
 import {
   Activity,
+  AlertTriangle,
   BarChart3,
   Check,
+  ChevronDown,
+  ChevronUp,
   Dumbbell,
   Heart,
   LogIn,
@@ -12,10 +15,13 @@ import {
   Pencil,
   Phone,
   Plus,
+  Save,
+  Shield,
   ShieldCheck,
   Smile,
   Target,
   Trash2,
+  Users,
   X,
 } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -25,6 +31,12 @@ import {
   type PersonalInfoFormData,
   updateStudentPersonalInfo,
 } from "./personal-info-actions";
+import {
+  type SafetyPlan,
+  loadProviderData,
+  saveProviderData,
+} from "@/app/dashboard/~lib/provider-store";
+import { saveProviderDataServer } from "@/app/dashboard/~lib/provider-data-actions";
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -38,6 +50,7 @@ type PersonalInfo = {
   ethnicity: string | null;
   language: string | null;
   email: string;
+  phone: string;
   homeAddress: string;
 };
 
@@ -92,6 +105,7 @@ type EditableFields = {
   ethnicity: string;
   language: string;
   email: string;
+  phone: string;
   homeAddress: string;
 };
 
@@ -130,6 +144,7 @@ function PersonalInfoPopup({
     ethnicity: info.ethnicity ?? "",
     language: info.language ?? "",
     email: info.email ?? "",
+    phone: info.phone ?? "",
     homeAddress: info.homeAddress ?? "",
   });
   const [contactsDraft, setContactsDraft] = useState<EmergencyContact[]>(contacts);
@@ -142,6 +157,7 @@ function PersonalInfoPopup({
       ethnicity: info.ethnicity ?? "",
       language: info.language ?? "",
       email: info.email ?? "",
+      phone: info.phone ?? "",
       homeAddress: info.homeAddress ?? "",
     });
     setContactsDraft(contacts);
@@ -176,6 +192,7 @@ function PersonalInfoPopup({
     { label: "Race/Ethnicity", value: editing ? draft.ethnicity : info.ethnicity, key: "ethnicity", options: ETHNICITY_OPTIONS },
     { label: "Home Language", value: editing ? draft.language : info.language, key: "language", options: LANGUAGE_OPTIONS },
     { label: "Email", value: editing ? draft.email : (info.email || null), key: "email" },
+    { label: "Phone", value: editing ? draft.phone : (info.phone || null), key: "phone" },
     { label: "Address", value: editing ? draft.homeAddress : (info.homeAddress || null), key: "homeAddress" },
   ];
 
@@ -364,6 +381,416 @@ function PersonalInfoPopup({
   );
 }
 
+// ─── Safety Plan Card Component ──────────────────────────────────────
+
+const emptySafetyPlan: SafetyPlan = {
+  warningSignsInternal: [],
+  warningSignsExternal: [],
+  copingStrategies: [],
+  distractions: [],
+  supportPeople: [],
+  professionalContacts: [],
+  safeEnvironment: "",
+  reasonsToLive: [],
+  lastUpdated: "",
+};
+
+function SafetyPlanCard({ studentId }: { studentId: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [safetyPlan, setSafetyPlan] = useState<SafetyPlan>(() => {
+    const stored = loadProviderData(studentId);
+    return stored?.safetyPlan ?? emptySafetyPlan;
+  });
+  const [draft, setDraft] = useState<SafetyPlan>(safetyPlan);
+
+  const hasPlan = safetyPlan.lastUpdated !== "";
+
+  const handleSave = () => {
+    const updated = { ...draft, lastUpdated: new Date().toISOString() };
+    setSafetyPlan(updated);
+    setEditing(false);
+    // Persist
+    const stored = loadProviderData(studentId);
+    saveProviderData(studentId, { ...stored, safetyPlan: updated });
+    saveProviderDataServer(studentId, { ...stored, safetyPlan: updated }).catch(() => {});
+  };
+
+  const handleCancel = () => {
+    setDraft(safetyPlan);
+    setEditing(false);
+  };
+
+  const updateListField = (field: keyof SafetyPlan, index: number, value: string) => {
+    setDraft((prev) => {
+      const arr = [...(prev[field] as string[])];
+      arr[index] = value;
+      return { ...prev, [field]: arr };
+    });
+  };
+
+  const addListItem = (field: keyof SafetyPlan) => {
+    setDraft((prev) => ({
+      ...prev,
+      [field]: [...(prev[field] as string[]), ""],
+    }));
+  };
+
+  const removeListItem = (field: keyof SafetyPlan, index: number) => {
+    setDraft((prev) => ({
+      ...prev,
+      [field]: (prev[field] as string[]).filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateContactField = (
+    field: "supportPeople" | "professionalContacts",
+    index: number,
+    key: string,
+    value: string
+  ) => {
+    setDraft((prev) => {
+      const arr = [...prev[field]];
+      arr[index] = { ...arr[index], [key]: value };
+      return { ...prev, [field]: arr };
+    });
+  };
+
+  const addContact = (field: "supportPeople" | "professionalContacts") => {
+    setDraft((prev) => ({
+      ...prev,
+      [field]: [...prev[field], field === "supportPeople" ? { name: "", phone: "" } : { name: "", phone: "", role: "" }],
+    }));
+  };
+
+  const removeContact = (field: "supportPeople" | "professionalContacts", index: number) => {
+    setDraft((prev) => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index),
+    }));
+  };
+
+  const inputCls = "w-full rounded-md border border-gray-200 bg-gray-50 px-2 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400";
+
+  const renderListSection = (
+    title: string,
+    field: keyof SafetyPlan,
+    placeholder: string,
+    icon: React.ReactNode
+  ) => {
+    const items = (editing ? draft[field] : safetyPlan[field]) as string[];
+    return (
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          {icon}
+          <span className="text-xs font-semibold text-gray-700">{title}</span>
+        </div>
+        {editing ? (
+          <div className="space-y-2">
+            {items.map((item, i) => (
+              <div key={i} className="flex gap-2">
+                <input
+                  type="text"
+                  value={item}
+                  onChange={(e) => updateListField(field, i, e.target.value)}
+                  placeholder={placeholder}
+                  className={inputCls}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeListItem(field, i)}
+                  className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => addListItem(field)}
+              className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+            >
+              <Plus className="h-3 w-3" />
+              Add
+            </button>
+          </div>
+        ) : items.length > 0 ? (
+          <ul className="space-y-1">
+            {items.map((item, i) => (
+              <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gray-400 shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-gray-400 italic">Not documented</p>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="rounded-xl border bg-white">
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className="flex w-full items-center justify-between px-4 py-3 text-left"
+      >
+        <div className="flex items-center gap-2">
+          <Shield className="h-4 w-4 text-red-500" />
+          <h4 className="text-xs font-semibold text-gray-900">Safety Plan</h4>
+          {hasPlan && (
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+              Active
+            </span>
+          )}
+          {!hasPlan && (
+            <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+              Not Created
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {hasPlan && !expanded && (
+            <span className="text-[10px] text-gray-400">
+              Updated {new Date(safetyPlan.lastUpdated).toLocaleDateString()}
+            </span>
+          )}
+          {expanded ? (
+            <ChevronUp className="h-4 w-4 text-gray-400" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-gray-400" />
+          )}
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="border-t px-4 py-4">
+          {!editing && (
+            <div className="flex justify-end mb-4">
+              <button
+                type="button"
+                onClick={() => { setDraft(safetyPlan); setEditing(true); }}
+                className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50"
+              >
+                <Pencil className="h-3 w-3" />
+                {hasPlan ? "Edit" : "Create Safety Plan"}
+              </button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-6">
+            {/* Warning Signs */}
+            <div className="space-y-4">
+              {renderListSection(
+                "Warning Signs (Internal)",
+                "warningSignsInternal",
+                "e.g., Feeling hopeless, racing thoughts",
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+              )}
+              {renderListSection(
+                "Warning Signs (External)",
+                "warningSignsExternal",
+                "e.g., Isolating from friends, not sleeping",
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+              )}
+            </div>
+
+            {/* Coping & Distractions */}
+            <div className="space-y-4">
+              {renderListSection(
+                "Coping Strategies",
+                "copingStrategies",
+                "e.g., Deep breathing, going for a walk",
+                <Heart className="h-3.5 w-3.5 text-pink-500" />
+              )}
+              {renderListSection(
+                "Distractions",
+                "distractions",
+                "e.g., Watching a movie, calling a friend",
+                <Smile className="h-3.5 w-3.5 text-emerald-500" />
+              )}
+            </div>
+
+            {/* Support People */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="h-3.5 w-3.5 text-blue-500" />
+                <span className="text-xs font-semibold text-gray-700">Support People</span>
+              </div>
+              {editing ? (
+                <div className="space-y-2">
+                  {draft.supportPeople.map((person, i) => (
+                    <div key={i} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={person.name}
+                        onChange={(e) => updateContactField("supportPeople", i, "name", e.target.value)}
+                        placeholder="Name"
+                        className={cn(inputCls, "flex-1")}
+                      />
+                      <input
+                        type="tel"
+                        value={person.phone}
+                        onChange={(e) => updateContactField("supportPeople", i, "phone", e.target.value)}
+                        placeholder="Phone"
+                        className={cn(inputCls, "w-32")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeContact("supportPeople", i)}
+                        className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addContact("supportPeople")}
+                    className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add Person
+                  </button>
+                </div>
+              ) : safetyPlan.supportPeople.length > 0 ? (
+                <div className="space-y-1">
+                  {safetyPlan.supportPeople.map((person, i) => (
+                    <div key={i} className="text-sm text-gray-600">
+                      <span className="font-medium">{person.name}</span>
+                      {person.phone && <span className="text-gray-400"> — {person.phone}</span>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400 italic">Not documented</p>
+              )}
+            </div>
+
+            {/* Professional Contacts */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Phone className="h-3.5 w-3.5 text-violet-500" />
+                <span className="text-xs font-semibold text-gray-700">Professional Contacts</span>
+              </div>
+              {editing ? (
+                <div className="space-y-2">
+                  {draft.professionalContacts.map((contact, i) => (
+                    <div key={i} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={contact.name}
+                        onChange={(e) => updateContactField("professionalContacts", i, "name", e.target.value)}
+                        placeholder="Name"
+                        className={cn(inputCls, "flex-1")}
+                      />
+                      <input
+                        type="text"
+                        value={contact.role}
+                        onChange={(e) => updateContactField("professionalContacts", i, "role", e.target.value)}
+                        placeholder="Role"
+                        className={cn(inputCls, "w-24")}
+                      />
+                      <input
+                        type="tel"
+                        value={contact.phone}
+                        onChange={(e) => updateContactField("professionalContacts", i, "phone", e.target.value)}
+                        placeholder="Phone"
+                        className={cn(inputCls, "w-28")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeContact("professionalContacts", i)}
+                        className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addContact("professionalContacts")}
+                    className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add Contact
+                  </button>
+                </div>
+              ) : safetyPlan.professionalContacts.length > 0 ? (
+                <div className="space-y-1">
+                  {safetyPlan.professionalContacts.map((contact, i) => (
+                    <div key={i} className="text-sm text-gray-600">
+                      <span className="font-medium">{contact.name}</span>
+                      {contact.role && <span className="text-gray-500"> ({contact.role})</span>}
+                      {contact.phone && <span className="text-gray-400"> — {contact.phone}</span>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400 italic">Not documented</p>
+              )}
+            </div>
+
+            {/* Safe Environment */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="h-3.5 w-3.5 text-teal-500" />
+                <span className="text-xs font-semibold text-gray-700">Making Environment Safe</span>
+              </div>
+              {editing ? (
+                <textarea
+                  value={draft.safeEnvironment}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, safeEnvironment: e.target.value }))}
+                  placeholder="Steps to make the environment safer..."
+                  rows={2}
+                  className={inputCls}
+                />
+              ) : safetyPlan.safeEnvironment ? (
+                <p className="text-sm text-gray-600">{safetyPlan.safeEnvironment}</p>
+              ) : (
+                <p className="text-xs text-gray-400 italic">Not documented</p>
+              )}
+            </div>
+
+            {/* Reasons to Live */}
+            <div>
+              {renderListSection(
+                "Reasons to Live",
+                "reasonsToLive",
+                "e.g., Family, future goals, pets",
+                <Heart className="h-3.5 w-3.5 text-red-500" />
+              )}
+            </div>
+          </div>
+
+          {/* Save/Cancel buttons */}
+          {editing && (
+            <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+              >
+                <Save className="h-3 w-3" />
+                Save Safety Plan
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Overview Component ────────────────────────────────────────
 
 export function OverviewClient({
@@ -388,6 +815,7 @@ export function OverviewClient({
       firstName: nameParts[0] ?? "",
       lastName: nameParts.slice(1).join(" ") ?? "",
       email: updated.email,
+      phone: updated.phone,
       grade: updated.grade,
       dateOfBirth: "", // preserved from server, not editable in popup
       gender: updated.gender.toLowerCase().replace(/ /g, "_"),
@@ -407,6 +835,7 @@ export function OverviewClient({
         ethnicity: updated.ethnicity || null,
         language: updated.language || null,
         email: updated.email,
+        phone: updated.phone,
         homeAddress: updated.homeAddress,
       }));
       setEmergencyContacts(updatedContacts);
@@ -616,6 +1045,9 @@ export function OverviewClient({
           </div>
         </div>
       </div>
+
+      {/* Row 3: Safety Plan */}
+      <SafetyPlanCard studentId={studentId} />
 
       {/* Popup */}
       {showInfoPopup && (

@@ -51,6 +51,20 @@ export type ProviderData = {
   plans: StoredTreatmentPlan[];
   planExercises: Record<string, StoredExercise[]>;
   assessments: StoredAssessment[];
+  reasonForEnrollment?: string;
+  safetyPlan?: SafetyPlan;
+};
+
+export type SafetyPlan = {
+  warningSignsInternal: string[];
+  warningSignsExternal: string[];
+  copingStrategies: string[];
+  distractions: string[];
+  supportPeople: { name: string; phone: string }[];
+  professionalContacts: { name: string; phone: string; role: string }[];
+  safeEnvironment: string;
+  reasonsToLive: string[];
+  lastUpdated: string;
 };
 
 // Increment this to invalidate old cached data

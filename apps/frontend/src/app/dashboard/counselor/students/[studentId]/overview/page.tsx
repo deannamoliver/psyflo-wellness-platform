@@ -53,6 +53,7 @@ export default async function StudentOverviewPage({
     ethnicity: profile?.ethnicity ? titleCase(profile.ethnicity, { delimiter: "_" }) : null,
     language: profile?.language ? titleCase(profile.language, { delimiter: "_" }) : null,
     email: user?.email ?? "",
+    phone: profile?.phone ?? "",
     homeAddress: profile?.homeAddress ?? "",
   };
 

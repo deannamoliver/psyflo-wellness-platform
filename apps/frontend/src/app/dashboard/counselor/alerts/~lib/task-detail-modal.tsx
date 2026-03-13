@@ -51,7 +51,7 @@ export function TaskDetailModal({ isOpen, onClose, task, assessmentData, onStatu
 
   if (!isOpen || !task) return null;
 
-  const isSafetyAlert = task.source === "safety_alert";
+  const isSafetyAlert = task.source === "safety_alert" || (task.createdBy === "system" && task.sourceAlertId);
   const priorityConfig = PRIORITY_CONFIG[task.priority];
   const statusConfig = STATUS_CONFIG[task.status];
 

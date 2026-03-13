@@ -3,10 +3,10 @@
 import {
   ArrowDown,
   ArrowUp,
+  Calendar,
   CheckSquare,
   FileText,
   Minus,
-  ShieldAlert,
   Users,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -299,15 +299,16 @@ const KPI_CARDS: StatCardConfig[] = [
     dotColor: "bg-orange-500",
   },
   {
-    label: "Safety Alerts (7d)",
-    value: 2,
-    change: 0,
-    icon: <ShieldAlert className="size-5 text-red-600" />,
-    iconBg: "bg-red-50",
-    tag: "Urgent",
-    tagBg: "bg-red-100",
-    tagText: "text-red-700",
-    dotColor: "bg-red-600",
+    label: "Avg. Data Days",
+    value: 18,
+    change: 8,
+    changeLabel: "vs last month",
+    icon: <Calendar className="size-5 text-violet-600" />,
+    iconBg: "bg-violet-50",
+    tag: "On Track",
+    tagBg: "bg-violet-100",
+    tagText: "text-violet-700",
+    dotColor: "bg-violet-600",
   },
   {
     label: "Open Tasks",

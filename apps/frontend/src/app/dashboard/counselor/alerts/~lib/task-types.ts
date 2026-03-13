@@ -12,6 +12,7 @@ export type Task = {
   priority: TaskPriority;
   status: TaskStatus;
   createdBy: CreatedBy;
+  source?: "safety_alert" | "manual";
   sourceAlertId?: string;
   dueDate?: Date;
   createdAt: Date;
