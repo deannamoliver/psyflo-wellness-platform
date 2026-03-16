@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import type { SoliStateData } from "@/lib/check-in/soli-state";
 import { Skeleton } from "@/lib/core-ui/skeleton";
 import { cn } from "@/lib/tailwind-utils";
+import { DailyCbtCard } from "@/components/exercises/cbt/daily-cbt-card";
 import {
   getSoliImage,
   syncSoliSettingsToLocalStorage,
@@ -339,6 +340,9 @@ export default function MobileWellnessDashboard({
           </div>
 
           <div className="space-y-2">
+            {/* Quick CBT Exercise — interactive, tap-through, < 1 min */}
+            <DailyCbtCard />
+
             {/* Daily Check-In - shows completion status based on whether check-in form is completed */}
             <div className="flex items-center gap-3 rounded-xl bg-blue-50 p-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">

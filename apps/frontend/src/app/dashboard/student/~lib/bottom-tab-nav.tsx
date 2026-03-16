@@ -20,6 +20,8 @@ const TABS = [
 const HIDDEN_PATTERNS = [
   "/dashboard/student/check-in",
   "/dashboard/student/wellness-check",
+  "/dashboard/student/toolbox/cbt-exercises/thought-flip",
+  "/dashboard/student/toolbox/cbt-exercises/mood-boost",
 ];
 
 export default function BottomTabNav() {

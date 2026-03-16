@@ -768,11 +768,86 @@ const DBT_EXERCISES: TherapyExercise[] = [
   },
 ];
 
+// ─── Quick CBT Exercises (Gamified, Patient Self-Service) ────────────
+
+const QUICK_CBT_EXERCISES: TherapyExercise[] = [
+  {
+    id: "cbt-quick-thought-flip",
+    name: "Thought Flip",
+    modality: "cbt",
+    domain: "cognitive_restructuring",
+    domainLabel: "Cognitive Restructuring",
+    description:
+      "Quick, gamified cognitive restructuring exercise. Patient selects a negative automatic thought from common patterns and chooses a more balanced reframe. Tap-only interaction, under 60 seconds.",
+    instructions: [
+      "Patient selects a stuck negative thought from a 2×2 grid",
+      "Patient picks a healthier reframe from 3 options",
+      "Completion screen reinforces the skill with XP reward",
+    ],
+    duration: "< 1 min",
+    frequency: "Daily or as needed",
+    evidenceBase: "Beck, A.T. (1979). Cognitive Therapy of Depression — identifying and reframing automatic negative thoughts",
+    validationSource: "Core CBT technique; simplified for adolescent engagement per Hofmann et al. (2012) meta-analysis showing large effect sizes for cognitive restructuring",
+    dsm5Targets: [
+      { code: "F32", name: "Major Depressive Disorder" },
+      { code: "F33", name: "Major Depressive Disorder, Recurrent" },
+      { code: "F41.1", name: "Generalized Anxiety Disorder" },
+    ],
+    clinicalIndications: [
+      "Negative automatic thoughts",
+      "Low motivation for longer exercises",
+      "Early-stage CBT skill building",
+      "Adolescent patients (ages 13-18)",
+    ],
+    contraindications: [
+      "Active psychosis with impaired reality testing",
+      "Acute suicidal crisis (stabilize first)",
+    ],
+    difficulty: "beginner",
+    targetCompletions: 30,
+  },
+  {
+    id: "cbt-quick-mood-boost",
+    name: "Mood Boost",
+    modality: "cbt",
+    domain: "behavioral_activation",
+    domainLabel: "Behavioral Activation",
+    description:
+      "Quick behavioral activation exercise. Patient selects a small positive activity and predicts how it might help their mood. Builds awareness of the activity-mood connection. Tap-only, under 60 seconds.",
+    instructions: [
+      "Patient picks a small doable activity from a 3×3 grid",
+      "Patient predicts how the activity might help (calm, boost, connection)",
+      "Completion screen encourages follow-through with XP reward",
+    ],
+    duration: "< 1 min",
+    frequency: "Daily or as needed",
+    evidenceBase: "Lewinsohn, P.M. (1974). Behavioral approach to depression — scheduling small positive activities to break avoidance-depression cycle",
+    validationSource: "Behavioral activation demonstrated comparable efficacy to full CBT per Dimidjian et al. (2006); micro-activation approach adapted for adolescent engagement",
+    dsm5Targets: [
+      { code: "F32", name: "Major Depressive Disorder" },
+      { code: "F33", name: "Major Depressive Disorder, Recurrent" },
+      { code: "F43.2", name: "Adjustment Disorders" },
+    ],
+    clinicalIndications: [
+      "Behavioral withdrawal and avoidance",
+      "Low motivation and energy",
+      "Early-stage behavioral activation",
+      "Adolescent patients (ages 13-18)",
+    ],
+    contraindications: [
+      "None significant for this brief intervention",
+    ],
+    difficulty: "beginner",
+    targetCompletions: 30,
+  },
+];
+
 // ─── Full Library ───────────────────────────────────────────────────
 
 export const THERAPY_EXERCISE_LIBRARY: TherapyExercise[] = [
   ...CBT_EXERCISES,
   ...DBT_EXERCISES,
+  ...QUICK_CBT_EXERCISES,
 ];
 
 // ─── Mock Assigned Exercises (for demo) ─────────────────────────────

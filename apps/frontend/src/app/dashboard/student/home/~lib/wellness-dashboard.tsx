@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import type { SoliStateData } from "@/lib/check-in/soli-state";
 import { Skeleton } from "@/lib/core-ui/skeleton";
 import { cn } from "@/lib/tailwind-utils";
+import { DailyCbtCard } from "@/components/exercises/cbt/daily-cbt-card";
 import {
   getSoliImage,
   syncSoliSettingsToLocalStorage,
@@ -683,6 +684,9 @@ export default function WellnessDashboard({
           </div>
 
           <div className="space-y-3">
+            {/* Quick CBT Exercise — interactive, tap-through, < 1 min */}
+            <DailyCbtCard />
+
             {/* Daily Check-In - shows completion status */}
             <div
               className={cn(
